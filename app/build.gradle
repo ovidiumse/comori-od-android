@@ -8,14 +8,6 @@ def privateProps = new Properties()
 privateProps.load(new FileInputStream(privatePropsFile))
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('C:\\Users\\mosca\\.android\\debug.keystore')
-            storePassword 'android'
-            keyAlias 'debugkeystore'
-            keyPassword 'android'
-        }
-    }
     compileSdk 30
 
     defaultConfig {
@@ -29,7 +21,6 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-        signingConfig signingConfigs.debug
         buildConfigField("String", "JWTPrivateKey", privateProps["JWTPrivateKey"])
     }
 
