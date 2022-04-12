@@ -39,14 +39,17 @@ fun SearchScreen() {
                 label = { Text("Caută în Comori OD") })
             if (query.isNotEmpty()) {
                 Text("You entered $query")
+            }
 
-                val searchResponse by searchModel.search(query).observeAsState()
+            // On search submit, do
+            /*
+            val searchResponse by searchModel.search(query).observeAsState()
                 when(searchResponse?.status) {
                     Status.SUCCESS -> {}
                     Status.LOADING -> {}
                     else -> {}
                 }
-            }
+             */
         }
     }
 }
