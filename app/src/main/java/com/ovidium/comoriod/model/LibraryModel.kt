@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.DataSource
+import com.ovidium.comoriod.data.LibraryDataSource
 import com.ovidium.comoriod.utils.JWTUtils
 import kotlin.time.ExperimentalTime
 
@@ -12,7 +13,7 @@ const val TAG = "AggregationsModel"
 
 class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     ViewModel() {
-    private val dataSource = DataSource(jwtUtils, RetrofitBuilder.apiService, signInModel)
+    private val dataSource = LibraryDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel)
 
     val authorsData by lazy { dataSource.authorsData.asLiveData() }
     val volumesData by lazy { dataSource.volumesData.asLiveData() }

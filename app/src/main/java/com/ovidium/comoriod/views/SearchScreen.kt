@@ -4,13 +4,19 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ovidium.comoriod.model.SearchModel
+import com.ovidium.comoriod.utils.Status
 
 
 @Composable
 fun SearchScreen() {
+    val searchModel: SearchModel = viewModel()
+
     var query by remember { mutableStateOf("") }
 
     Box(
@@ -33,6 +39,13 @@ fun SearchScreen() {
                 label = { Text("Caută în Comori OD") })
             if (query.isNotEmpty()) {
                 Text("You entered $query")
+
+                val searchResponse by searchModel.search(query).observeAsState()
+                when(searchResponse?.status) {
+                    Status.SUCCESS -> {}
+                    Status.LOADING -> {}
+                    else -> {}
+                }
             }
         }
     }
