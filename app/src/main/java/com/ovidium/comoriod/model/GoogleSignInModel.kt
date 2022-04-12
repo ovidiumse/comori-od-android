@@ -72,7 +72,7 @@ class GoogleSignInModel(context: Context) : ViewModel() {
         }
     }
 
-    fun silentSignIn(context: Context?) {
+    fun silentSignIn(context: Context) {
         viewModelScope.launch {
             userResourceState.value = UserResource.loading()
             try {
@@ -108,7 +108,7 @@ class GoogleSignInModel(context: Context) : ViewModel() {
         }
     }
 
-    fun signOut(applicationContext: Context?) {
+    fun signOut(applicationContext: Context) {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestId()
             .requestEmail()
@@ -121,9 +121,8 @@ class GoogleSignInModel(context: Context) : ViewModel() {
     }
 }
 
-class GoogleSignInModelFactory(val context: Context) : ViewModelProvider.Factory {
-    @ExperimentalTime
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+class GoogleSignInModelFactory(private val context: Context) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(Context::class.java).newInstance(context)
     }
 }
