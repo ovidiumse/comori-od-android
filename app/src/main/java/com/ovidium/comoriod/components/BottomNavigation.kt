@@ -19,8 +19,6 @@ fun BottomNavigation(navController: NavController) {
     androidx.compose.material.BottomNavigation(
         elevation = 5.dp
     ) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
         var selectedPage by remember { mutableStateOf(0) }
 
         items.mapIndexed { idx, item ->

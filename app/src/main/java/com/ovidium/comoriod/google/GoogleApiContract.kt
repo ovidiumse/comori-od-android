@@ -10,7 +10,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 
 class GoogleApiContract : ActivityResultContract<Int, Task<GoogleSignInAccount>?>() {
-    override fun createIntent(context: Context, input: Int?): Intent {
+    override fun createIntent(context: Context, input: Int): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestId()
             .requestEmail()

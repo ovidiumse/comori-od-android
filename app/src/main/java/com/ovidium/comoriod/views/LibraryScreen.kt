@@ -1,7 +1,6 @@
 package com.ovidium.comoriod.views
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -29,7 +28,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
@@ -74,10 +72,6 @@ class DataItem(
 ) {
 }
 
-@ExperimentalFoundationApi
-@ExperimentalPagerApi
-@ExperimentalMaterialApi
-@ExperimentalTime
 @Composable
 fun LibraryScreen(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
     val tabsHeight = 40
@@ -149,7 +143,6 @@ fun LibraryScreen(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
     }
 }
 
-@ExperimentalTime
 @Composable
 fun LibraryMain(signInModel: GoogleSignInModel, libraryModel: LibraryModel, isDark: Boolean) {
     val bottomSpace = 50
@@ -471,8 +464,6 @@ fun VolumesRow(response: VolumesResponse?, isLoading: Boolean, isDark: Boolean) 
     HorizontalCarousel(name = "Volume", items, estimatedSize = 7, isLoading)
 }
 
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun AuthorsGrid(response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean) {
     fun getBooksNumber(bucket: com.ovidium.comoriod.data.authors.Bucket): String {
@@ -544,8 +535,6 @@ fun AuthorsGrid(response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean)
     }
 }
 
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun VolumesGrid(response: VolumesResponse?, isLoading: Boolean, isDark: Boolean) {
     fun getAuthor(bucket: Bucket): String? {
@@ -566,8 +555,6 @@ fun VolumesGrid(response: VolumesResponse?, isLoading: Boolean, isDark: Boolean)
     ItemsGrid(names = Pair("volum", "volume"), items, estimatedSize = 12, isLoading = isLoading)
 }
 
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun BooksGrid(response: BooksResponse?, isLoading: Boolean, isDark: Boolean) {
     fun getVolume(bucket: com.ovidium.comoriod.data.books.Bucket): String {
@@ -616,11 +603,10 @@ fun <T> StateHandler(
             "Ceva nu a mers bine!",
             Toast.LENGTH_SHORT
         ).show()
+        else -> {}
     }
 }
 
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @Composable
 fun ItemsGrid(
     names: Pair<String, String>,
@@ -685,7 +671,7 @@ fun ItemsGrid(
                 if (hasDetail || hasSecondary) {
                     val grouped = items.groupBy { item -> item.detail ?: item.secondary }
 
-                    grouped.forEach { group, items ->
+                    grouped.forEach { (group, items) ->
                         stickyHeader {
                             Card(
                                 modifier = Modifier

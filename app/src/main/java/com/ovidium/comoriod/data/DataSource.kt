@@ -1,18 +1,14 @@
 package com.ovidium.comoriod.data
 
-import android.content.Context
 import android.util.Log
 import com.ovidium.comoriod.api.ApiService
-import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlin.time.ExperimentalTime
 
-@ExperimentalTime
 class DataSource constructor(
     private val jwtUtils: JWTUtils,
     private val apiService: ApiService,
@@ -35,13 +31,16 @@ class DataSource constructor(
 
     private fun buildToken(): String? {
         val userData = signInModel.userResource.value
+        if (userData.user?.id == null)
+            return null
+
         return when (userData.state) {
-            UserState.LoggedIn -> userData.user?.let { user ->
+            UserState.LoggedIn ->
                 jwtUtils.buildToken(
-                    user.id,
-                    user.issuer
+                    userData.user.id,
+                    userData.user.issuer
                 )
-            }
+
             else -> null
         }
     }

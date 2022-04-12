@@ -10,7 +10,6 @@ import kotlin.time.ExperimentalTime
 
 const val TAG = "AggregationsModel"
 
-@ExperimentalTime
 class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     ViewModel() {
     private val dataSource = DataSource(jwtUtils, RetrofitBuilder.apiService, signInModel)
@@ -23,12 +22,11 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val trendingData by lazy { dataSource.trendingData.asLiveData()}
 }
 
-@ExperimentalTime
 class LibraryModelFactory(
     private val jwtUtils: JWTUtils,
     private val signInModel: GoogleSignInModel
 ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(JWTUtils::class.java, GoogleSignInModel::class.java)
             .newInstance(jwtUtils, signInModel)
     }

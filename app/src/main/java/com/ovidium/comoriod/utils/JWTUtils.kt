@@ -10,7 +10,7 @@ import java.time.ZonedDateTime
 class JWTUtils {
     private val signer by lazy { ECSigner.newSHA512Signer(BuildConfig.JWTPrivateKey) }
 
-    fun buildToken(userId: String, issuer: String): String? {
+    fun buildToken(userId: String?, issuer: String): String {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
 
         val jwt = JWT().setIssuer(issuer).setIssuedAt(now).setSubject(userId)

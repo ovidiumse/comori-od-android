@@ -4,8 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -14,22 +12,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.BottomNavigation
+import com.ovidium.comoriod.components.Drawer
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.GoogleSignInModelFactory
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.*
 import kotlinx.coroutines.launch
-import kotlin.time.ExperimentalTime
 
 class MainActivity : ComponentActivity() {
-    @ExperimentalFoundationApi
-    @ExperimentalMaterialApi
-    @ExperimentalPagerApi
-    @ExperimentalTime
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,10 +32,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
-@ExperimentalPagerApi
-@ExperimentalTime
 @Composable
 fun ComoriOdApp(context: Context) {
     val signInModel: GoogleSignInModel = viewModel(factory = GoogleSignInModelFactory(context))
@@ -72,10 +61,6 @@ fun ComoriOdApp(context: Context) {
     }
 }
 
-@ExperimentalFoundationApi
-@ExperimentalMaterialApi
-@ExperimentalPagerApi
-@ExperimentalTime
 @Composable
 fun BottomBarMain(
     navController: NavHostController,
