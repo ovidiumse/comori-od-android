@@ -2,6 +2,7 @@ package com.ovidium.comoriod.data
 
 import android.util.Log
 import com.ovidium.comoriod.api.ApiService
+import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.utils.JWTUtils
@@ -61,5 +62,9 @@ class DataSource constructor(
         buildFlow {
             buildToken()?.let { token -> apiService.getTrending(token) }
         }
+    }
+
+    fun search(q: String, limit: Int = 20, offset: Int = 0): Flow<Resource<SearchResponse>> {
+        return buildFlow { apiService.search(q, limit, offset) }
     }
 }

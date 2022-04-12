@@ -4,6 +4,7 @@ import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
+import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.data.trending.TrendingResponse
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import retrofit2.http.GET
@@ -34,4 +35,11 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("limit") limit: Int = 5
     ): TrendingResponse
+
+    @GET("articles")
+    suspend fun search(
+        @Query("q") q: String,
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Int = 0
+    ): SearchResponse
 }
