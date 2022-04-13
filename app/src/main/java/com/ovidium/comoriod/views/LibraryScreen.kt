@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,7 +25,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
@@ -49,10 +47,12 @@ import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.utils.*
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.ceil
-import kotlin.time.ExperimentalTime
 
 val TAG = "LibraryScreen"
 
@@ -588,22 +588,21 @@ fun BooksGrid(response: BooksResponse?, isLoading: Boolean, isDark: Boolean) {
 
 @Composable
 fun <T> StateHandler(
-    responseData: LiveData<Resource<T>>,
+    responseData: SharedFlow<Resource<T>>,
     showSuccess: @Composable (T?, Boolean) -> Unit
 ) {
-    val response by responseData.observeAsState()
+    val response by responseData.collectAsState(initial = Resource.loading(null))
 
-    when (response?.status) {
+    when (response.status) {
         Status.SUCCESS, Status.LOADING -> showSuccess(
-            response?.data,
-            response?.status == Status.LOADING
+            response.data,
+            response.status == Status.LOADING
         )
         Status.ERROR -> Toast.makeText(
             LocalContext.current,
             "Ceva nu a mers bine!",
             Toast.LENGTH_SHORT
         ).show()
-        else -> {}
     }
 }
 

@@ -10,7 +10,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.model.SearchModel
+import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -39,15 +43,26 @@ fun SearchScreen() {
                 label = { Text("Caută în Comori OD") })
             if (query.isNotEmpty()) {
                 Text("You entered $query")
+
+                val autocompleteResponse by searchModel.autocomplete(query)
+                    .collectAsState(Resource.loading(null))
+
+                when (autocompleteResponse.status) {
+                    Status.SUCCESS -> {
+                        autocompleteResponse.data?.hits?.hits?.forEach { hit -> Column { Text(hit._source.title) } }
+                    }
+                    Status.LOADING -> {}
+                    Status.ERROR -> {}
+                }
             }
 
             // On search submit, do
             /*
-            val searchResponse by searchModel.search(query).observeAsState()
-                when(searchResponse?.status) {
+            val searchResponse by searchModel.search(query).collectAsState(Resource.loading(null))
+                when(searchResponse.status) {
                     Status.SUCCESS -> {}
                     Status.LOADING -> {}
-                    else -> {}
+                    Status.ERROR -> {}
                 }
              */
         }

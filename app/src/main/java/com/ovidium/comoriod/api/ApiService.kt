@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.api
 
 import com.ovidium.comoriod.data.authors.AuthorsResponse
+import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
@@ -22,7 +23,7 @@ interface ApiService {
     suspend fun getBooks(): BooksResponse
 
     @GET("recentlyaddedbooks")
-    suspend fun getRecentlyAddedBooks() : RecentlyAddedBooksResponse
+    suspend fun getRecentlyAddedBooks(): RecentlyAddedBooksResponse
 
     @GET("recommended")
     suspend fun getRecommended(
@@ -35,6 +36,9 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Query("limit") limit: Int = 5
     ): TrendingResponse
+
+    @GET("titles/completion")
+    suspend fun autocomplete(@Query("prefix") prefix: String): AutocompleteResponse
 
     @GET("articles")
     suspend fun search(
