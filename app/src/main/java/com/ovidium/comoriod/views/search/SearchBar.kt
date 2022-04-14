@@ -1,7 +1,6 @@
 package com.ovidium.comoriod.views.search
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,11 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.ContentAlpha.medium
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -26,8 +23,6 @@ import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.colors
 
 
-@ExperimentalAnimationApi
-@ExperimentalComposeUiApi
 @Composable
 fun SearchBar(
     searchText: String,

@@ -10,6 +10,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 "-Xuse-experimental=com.google.accompanist.pager.ExperimentalPagerApi",
                 "-Xuse-experimental=coil.annotation.ExperimentalCoilApi",
                 "-Xuse-experimental=kotlin.time.ExperimentalTime",
+                "-Xuse-experimental=androidx.compose.animation.ExperimentalAnimationApi",
+                "-Xuse-experimental=androidx.compose.ui.ExperimentalComposeUiApi",
                 "-Xjvm-default=enable"
         ]
     }

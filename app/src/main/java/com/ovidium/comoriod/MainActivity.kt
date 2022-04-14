@@ -20,6 +20,7 @@ import com.ovidium.comoriod.model.GoogleSignInModelFactory
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.*
+import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
