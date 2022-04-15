@@ -28,7 +28,8 @@ fun SearchBar(
     searchText: String,
     placeholderText: String = if (searchText.isEmpty()) "Caută..." else searchText,
     onSearchTextChanged: (String) -> Unit = {},
-    onClearClick: () -> Unit = {}
+    onClearClick: () -> Unit = {},
+    onDoneClick: () -> Unit = {}
 ) {
     var showClearButton: MutableState<Boolean> = remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -72,6 +73,7 @@ fun SearchBar(
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = {
+            onDoneClick()
             keyboardController?.hide()
         }),
         shape = Shapes.medium

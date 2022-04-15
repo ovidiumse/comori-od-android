@@ -3,27 +3,27 @@ package com.ovidium.comoriod.views.search
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.views.Screen
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun SearchScreen() {
     val searchModel: SearchModel = viewModel()
-
+    val scaffoldState = rememberScaffoldState()
     var query by remember { mutableStateOf("") }
+    var showSearchResults by remember { mutableStateOf(false) }
 
     Scaffold(
-//        topBar = {
-//            TopAppBar(
-//                title = {
-//                    Row {
-//                        Text("Caută")
-//                    }
-//                })
-//        },
+        modifier = Modifier.fillMaxSize(),
         content = {
             Column {
                 SearchBar(
@@ -32,6 +32,8 @@ fun SearchScreen() {
                         query = it
                     }, onClearClick = {
                         query = ""
+                    }, onDoneClick = {
+                        showSearchResults = true
                     })
                 if (query.isNotEmpty()) {
                     val autocompleteResponse by searchModel.autocomplete(query)
@@ -60,6 +62,15 @@ fun SearchScreen() {
                 }
              */
             }
-        })
+        },
+//        topBar = {
+//            TopAppBar(
+//                title = {
+//                    Row {
+//                        Text("Caută")
+//                    }
+//                })
+//        },
+        scaffoldState = scaffoldState)
     }
 
