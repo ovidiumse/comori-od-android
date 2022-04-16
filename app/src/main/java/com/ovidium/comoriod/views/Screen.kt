@@ -8,3 +8,17 @@ sealed class Screen(val route: String, val title: String, @DrawableRes val icon:
     object Search: Screen(route="search", title="Search", icon=R.drawable.ic_baseline_search_24)
     object Favourites: Screen(route="favourites", title="Favourites", icon=R.drawable.ic_baseline_star_border_24)
 }
+
+
+sealed class SearchScreens(val route: String, val title: String, @DrawableRes val icon: Int) {
+    object SearchResults: SearchScreens("search_results", title = "Search Results", icon = R.drawable.ic_baseline_search_24)
+
+    fun withArgs(vararg args: String): String {
+        return buildString {
+            append(route)
+            args.forEach { arg ->
+                append("/$arg")
+            }
+        }
+    }
+}

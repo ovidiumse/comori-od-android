@@ -14,10 +14,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.Drawer
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -25,6 +27,7 @@ import com.ovidium.comoriod.model.GoogleSignInModelFactory
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.*
+import com.ovidium.comoriod.views.search.SearchResultsScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.launch
 
@@ -109,11 +112,25 @@ fun BottomBarMain(
         }
 
         composable(Screen.Search.route) {
-            SearchScreen()
+            SearchScreen(navController)
         }
 
         composable(Screen.Favourites.route) {
             FavouritesScreen()
         }
+
+        composable(
+            route = SearchScreens.SearchResults.route + "/{query}",
+            arguments = listOf(
+                navArgument("query") {
+                    type = NavType.StringType
+                    defaultValue = "Unknown"
+                    nullable = true
+                }
+            )
+        ) { entry ->
+            SearchResultsScreen(query = entry.arguments!!.getString("query")!!)
+        }
+
     }
 }

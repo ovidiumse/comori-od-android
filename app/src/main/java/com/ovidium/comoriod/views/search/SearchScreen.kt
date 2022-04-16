@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -12,15 +13,15 @@ import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.Screen
+import com.ovidium.comoriod.views.SearchScreens
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(navController: NavController) {
     val searchModel: SearchModel = viewModel()
     val scaffoldState = rememberScaffoldState()
     var query by remember { mutableStateOf("") }
-    var showSearchResults by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -33,7 +34,7 @@ fun SearchScreen() {
                     }, onClearClick = {
                         query = ""
                     }, onDoneClick = {
-                        showSearchResults = true
+                        navController.navigate(SearchScreens.SearchResults.withArgs(query))
                     })
                 if (query.isNotEmpty()) {
                     val autocompleteResponse by searchModel.autocomplete(query)

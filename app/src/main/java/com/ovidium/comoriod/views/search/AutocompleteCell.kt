@@ -25,7 +25,8 @@ fun AutocompleteCell(hit: Hit) {
                 .padding(vertical = 3.dp)
         )
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
             Icon(
                 modifier = Modifier.size(12.dp),
