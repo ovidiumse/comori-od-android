@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,7 +39,6 @@ fun SearchResultsCell(hit: Hit, index: Int) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .padding(vertical = 10.dp)
                 .wrapContentSize(Alignment.Center),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -50,7 +50,7 @@ fun SearchResultsCell(hit: Hit, index: Int) {
             SearchResultsTypeView(hit)
         }
         Text(
-            text = fmtVerses(hit.highlight.versesText),
+            text = fmtVerses(hit.highlight.versesText, isDark = isSystemInDarkTheme()),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -63,7 +63,7 @@ fun SearchResultsCell(hit: Hit, index: Int) {
 @Composable
 fun SearchResultsTitleView(hit: Hit, index: Int) {
     fun getTitle(hit : Hit): String {
-        return if (!hit.highlight.title.isEmpty()) {
+        return if (!hit.highlight.title.isNullOrEmpty()) {
             hit.highlight.title[0]
         } else hit._source.title
     }
@@ -71,10 +71,19 @@ fun SearchResultsTitleView(hit: Hit, index: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentWidth(align = Alignment.CenterHorizontally)
+            .wrapContentWidth(align = Alignment.Start),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = highlightText(getTitle(hit)),
+            text = "${index + 1}.",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Left,
+            modifier = Modifier
+                .padding(start = 16.dp)
+        )
+        Text(
+            text = highlightText(getTitle(hit), isDark = isSystemInDarkTheme()),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left,
@@ -83,28 +92,6 @@ fun SearchResultsTitleView(hit: Hit, index: Int) {
                 .padding(vertical = 10.dp)
                 .padding(horizontal = 16.dp)
         )
-        Column(
-            horizontalAlignment = Alignment.End,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(vertical = 10.dp)
-                    .padding(horizontal = 16.dp)
-                    .background(Color.Red, shape = CircleShape)
-                    .padding(all = 5.dp)
-                    .width(20.dp)
-                    .height(20.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "${index + 1}",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
     }
 }
 
@@ -115,8 +102,8 @@ fun SearchResultsBookView(hit: Hit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(12.dp),
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_book),
+            modifier = Modifier.size(14.dp),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
             contentDescription = "Some icon",
             tint = Color.Red
         )
@@ -137,8 +124,8 @@ fun SearchResultsAuthorView(hit: Hit) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(12.dp),
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_book),
+            modifier = Modifier.size(14.dp),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_author),
             contentDescription = "Some icon",
             tint = Color.Red
         )
