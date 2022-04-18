@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.search
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.colors
+import com.ovidium.comoriod.ui.theme.getNamedColor
 
 
 @Composable
@@ -50,7 +52,7 @@ fun SearchBar(
             Text(text = placeholderText)
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = Color.DarkGray,
+            backgroundColor = getNamedColor("Container", isDark = isSystemInDarkTheme())!!,
             cursorColor = colors.colorPrimary,
             focusedBorderColor = Color.Transparent,
         ),

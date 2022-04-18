@@ -16,17 +16,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun AppBar(onMenuClicked: () -> Unit) {
     val isDark = isSystemInDarkTheme()
-    val background = if (isDark) MaterialTheme.colors.background else MaterialTheme.colors.primary
+    val background = getNamedColor("Container", isDark = isDark)!!
 
     TopAppBar(
         title = {
             Text(
                 text = stringResource(id = R.string.app_title),
-                color = Color.White
+                color = getNamedColor("Link", isDark = isDark)!!
             )
         },
         navigationIcon = {
@@ -35,7 +36,7 @@ fun AppBar(onMenuClicked: () -> Unit) {
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
                 modifier = Modifier.clickable(onClick = onMenuClicked),
-                tint = Color.White
+                tint = getNamedColor("Link", isDark = isDark)!!
             )
         },
         elevation = 8.dp,

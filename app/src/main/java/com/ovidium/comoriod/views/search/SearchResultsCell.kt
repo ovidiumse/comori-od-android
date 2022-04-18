@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.search.Hit
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtVerses
 import com.ovidium.comoriod.utils.highlightText
 
@@ -33,7 +34,7 @@ fun SearchResultsCell(hit: Hit, index: Int) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(16.dp))
-            .background(Color.DarkGray)
+            .background(getNamedColor("Container", isDark = isSystemInDarkTheme())!!)
     ) {
         SearchResultsTitleView(hit, index)
         Row(

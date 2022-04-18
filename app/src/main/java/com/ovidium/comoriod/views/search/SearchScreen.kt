@@ -1,9 +1,11 @@
 package com.ovidium.comoriod.views.search
 
+import androidx.appcompat.widget.ActivityChooserView.InnerLayout
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.model.SearchModel
@@ -15,60 +17,39 @@ import com.ovidium.comoriod.views.Screens
 @Composable
 fun SearchScreen(navController: NavController) {
     val searchModel: SearchModel = viewModel()
-    val scaffoldState = rememberScaffoldState()
     var query by remember { mutableStateOf("") }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        content = {
-            Column {
-                SearchBar(
-                    searchText = query,
-                    onSearchTextChanged = {
-                        query = it
-                    }, onClearClick = {
-                        query = ""
-                    }, onDoneClick = {
-                        if (query.isNotEmpty())
-                            navController.navigate(Screens.SearchResults.withArgs(query))
-                    })
+    Column(
+        modifier = Modifier
+            .padding(bottom = 16.dp)
+    ) {
+        SearchBar(
+            searchText = query,
+            onSearchTextChanged = {
+                query = it
+            }, onClearClick = {
+                query = ""
+            }, onDoneClick = {
+                if (query.isNotEmpty())
+                    navController.navigate(Screens.SearchResults.withArgs(query))
+            })
 
-                if (query.isNotEmpty()) {
-                    val autocompleteResponse by searchModel.autocomplete(query)
-                        .collectAsState(Resource.loading(null))
+        if (query.isNotEmpty()) {
+            val autocompleteResponse by searchModel.autocomplete(query)
+                .collectAsState(Resource.loading(null))
 
-                    when (autocompleteResponse.status) {
-                        Status.SUCCESS -> {
-                            autocompleteResponse.data?.hits?.hits?.let { hits ->
-                                AutocompleteList(hits)
-                            }
-                        }
-                        Status.LOADING -> {}
-                        Status.ERROR -> {}
+            when (autocompleteResponse.status) {
+                Status.SUCCESS -> {
+                    autocompleteResponse.data?.hits?.hits?.let { hits ->
+                        AutocompleteList(hits)
                     }
-                } else {
-                    // Show suggestions
                 }
-
-                // On search submit, do
-                /*
-            val searchResponse by searchModel.search(query).collectAsState(Resource.loading(null))
-                when(searchResponse.status) {
-                    Status.SUCCESS -> {}
-                    Status.LOADING -> {}
-                    Status.ERROR -> {}
-                }
-             */
+                Status.LOADING -> {}
+                Status.ERROR -> {}
             }
-        },
-//        topBar = {
-//            TopAppBar(
-//                title = {
-//                    Row {
-//                        Text("Caută")
-//                    }
-//                })
-//        },
-        scaffoldState = scaffoldState)
+        } else {
+            // Show suggestions
+        }
     }
+}
 

@@ -18,21 +18,16 @@ fun SearchResultsScreen(query: String) {
     val searchModel: SearchModel = viewModel()
     val scaffoldState = rememberScaffoldState()
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        content = {
-            val searchResponse by searchModel.search(query)
-                .collectAsState(Resource.loading(null))
-            when (searchResponse.status) {
-                Status.SUCCESS -> {
-                    searchResponse.data?.hits?.hits?.let { hits ->
-                        SearchResultsList(hits = hits)
-                    }
-                }
-                Status.LOADING -> {}
-                Status.ERROR -> {}
+    val searchResponse by searchModel.search(query)
+        .collectAsState(Resource.loading(null))
+    when (searchResponse.status) {
+        Status.SUCCESS -> {
+            searchResponse.data?.hits?.hits?.let { hits ->
+                SearchResultsList(hits = hits)
             }
-        },
-        scaffoldState = scaffoldState)
+        }
+        Status.LOADING -> {}
+        Status.ERROR -> {}
+    }
     
 }

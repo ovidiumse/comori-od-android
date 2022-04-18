@@ -18,6 +18,8 @@ fun SearchResultsList(hits: List<Hit>) {
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 16.dp)
+            .padding(bottom = 56.dp)
+            .padding(top = 16.dp)
     ) {
         itemsIndexed(hits) { index, hit ->
             SearchResultsCell(hit = hit, index)
