@@ -26,7 +26,9 @@ import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.GoogleSignInModelFactory
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.utils.JWTUtils
-import com.ovidium.comoriod.views.*
+import com.ovidium.comoriod.views.FavouritesScreen
+import com.ovidium.comoriod.views.LibraryScreen
+import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.SearchResultsScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.launch
@@ -50,11 +52,7 @@ fun ComoriOdApp(context: Context) {
         val navController = rememberNavController()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
         val coroutineScope = rememberCoroutineScope()
-        val bottomBarItems = listOf(
-            Screen.Library,
-            Screen.Search,
-            Screen.Favourites,
-        )
+
         Scaffold(
             topBar = {
                 AppBar(onMenuClicked = {
@@ -72,28 +70,32 @@ fun ComoriOdApp(context: Context) {
                 BottomNavigation {
                     val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
-                    bottomBarItems.forEach { screen ->
-                        BottomNavigationItem(
-                            icon = { androidx.compose.material.Icon(
-                                imageVector = ImageVector.vectorResource(id = screen.icon),
-                                contentDescription = screen.title
-                            ) },
-                            label = { Text(screen.title) },
-                            selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
+                    Screens.values().forEach { screen ->
+                        if (screen.isMenu) {
+                            BottomNavigationItem(
+                                icon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = screen.icon),
+                                        contentDescription = screen.title
+                                    )
+                                },
+                                label = { Text(screen.title) },
+                                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                onClick = {
+                                    navController.navigate(screen.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
             }
-        ) { innerPadding ->
+        ) { _ ->
             BottomBarMain(navController = navController, jwtUtils, signInModel)
         }
     }
@@ -106,31 +108,35 @@ fun BottomBarMain(
     jwtUtils: JWTUtils,
     signInModel: GoogleSignInModel,
 ) {
-    NavHost(navController, startDestination = Screen.Library.route) {
-        composable(Screen.Library.route) {
+    NavHost(navController, startDestination = Screens.Library.route) {
+        composable(Screens.Library.route) {
             LibraryScreen(jwtUtils, signInModel)
         }
 
-        composable(Screen.Search.route) {
+        composable(Screens.Search.route) {
             SearchScreen(navController)
         }
 
-        composable(Screen.Favourites.route) {
+        composable(Screens.Favourites.route) {
             FavouritesScreen()
         }
 
         composable(
-            route = SearchScreens.SearchResults.route + "/{query}",
-            arguments = listOf(
-                navArgument("query") {
-                    type = NavType.StringType
-                    defaultValue = "Unknown"
-                    nullable = true
-                }
-            )
+            route = Screens.SearchResults.route + "/{query}",
+            arguments = listOf(navArgument("query") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
         ) { entry ->
-            SearchResultsScreen(query = entry.arguments!!.getString("query")!!)
-        }
+            fun getQuery(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("query", "")
+            }
 
+            SearchResultsScreen(query = getQuery())
+        }
     }
 }

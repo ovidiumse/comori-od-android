@@ -6,15 +6,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
-import com.ovidium.comoriod.views.Screen
-import com.ovidium.comoriod.views.SearchScreens
-import kotlinx.coroutines.launch
+import com.ovidium.comoriod.views.Screens
 
 
 @Composable
@@ -34,8 +29,10 @@ fun SearchScreen(navController: NavController) {
                     }, onClearClick = {
                         query = ""
                     }, onDoneClick = {
-                        navController.navigate(SearchScreens.SearchResults.withArgs(query))
+                        if (query.isNotEmpty())
+                            navController.navigate(Screens.SearchResults.withArgs(query))
                     })
+
                 if (query.isNotEmpty()) {
                     val autocompleteResponse by searchModel.autocomplete(query)
                         .collectAsState(Resource.loading(null))
