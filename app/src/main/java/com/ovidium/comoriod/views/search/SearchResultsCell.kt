@@ -1,8 +1,5 @@
 package com.ovidium.comoriod.views.search
 
-import android.graphics.Paint.Align
-import android.text.Html
-import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -12,18 +9,21 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.search.Hit
+import com.ovidium.comoriod.utils.fmtVerses
+import com.ovidium.comoriod.utils.highlightText
 
 
 @Composable
@@ -46,14 +46,11 @@ fun SearchResultsCell(hit: Hit, index: Int) {
                 SearchResultsBookView(hit)
                 SearchResultsAuthorView(hit)
             }
-                SearchResultsTypeView(hit)
+
+            SearchResultsTypeView(hit)
         }
         Text(
-            text = buildAnnotatedString {
-                val html = hit.highlight.versesText.joinToString(separator = "\n")
-                val parsed = Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT).toString()
-                append(parsed)
-            },
+            text = fmtVerses(hit.highlight.versesText),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -65,13 +62,19 @@ fun SearchResultsCell(hit: Hit, index: Int) {
 
 @Composable
 fun SearchResultsTitleView(hit: Hit, index: Int) {
+    fun getTitle(hit : Hit): String {
+        return if (!hit.highlight.title.isEmpty()) {
+            hit.highlight.title[0]
+        } else hit._source.title
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentWidth(align = Alignment.CenterHorizontally)
     ) {
         Text(
-            text = hit._source.title,
+            text = highlightText(getTitle(hit)),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left,
