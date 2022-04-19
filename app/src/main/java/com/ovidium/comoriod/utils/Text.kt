@@ -1,11 +1,9 @@
 package com.ovidium.comoriod.utils
 
-//import androidx.compose.material.Colors
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.ovidium.comoriod.ui.theme.colors.colorPrimaryText
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 

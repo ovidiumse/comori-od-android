@@ -1,23 +1,25 @@
 package com.ovidium.comoriod.views.search
 
-import androidx.appcompat.widget.ActivityChooserView.InnerLayout
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.model.SearchModel
-import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
-import com.ovidium.comoriod.views.Screens
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun SearchScreen(navController: NavController) {
     val searchModel: SearchModel = viewModel()
-    var query by remember { mutableStateOf("") }
+    var query by remember { searchModel.query }
+    val autocompleteData by remember { searchModel.autocompleteData }
+    val searchData by remember { searchModel.searchData }
+    var isSearch by remember { mutableStateOf(false )}
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -27,25 +29,43 @@ fun SearchScreen(navController: NavController) {
             searchText = query,
             onSearchTextChanged = {
                 query = it
+                coroutineScope.launch {
+                    searchModel.autocomplete()
+                }
             }, onClearClick = {
                 query = ""
             }, onDoneClick = {
-                if (query.isNotEmpty())
-                    navController.navigate(Screens.SearchResults.withArgs(query))
+                if (query.isNotEmpty()) {
+                    isSearch = true
+                    coroutineScope.launch {
+                        searchModel.search()
+                    }
+                }
             })
 
         if (query.isNotEmpty()) {
-            val autocompleteResponse by searchModel.autocomplete(query)
-                .collectAsState(Resource.loading(null))
-
-            when (autocompleteResponse.status) {
-                Status.SUCCESS -> {
-                    autocompleteResponse.data?.hits?.hits?.let { hits ->
-                        AutocompleteList(hits)
+            if (!isSearch) {
+                when (autocompleteData.status) {
+                    Status.SUCCESS -> {
+                        autocompleteData.data?.hits?.hits?.let { hits ->
+                            AutocompleteList(hits)
+                        }
                     }
+                    Status.LOADING -> {}
+                    Status.ERROR -> {}
                 }
-                Status.LOADING -> {}
-                Status.ERROR -> {}
+            }
+            else {
+
+                when (searchData.status) {
+                    Status.SUCCESS -> {
+                        searchData.data?.hits?.hits?.let { hits ->
+                            SearchResultsList(hits)
+                        }
+                    }
+                    Status.LOADING -> {}
+                    Status.ERROR -> {}
+                }
             }
         } else {
             // Show suggestions

@@ -2,7 +2,6 @@ package com.ovidium.comoriod.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource

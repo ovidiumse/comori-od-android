@@ -16,19 +16,5 @@ enum class Screens(
         title = "Favourites",
         icon = R.drawable.ic_baseline_star_border_24,
         true
-    ),
-    SearchResults(
-        route = "search_results",
-        title = "Search results",
-        icon = R.drawable.ic_baseline_search_24
-    );
-
-    fun withArgs(vararg args: String): String {
-        return buildString {
-            append(route)
-            args.forEach { arg ->
-                append("/$arg")
-            }
-        }
-    }
+    )
 }
