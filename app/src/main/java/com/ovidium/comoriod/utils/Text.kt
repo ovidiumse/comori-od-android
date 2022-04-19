@@ -27,7 +27,7 @@ fun highlightText(text: String, isDark: Boolean): AnnotatedString {
             if (highlighted) {
                 withStyle(
                     style = SpanStyle(
-                        color = if (isDark) colorSecondaryText else colorPrimaryText,
+                        color = colorSecondaryText,
                         background = getNamedColor("Highlight", isDark = isDark)!!),
                 ) {
                     append(part)
