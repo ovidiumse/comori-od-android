@@ -18,6 +18,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.ui.theme.Shapes
@@ -31,16 +32,14 @@ fun SearchBar(
     placeholderText: String = if (searchText.isEmpty()) "Caută..." else searchText,
     onSearchTextChanged: (String) -> Unit = {},
     onClearClick: () -> Unit = {},
-    onDoneClick: () -> Unit = {}
+    onSearchClick: () -> Unit = {}
 ) {
     var showClearButton: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
 
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp)
             .padding(16.dp)
             .onFocusChanged { focusState ->
                 showClearButton.value = (focusState.isFocused)
@@ -73,11 +72,8 @@ fun SearchBar(
         },
         maxLines = 1,
         singleLine = true,
-        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(onDone = {
-            onDoneClick()
-            keyboardController?.hide()
-        }),
+        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(onSearch = { onSearchClick() }),
         shape = Shapes.medium
     )
 

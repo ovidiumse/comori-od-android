@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.data.search.Hit
@@ -18,7 +21,6 @@ fun SearchResultsList(hits: List<Hit>) {
             .fillMaxHeight()
             .padding(horizontal = 16.dp)
             .padding(bottom = 56.dp)
-            .padding(top = 16.dp)
     ) {
         itemsIndexed(hits) { index, hit ->
             SearchResultsCell(hit = hit, index)
@@ -26,3 +28,5 @@ fun SearchResultsList(hits: List<Hit>) {
         }
     }
 }
+
+

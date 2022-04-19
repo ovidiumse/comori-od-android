@@ -5,9 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,6 +20,7 @@ import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.Drawer
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.GoogleSignInModelFactory
+import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.FavouritesScreen
@@ -52,13 +51,17 @@ fun ComoriOdApp(context: Context) {
 
         Scaffold(
             topBar = {
-                AppBar(onMenuClicked = {
+                AppBar(
+                    onMenuClicked = {
                     coroutineScope.launch {
                         if (scaffoldState.drawerState.isClosed)
                             scaffoldState.drawerState.open()
                         else
                             scaffoldState.drawerState.close()
                     }
+                },
+                onSearchClicked = {
+                    navController.navigate(Screens.Search.route)
                 })
             },
             drawerContent = { Drawer(context) },

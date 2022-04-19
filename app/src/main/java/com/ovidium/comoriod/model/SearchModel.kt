@@ -14,6 +14,7 @@ class SearchModel : ViewModel() {
     private val dataSource = SearchDataSource(RetrofitBuilder.apiService, viewModelScope)
 
     var query = mutableStateOf("")
+    var isSearch = mutableStateOf(false)
     var autocompleteData = mutableStateOf<Resource<AutocompleteResponse>>(Resource.loading(null))
     var searchData = mutableStateOf<Resource<SearchResponse>>(Resource.loading(null))
 
