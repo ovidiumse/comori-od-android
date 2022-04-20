@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.search
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -11,18 +12,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.autocomplete.Hit
+import com.ovidium.comoriod.views.Screens
 
 
 @Composable
-fun AutocompleteCell(hit: Hit) {
+fun AutocompleteCell(hit: Hit, navController: NavController) {
     Column {
         Text(
             text = hit._source.title,
             fontSize = 16.sp,
             modifier = Modifier
                 .padding(vertical = 3.dp)
+                .clickable {
+                    navController.navigate(Screens.Article.withArgs(hit._id)) {
+                        launchSingleTop = true
+                    }
+                }
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,

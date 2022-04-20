@@ -8,12 +8,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.ovidium.comoriod.data.autocomplete.Hit
 import com.ovidium.comoriod.views.search.AutocompleteCell
 
 
 @Composable
-fun AutocompleteList(hits: List<Hit>) {
+fun AutocompleteList(hits: List<Hit>, navController: NavController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
@@ -21,7 +22,7 @@ fun AutocompleteList(hits: List<Hit>) {
             .padding(bottom = 56.dp)
     ) {
         items(hits) { hit ->
-            AutocompleteCell(hit)
+            AutocompleteCell(hit, navController)
         }
     }
 }

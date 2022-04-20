@@ -70,7 +70,7 @@ fun SearchScreen(navController: NavController) {
                 when (autocompleteData.status) {
                     Status.SUCCESS -> {
                         autocompleteData.data?.hits?.hits?.let { hits ->
-                            AutocompleteList(hits)
+                            AutocompleteList(hits, navController)
                         }
                     }
                     Status.LOADING -> {}
