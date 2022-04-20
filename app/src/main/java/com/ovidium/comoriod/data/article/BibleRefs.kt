@@ -19,7 +19,7 @@ enum class PurpleType {
     Verse
 }
 
-data class ArticleResponseVerse (
+data class ArticleResponseChunk (
     val type: String,
     val style: List<String>,
     val text: String,

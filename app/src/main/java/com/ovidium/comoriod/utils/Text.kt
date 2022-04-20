@@ -1,14 +1,12 @@
 package com.ovidium.comoriod.utils
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import com.ovidium.comoriod.data.article.ArticleResponseVerse
-import com.ovidium.comoriod.data.article.VerseType
+import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
@@ -48,29 +46,47 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
 }
 
 
-fun parseVerse(verses: List<List<ArticleResponseVerse>>, isDark: Boolean): AnnotatedString {
-    return buildAnnotatedString {
-        println(verses)
-        for (verse in verses) {
-            if (verse.isEmpty()) {
-                append("\n")
-            } else {
-                if (verse.first().type == "normal") {
-                    if (verse.first().style.isEmpty()) {
-                        println("VERSE: ${verse.first().style.joinToString(", ")}")
-                        append(verse.first().text + "\n")
-                    } else {
-                        println("VERSE: ${verse.first().style.joinToString(", ")}")
-                        when (verse.first().style.joinToString(", ")) {
-                            "italic" -> { withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) { append(verse.first().text) } }
-                            "bold, italic" -> { withStyle(style = SpanStyle(fontStyle = FontStyle.Italic, fontWeight = FontWeight.Bold)) { append(verse.first().text) } }
-                            "bold" -> { withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { append(verse.first().text) } }
-                        }
+fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : AnnotatedString {
+    fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
+        fun buildStyle(styles: List<String>): SpanStyle {
+            val style = SpanStyle()
+            for (s in styles) {
+                when (s) {
+                    "italic" -> style.merge(SpanStyle(fontStyle = FontStyle.Italic))
+                    "bold" -> style.merge(SpanStyle(fontWeight = FontWeight.Bold))
+                }
+            }
+
+            return style
+        }
+
+        return buildAnnotatedString {
+            when (chunk.type) {
+                "normal" -> {
+                    withStyle(buildStyle(chunk.style)) {
+                        append(chunk.text)
                     }
-                } else if (verse.first().type == "bible-ref") {
-                    withStyle(style = SpanStyle(color = getNamedColor("Link", isDark = isDark)!!)) { append(verse.first().text) }
+                }
+                "bible-ref" -> {
+                    withStyle(style = SpanStyle(color = getNamedColor("Link", isDark)!!)) {
+                        append(chunk.text)
+                    }
                 }
             }
         }
+    }
+
+    fun buildVerse(verse: List<ArticleResponseChunk>): AnnotatedString {
+        return buildAnnotatedString {
+            for (chunk in verse)
+                append(buildChunk(chunk))
+
+            append('\n')
+        }
+    }
+
+    return buildAnnotatedString {
+        for (verse in verses)
+            append(buildVerse(verse))
     }
 }

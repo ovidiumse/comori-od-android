@@ -16,6 +16,6 @@ data class ArticleResponse(
     val subtitle: List<Any>,
     val title: String,
     val type: String,
-    val verses: List<List<ArticleResponseVerse>>,
+    val verses: List<List<ArticleResponseChunk>>,
     val volume: String
 )

@@ -19,9 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.model.ArticleModel
-import com.ovidium.comoriod.utils.Status
-import com.ovidium.comoriod.utils.fmtVerses
-import com.ovidium.comoriod.utils.parseVerse
+import com.ovidium.comoriod.utils.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -101,7 +99,7 @@ fun ArticleViewContent(article: ArticleResponse) {
             }
             item { 
                 Text(
-                    text = parseVerse(article.verses, isDark = isSystemInDarkTheme()),
+                    text = parseVerses(article.verses, isDark = isSystemInDarkTheme()),
                     fontSize = 20.sp,
                     lineHeight = 25.sp,
                     fontWeight = FontWeight.Light,
