@@ -1,12 +1,14 @@
 package com.ovidium.comoriod.views.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,20 +19,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.search.Hit
+import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtVerses
 import com.ovidium.comoriod.utils.highlightText
+import com.ovidium.comoriod.views.Screens
+import kotlinx.coroutines.launch
 
 
 @Composable
-fun SearchResultsCell(hit: Hit, index: Int) {
+fun SearchResultsCell(hit: Hit, index: Int, navController: NavController) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(16.dp))
             .background(getNamedColor("Container", isDark = isSystemInDarkTheme())!!)
+            .clickable {
+                navController.navigate(Screens.Article.withArgs(hit._id)) {
+                    launchSingleTop = true
+                }
+            }
     ) {
         SearchResultsTitleView(hit, index)
         Row(

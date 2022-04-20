@@ -12,10 +12,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.Drawer
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -26,6 +28,7 @@ import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.FavouritesScreen
 import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
+import com.ovidium.comoriod.views.article.ArticleView
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.launch
 
@@ -119,6 +122,24 @@ fun BottomBarMain(
 
         composable(Screens.Favourites.route) {
             FavouritesScreen()
+        }
+
+        composable(
+            route = Screens.Article.route + "/{articleID}",
+            arguments = listOf(navArgument("articleID") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getArticleID(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("articleID", "")
+            }
+
+            ArticleView(articleID = getArticleID())
         }
     }
 }

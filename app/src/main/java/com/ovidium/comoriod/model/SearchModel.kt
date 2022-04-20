@@ -24,9 +24,9 @@ class SearchModel : ViewModel() {
     }
 
     suspend fun search(limit: Int = 20, offset: Int = 0) {
-        println("Searching $query.value")
         dataSource.search(query.value, limit, offset).collectLatest { state ->
             searchData.value = state
         }
     }
+
 }

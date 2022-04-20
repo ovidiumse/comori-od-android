@@ -12,10 +12,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.ovidium.comoriod.data.search.Hit
 
 @Composable
-fun SearchResultsList(hits: List<Hit>) {
+fun SearchResultsList(hits: List<Hit>, navController: NavController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
@@ -23,7 +24,7 @@ fun SearchResultsList(hits: List<Hit>) {
             .padding(bottom = 56.dp)
     ) {
         itemsIndexed(hits) { index, hit ->
-            SearchResultsCell(hit = hit, index)
+            SearchResultsCell(hit = hit, index, navController)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

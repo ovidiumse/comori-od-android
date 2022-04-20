@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.colors
@@ -81,7 +82,7 @@ fun SearchScreen(navController: NavController) {
                 when (searchData.status) {
                     Status.SUCCESS -> {
                         searchData.data?.hits?.hits?.let { hits ->
-                            SearchResultsList(hits)
+                            SearchResultsList(hits, navController)
                         }
                     }
                     Status.LOADING -> {}

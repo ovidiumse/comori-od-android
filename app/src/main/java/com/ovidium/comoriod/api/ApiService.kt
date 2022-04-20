@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.api
 
+import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
 import com.ovidium.comoriod.data.books.BooksResponse
@@ -10,6 +11,7 @@ import com.ovidium.comoriod.data.trending.TrendingResponse
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -46,4 +48,9 @@ interface ApiService {
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0
     ): SearchResponse
+
+    @GET("data/{id}.json")
+    suspend fun getArticle(
+        @Path("id") id: String
+    ): ArticleResponse
 }
