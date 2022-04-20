@@ -1,12 +1,11 @@
 package com.ovidium.comoriod.utils
 
+import android.text.style.ClickableSpan
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.ui.theme.colors
@@ -48,15 +47,14 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
     return highlightText(verses.joinToString(separator = "\n"), isDark = isDark)
 }
 
-
 fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : AnnotatedString {
     fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
-            val style = SpanStyle()
+            var style = SpanStyle()
             for (s in styles) {
                 when (s) {
-                    "italic" -> style.merge(SpanStyle(fontStyle = FontStyle.Italic))
-                    "bold" -> style.merge(SpanStyle(fontWeight = FontWeight.Bold))
+                    "italic" -> style = style.merge(SpanStyle(fontStyle = FontStyle.Italic))
+                    "bold" -> style = style.merge(SpanStyle(fontWeight = FontWeight.Bold))
                 }
             }
 
@@ -71,12 +69,11 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
                     }
                 }
                 "bible-ref" -> {
-                    pushStringAnnotation(tag = "URL",
-                        annotation = chunk.text)
-                    withStyle(style = SpanStyle(color = getNamedColor("Link", isDark)!!)) {
-                        append(chunk.text)
+                    withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
+                        withStyle(style = SpanStyle(color = getNamedColor("Link", isDark)!!)) {
+                            append(chunk.text)
+                        }
                     }
-                    pop()
                 }
             }
         }
@@ -93,8 +90,6 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
 
     return buildAnnotatedString {
         for (verse in verses)
-            withStyle(style = SpanStyle(color = colors.colorPrimaryText, fontSize = 20.sp, fontWeight = FontWeight.Light)) {
-                append(buildVerse(verse))
-            }
+            append(buildVerse(verse))
     }
 }

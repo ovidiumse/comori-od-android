@@ -2,10 +2,12 @@ package com.ovidium.comoriod.views.article
 
 import android.content.res.Resources
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Card
@@ -19,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.article.BibleRefVerse
@@ -55,6 +59,8 @@ fun ArticleView(articleID: String) {
 
 @Composable
 fun ArticleViewContent(article: ArticleResponse) {
+
+    var openedBibleRef by remember { mutableStateOf("")}
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -113,13 +119,33 @@ fun ArticleViewContent(article: ArticleResponse) {
                                     end = offset
                                 )
                                 .firstOrNull()?.let { annotation ->
+                                        val bibleRef = article.bibleRefs.get(annotation.item)!!
+                                        var bibleRefText = ""
+                                        bibleRef.verses.forEach { verse ->
+                                            bibleRefText += "${verse.name} - ${verse.text}\n"
+                                        }
+
+                                        openedBibleRef = bibleRefText
                                     Log.d("Clicked URL", annotation.item)
                                 }
+
                             }
                         )
                     }
                 }
             }
         }
+
+    if (openedBibleRef.isNotEmpty()) {
+        Popup(alignment = Alignment.Center) {
+            Box(
+                Modifier
+                    .size(300.dp, 100.dp)
+                    .background(Color.White, RoundedCornerShape(8.dp))
+            ) {
+                Text(openedBibleRef)
+            }
+        }
+    }
 
 }

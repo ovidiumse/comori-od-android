@@ -12,6 +12,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 "-Xuse-experimental=kotlin.time.ExperimentalTime",
                 "-Xuse-experimental=androidx.compose.animation.ExperimentalAnimationApi",
                 "-Xuse-experimental=androidx.compose.ui.ExperimentalComposeUiApi",
+                "-Xuse-experimental=androidx.compose.ui.text.ExperimentalTextApi",
                 "-Xjvm-default=enable"
         ]
     }
