@@ -1,12 +1,15 @@
 package com.ovidium.comoriod.views.article
 
 import android.content.res.Resources
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.utils.*
 import kotlinx.coroutines.launch
@@ -97,17 +101,25 @@ fun ArticleViewContent(article: ArticleResponse) {
                         .padding(bottom = 16.dp)
                 )
             }
-            item { 
-                Text(
-                    text = parseVerses(article.verses, isDark = isSystemInDarkTheme()),
-                    fontSize = 20.sp,
-                    lineHeight = 25.sp,
-                    fontWeight = FontWeight.Light,
-                    modifier = Modifier
-                        .padding(bottom = 16.dp)
-                )
+            item {
+                    SelectionContainer {
+                        val isDark = isSystemInDarkTheme()
+                        val parsedText = parseVerses(article.verses, isDark = isDark)
+                        ClickableText(
+                            text = parsedText,
+                            onClick = { offset ->
+                                parsedText.getStringAnnotations(
+                                    tag = "URL", start = offset,
+                                    end = offset
+                                )
+                                .firstOrNull()?.let { annotation ->
+                                    Log.d("Clicked URL", annotation.item)
+                                }
+                            }
+                        )
+                    }
+                }
             }
         }
-    }
 
 }

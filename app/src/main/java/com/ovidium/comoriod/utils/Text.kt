@@ -1,12 +1,15 @@
 package com.ovidium.comoriod.utils
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
+import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
@@ -68,9 +71,12 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
                     }
                 }
                 "bible-ref" -> {
+                    pushStringAnnotation(tag = "URL",
+                        annotation = chunk.text)
                     withStyle(style = SpanStyle(color = getNamedColor("Link", isDark)!!)) {
                         append(chunk.text)
                     }
+                    pop()
                 }
             }
         }
@@ -87,6 +93,8 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
 
     return buildAnnotatedString {
         for (verse in verses)
-            append(buildVerse(verse))
+            withStyle(style = SpanStyle(color = colors.colorPrimaryText, fontSize = 20.sp, fontWeight = FontWeight.Light)) {
+                append(buildVerse(verse))
+            }
     }
 }
