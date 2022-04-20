@@ -59,8 +59,9 @@ fun SearchResultsCell(hit: Hit, index: Int, navController: NavController) {
 
             SearchResultsTypeView(hit)
         }
+
         Text(
-            text = fmtVerses(hit.highlight.versesText, isDark = isSystemInDarkTheme()),
+            text = fmtVerses(hit.highlight.versesText.orEmpty(), isDark = isSystemInDarkTheme()),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -72,7 +73,7 @@ fun SearchResultsCell(hit: Hit, index: Int, navController: NavController) {
 
 @Composable
 fun SearchResultsTitleView(hit: Hit, index: Int) {
-    fun getTitle(hit : Hit): String {
+    fun getTitle(hit: Hit): String {
         return if (!hit.highlight.title.isNullOrEmpty()) {
             hit.highlight.title[0]
         } else hit._source.title
