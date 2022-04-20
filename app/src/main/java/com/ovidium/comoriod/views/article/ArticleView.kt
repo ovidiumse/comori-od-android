@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,7 +61,7 @@ fun ArticleView(articleID: String) {
 @Composable
 fun ArticleViewContent(article: ArticleResponse) {
 
-    var openedBibleRef by remember { mutableStateOf("")}
+    var openedBibleRef by remember { mutableStateOf("") }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,42 +109,51 @@ fun ArticleViewContent(article: ArticleResponse) {
                 )
             }
             item {
-                    SelectionContainer {
-                        val isDark = isSystemInDarkTheme()
-                        val parsedText = parseVerses(article.verses, isDark = isDark)
-                        ClickableText(
-                            text = parsedText,
-                            onClick = { offset ->
-                                parsedText.getStringAnnotations(
-                                    tag = "URL", start = offset,
-                                    end = offset
-                                )
-                                .firstOrNull()?.let { annotation ->
-                                        val bibleRef = article.bibleRefs.get(annotation.item)!!
-                                        var bibleRefText = ""
-                                        bibleRef.verses.forEach { verse ->
-                                            bibleRefText += "${verse.name} - ${verse.text}\n"
-                                        }
+                SelectionContainer {
+                    val isDark = isSystemInDarkTheme()
+                    val parsedText = parseVerses(article.verses, isDark = isDark)
+                    ClickableText(
+                        text = parsedText,
+                        style = TextStyle(
+                            color = MaterialTheme.colors.onBackground,
+                            fontSize = 18.sp
+                        ),
+                        onClick = { offset ->
+                            val annotation = parsedText.getStringAnnotations(
+                                tag = "URL",
+                                start = offset,
+                                end = offset
+                            ).firstOrNull()
 
-                                        openedBibleRef = bibleRefText
-                                    Log.d("Clicked URL", annotation.item)
+                            if (annotation != null) {
+                                val bibleRef = article.bibleRefs[annotation.item]
+                                var bibleRefText = ""
+                                bibleRef?.verses?.forEach { verse ->
+                                    bibleRefText += "${verse.name} - ${verse.text}\n"
                                 }
 
+                                openedBibleRef = bibleRefText
+                            } else { // dismiss popup
+                                openedBibleRef = ""
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }
+    }
 
     if (openedBibleRef.isNotEmpty()) {
         Popup(alignment = Alignment.Center) {
             Box(
                 Modifier
                     .size(300.dp, 100.dp)
-                    .background(Color.White, RoundedCornerShape(8.dp))
+                    .background(MaterialTheme.colors.onBackground, RoundedCornerShape(8.dp))
             ) {
-                Text(openedBibleRef)
+                Text(
+                    text = openedBibleRef,
+                    style = TextStyle(color = MaterialTheme.colors.background)
+                )
             }
         }
     }
