@@ -78,7 +78,6 @@ fun SearchScreen(navController: NavController) {
                 }
             }
             else {
-
                 when (searchData.status) {
                     Status.SUCCESS -> {
                         searchData.data?.hits?.hits?.let { hits ->

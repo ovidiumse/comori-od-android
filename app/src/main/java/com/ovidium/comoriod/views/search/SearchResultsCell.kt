@@ -7,8 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,6 +23,7 @@ import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.search.Hit
 import com.ovidium.comoriod.model.ArticleModel
+import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtVerses
 import com.ovidium.comoriod.utils.highlightText
@@ -33,6 +33,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SearchResultsCell(hit: Hit, index: Int, navController: NavController) {
+
+    val searchModel: SearchModel = viewModel()
+    val searchData by remember { searchModel.searchData }
 
     Column(
         modifier = Modifier
@@ -68,6 +71,15 @@ fun SearchResultsCell(hit: Hit, index: Int, navController: NavController) {
                 .padding(vertical = 10.dp)
         )
     }
+
+    LaunchedEffect(Unit) {
+        val searchResults = searchData.data?.hits?.hits?.count().let { it } ?: return@LaunchedEffect
+        val totalHits = searchData.data?.hits?.total?.value.let { it } ?: return@LaunchedEffect
+        if ((searchResults < totalHits) && (searchResults == (index + 1))) {
+            searchModel.search(20, searchResults)
+        }
+    }
+
 }
 
 
