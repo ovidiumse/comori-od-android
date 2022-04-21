@@ -1,14 +1,9 @@
 package com.ovidium.comoriod.utils
 
-import android.text.style.ClickableSpan
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
-import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
@@ -91,5 +86,24 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
     return buildAnnotatedString {
         for (verse in verses)
             append(buildVerse(verse))
+    }
+}
+
+
+fun formatBibleRefs(item: String, isDark: Boolean): AnnotatedString {
+    return buildAnnotatedString {
+        val title = item.split(" - ").first()
+        val body = item.split(" - ").last()
+        withStyle(
+            style = SpanStyle(
+                color = getNamedColor("BibleRefBlue", isDark = isDark)!!,
+                fontWeight = FontWeight.Bold
+            ),
+        ) {
+            append(title)
+        }
+        if (body.isNotEmpty()) {
+            append(" - " + body)
+        }
     }
 }

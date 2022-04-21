@@ -80,6 +80,8 @@ fun SearchBar(
 
 
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        if (searchText.isEmpty()) {
+            focusRequester.requestFocus()
+        }
     }
 }

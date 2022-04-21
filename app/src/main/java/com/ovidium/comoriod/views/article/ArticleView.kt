@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -18,8 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -28,6 +33,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.model.ArticleModel
+import com.ovidium.comoriod.ui.theme.colors
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.*
 import kotlinx.coroutines.launch
 
@@ -144,18 +151,6 @@ fun ArticleViewContent(article: ArticleResponse) {
     }
 
     if (openedBibleRef.isNotEmpty()) {
-        Popup(alignment = Alignment.Center) {
-            Box(
-                Modifier
-                    .size(300.dp, 100.dp)
-                    .background(MaterialTheme.colors.onBackground, RoundedCornerShape(8.dp))
-            ) {
-                Text(
-                    text = openedBibleRef,
-                    style = TextStyle(color = MaterialTheme.colors.background)
-                )
-            }
-        }
+        BibleRefsPopup(openedBibleRef)
     }
-
 }
