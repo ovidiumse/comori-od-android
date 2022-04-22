@@ -22,12 +22,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.formatBibleRefs
 
 @Composable
-fun BibleRefsPopup(openedBibleRef: String) {
+fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
     Popup(
         alignment = Alignment.BottomCenter,
     ) {
@@ -46,8 +47,7 @@ fun BibleRefsPopup(openedBibleRef: String) {
             LazyColumn(
                 modifier = Modifier.padding(16.dp)
             ) {
-                val bibleVerses = openedBibleRef.split("\n").toList()
-                itemsIndexed(bibleVerses) { index, item ->
+                itemsIndexed(bibleRefs) { index, item ->
                     Text(
                         text = formatBibleRefs(item, isDark = isDark),
                         style = TextStyle(

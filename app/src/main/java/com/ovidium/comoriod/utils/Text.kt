@@ -4,6 +4,7 @@ import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
+import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
@@ -90,20 +91,18 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
 }
 
 
-fun formatBibleRefs(item: String, isDark: Boolean): AnnotatedString {
+fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
     return buildAnnotatedString {
-        val title = item.split(" - ").first()
-        val body = item.split(" - ").last()
         withStyle(
             style = SpanStyle(
                 color = getNamedColor("BibleRefBlue", isDark = isDark)!!,
                 fontWeight = FontWeight.Bold
             ),
         ) {
-            append(title)
+            append(item.name)
         }
-        if (body.isNotEmpty()) {
-            append(" - " + body)
+        if (item.text.isNotEmpty()) {
+            append(" - " + item.text)
         }
     }
 }

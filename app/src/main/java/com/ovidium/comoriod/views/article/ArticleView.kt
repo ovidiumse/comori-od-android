@@ -1,42 +1,25 @@
 package com.ovidium.comoriod.views.article
 
-import android.content.res.Resources
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.SelectionContainer
-import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.Popup
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.compose.*
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.model.ArticleModel
-import com.ovidium.comoriod.ui.theme.colors
-import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.*
-import kotlinx.coroutines.launch
 
 @Composable
 fun ArticleView(articleID: String) {
@@ -68,7 +51,8 @@ fun ArticleView(articleID: String) {
 @Composable
 fun ArticleViewContent(article: ArticleResponse) {
 
-    var openedBibleRef by remember { mutableStateOf("") }
+    var showBibleRefsPopup by remember { mutableStateOf(false) }
+    var bibleRefs = remember { mutableListOf<BibleRefVerse>() }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -131,17 +115,12 @@ fun ArticleViewContent(article: ArticleResponse) {
                                 start = offset,
                                 end = offset
                             ).firstOrNull()
-
                             if (annotation != null) {
-                                val bibleRef = article.bibleRefs[annotation.item]
-                                var bibleRefText = ""
-                                bibleRef?.verses?.forEach { verse ->
-                                    bibleRefText += "${verse.name} - ${verse.text}\n"
-                                }
-
-                                openedBibleRef = bibleRefText
+                                bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
+                                showBibleRefsPopup = true
                             } else { // dismiss popup
-                                openedBibleRef = ""
+                                bibleRefs.clear()
+                                showBibleRefsPopup = false
                             }
                         }
                     )
@@ -150,7 +129,7 @@ fun ArticleViewContent(article: ArticleResponse) {
         }
     }
 
-    if (openedBibleRef.isNotEmpty()) {
-        BibleRefsPopup(openedBibleRef)
+    if (showBibleRefsPopup) {
+        BibleRefsPopup(bibleRefs)
     }
 }
