@@ -126,7 +126,8 @@ fun ArticleViewContent(article: ArticleResponse) {
                         text = parsedText,
                         style = TextStyle(
                             color = MaterialTheme.colors.onBackground,
-                            fontSize = 18.sp
+                            fontSize = 18.sp,
+                            lineHeight = 25.sp
                         ),
                         onClick = { offset ->
                             val annotation = parsedText.getStringAnnotations(
@@ -151,19 +152,4 @@ fun ArticleViewContent(article: ArticleResponse) {
     if (showBibleRefsPopup) {
         BibleRefsPopup(bibleRefs)
     }
-}
-
-
-@Composable
-fun VerticalDivider(
-    modifier: Modifier = Modifier,
-    color: Color = colors.colorPrimary,
-    thickness: Dp = 1.dp
-) {
-    Box(
-        modifier
-            .fillMaxHeight()
-            .width(thickness)
-            .background(color = color)
-    )
 }
