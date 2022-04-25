@@ -6,11 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.SearchDataSource
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
-import com.ovidium.comoriod.data.search.Hits
 import com.ovidium.comoriod.data.search.SearchResponse
-import com.ovidium.comoriod.data.search.Total
 import com.ovidium.comoriod.utils.Resource
-import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.concatenate
 import kotlinx.coroutines.flow.collectLatest
 

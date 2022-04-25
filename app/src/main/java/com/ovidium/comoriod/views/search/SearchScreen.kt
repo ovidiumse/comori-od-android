@@ -1,33 +1,20 @@
 package com.ovidium.comoriod.views.search
 
 import SuggestionsView
-import androidx.compose.animation.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.model.SearchModel
-import com.ovidium.comoriod.ui.theme.Shapes
-import com.ovidium.comoriod.ui.theme.colors
-import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -40,6 +27,7 @@ fun SearchScreen(navController: NavController) {
     var isSearch by remember { searchModel.isSearch}
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
+    var currentJob by remember { mutableStateOf<Job?>(null) }
 
     Column(
         modifier = Modifier
@@ -50,11 +38,15 @@ fun SearchScreen(navController: NavController) {
             onSearchTextChanged = {
                 query = it
                 isSearch = false
-                coroutineScope.launch {
+                currentJob?.cancel()
+                currentJob = coroutineScope.async {
+                    delay(500L)
                     searchModel.autocomplete()
                 }
             }, onClearClick = {
                 query = ""
+                currentJob?.cancel()
+                searchModel.autocompleteData.value = Resource(Status.SUCCESS, null, null)
                 keyboardController?.show()
             }, onSearchClick = {
                 if (query.isNotEmpty()) {
