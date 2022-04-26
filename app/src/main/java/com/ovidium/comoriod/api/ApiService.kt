@@ -9,10 +9,7 @@ import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.data.trending.TrendingResponse
 import com.ovidium.comoriod.data.volumes.VolumesResponse
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface ApiService {
     @GET("authors")
@@ -45,8 +42,9 @@ interface ApiService {
     @GET("articles")
     suspend fun search(
         @Query("q") q: String,
+        @Query("include_aggs") includeAggs: String = "",
         @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Int = 0
+        @Query("offset") offset: Int = 0,
     ): SearchResponse
 
     @GET("data/{id}.json")

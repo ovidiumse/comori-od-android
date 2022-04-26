@@ -16,8 +16,8 @@ class SearchDataSource(
         return buildSharedFlow(externalScope) { apiService.autocomplete(prefix) }
     }
 
-    fun search(q: String, limit: Int = 20, offset: Int = 0): SharedFlow<Resource<SearchResponse>> {
-        return buildSharedFlow(externalScope) { apiService.search(q, limit, offset) }
+    fun search(q: String, includeAggs: String, limit: Int = 20, offset: Int = 0): SharedFlow<Resource<SearchResponse>> {
+        return buildSharedFlow(externalScope) { apiService.search(q, includeAggs, limit, offset) }
     }
 
     fun getArticle(id: String): SharedFlow<Resource<ArticleResponse>> {

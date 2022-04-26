@@ -22,6 +22,12 @@ enum class Screens(
     route = "article",
     title = "Article",
     icon = R.drawable.ic_baseline_search_24
+    ),
+
+    Filter(
+    route = "filter",
+    title = "Filter",
+    icon = R.drawable.ic_filter
     );
 
     fun withArgs(vararg args: String): String {

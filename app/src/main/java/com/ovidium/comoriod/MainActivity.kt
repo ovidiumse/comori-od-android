@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.Drawer
+import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.GoogleSignInModelFactory
 import com.ovidium.comoriod.model.SearchModel
@@ -30,6 +33,8 @@ import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
 import com.ovidium.comoriod.views.search.SearchScreen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -48,30 +53,27 @@ fun ComoriOdApp(context: Context) {
     val jwtUtils = JWTUtils()
 
     ComoriODTheme {
+
         val navController = rememberNavController()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
         val coroutineScope = rememberCoroutineScope()
-
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
         Scaffold(
             topBar = {
-                AppBar(
-                    onMenuClicked = {
-                    coroutineScope.launch {
-                        if (scaffoldState.drawerState.isClosed)
-                            scaffoldState.drawerState.open()
-                        else
-                            scaffoldState.drawerState.close()
-                    }
-                },
-                onSearchClicked = {
-                    navController.navigate(Screens.Search.route)
-                })
+                if (navBackStackEntry?.destination?.route != Screens.Search.route) {
+                    AppBar(
+                        onMenuClicked = {
+                            launchMenu(coroutineScope, scaffoldState)
+                        },
+                        onSearchClicked = {
+                            navController.navigate(Screens.Search.route)
+                        })
+                }
             },
             drawerContent = { Drawer(context) },
             scaffoldState = scaffoldState,
             bottomBar = {
                 BottomNavigation {
-                    val navBackStackEntry by navController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
                     Screens.values().forEach { screen ->
                         if (screen.isMenu) {
@@ -109,7 +111,7 @@ fun ComoriOdApp(context: Context) {
 fun BottomBarMain(
     navController: NavHostController,
     jwtUtils: JWTUtils,
-    signInModel: GoogleSignInModel,
+    signInModel: GoogleSignInModel
 ) {
     NavHost(navController, startDestination = Screens.Library.route) {
         composable(Screens.Library.route) {
@@ -141,5 +143,32 @@ fun BottomBarMain(
 
             ArticleView(articleID = getArticleID())
         }
+
+//        composable(
+//            route = Screens.Filter.route + "/{query}",
+//            arguments = listOf(navArgument("query") {
+//                type = NavType.StringType
+//                defaultValue = ""
+//                nullable = true
+//            })
+//        ) { entry ->
+//            fun getQuery(): String {
+//                return if (entry.arguments == null)
+//                    ""
+//                else
+//                    entry.arguments!!.getString("query", "")
+//            }
+//            FilterView(query = getQuery())
+//        }
+    }
+}
+
+
+private fun launchMenu(coroutineScope: CoroutineScope, scaffoldState: ScaffoldState) {
+    coroutineScope.launch {
+        if (scaffoldState.drawerState.isClosed)
+            scaffoldState.drawerState.open()
+        else
+            scaffoldState.drawerState.close()
     }
 }

@@ -24,11 +24,14 @@ fun concatenate(data: SearchResponse?, newData: SearchResponse?): Resource<Searc
     val newHits = newData?.hits?.hits.let { it } ?: return Resource(Status.ERROR, null, "Error")
     val total =
         data?.hits?.total?.value.let { it } ?: return Resource(Status.ERROR, null, "Error")
+    val aggs =
+        data?.aggregations.let { it } ?: return Resource(Status.ERROR, null, "Error")
     val concatenatedHits =
         Hits((existingHits + newHits), max_score = 0, total = Total("", total))
     val response = SearchResponse(
         newData!!._shards,
         hits = concatenatedHits,
+        aggregations = aggs,
         timed_out = false,
         took = 0
     )
