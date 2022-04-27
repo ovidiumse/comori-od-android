@@ -1,7 +1,6 @@
 package com.ovidium.comoriod.views.search.filter
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -20,8 +21,28 @@ import com.ovidium.comoriod.data.search.Bucket
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
+enum class FilterCategory(val value: String) {
+    TYPES("types"),
+    AUTHORS("authors"),
+    VOLUMES("volumes"),
+    BOOKS("books");
+
+    fun localizedTitle(): String {
+        when (this) {
+            TYPES -> { return "Tip" }
+            AUTHORS -> { return "Autori" }
+            VOLUMES -> { return "Volume" }
+            BOOKS -> { return "Cărți" }
+        }
+    }
+}
+
+
 @Composable
-fun FilterCategory(buckets: List<Bucket>, title: String, isDark: Boolean) {
+fun FilterCategoryView(category: FilterCategory, buckets: List<Bucket>, isDark: Boolean) {
+
+    val selected by remember { mutableStateOf(mutableListOf<String>()) }
+
     Column(modifier= Modifier.padding(bottom = 30.dp)) {
         Column(
             modifier = Modifier
@@ -32,7 +53,7 @@ fun FilterCategory(buckets: List<Bucket>, title: String, isDark: Boolean) {
                 .padding(bottom = 16.dp)
         ) {
             Text(
-                text = title.uppercase(),
+                text = category.localizedTitle(),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
@@ -43,8 +64,16 @@ fun FilterCategory(buckets: List<Bucket>, title: String, isDark: Boolean) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
-                        checked = false,
-                        onCheckedChange = { },
+                        checked = selected.contains(item.key),
+                        onCheckedChange = {
+                              if (selected.contains(item.key)) {
+                                  selected.remove(item.key)
+                                  println("Selection: ${selected}")
+                              } else {
+                                  selected.add(item.key)
+                                  println("Selection: ${selected}")
+                              }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.1f)
