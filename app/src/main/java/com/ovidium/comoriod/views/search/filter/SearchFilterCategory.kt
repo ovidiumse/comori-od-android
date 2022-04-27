@@ -41,7 +41,7 @@ enum class FilterCategory(val value: String) {
 @Composable
 fun FilterCategoryView(category: FilterCategory, buckets: List<Bucket>, isDark: Boolean) {
 
-    val selected by remember { mutableStateOf(mutableListOf<String>()) }
+    val selected = remember { mutableStateListOf<String>() }
 
     Column(modifier= Modifier.padding(bottom = 30.dp)) {
         Column(

@@ -27,7 +27,7 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
     var query by remember { searchModel.query }
     val autocompleteData by remember { searchModel.autocompleteData }
     val searchData by remember { searchModel.searchData }
-    var isSearch by remember { searchModel.isSearch}
+    var isSearch by remember { searchModel.isSearch }
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     var currentJob by remember { mutableStateOf<Job?>(null) }
@@ -38,7 +38,7 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
             SearchTopBar(
                 title = "Search",
                 isSearch = isSearch,
-                onMenuClicked = {  },
+                onMenuClicked = { },
                 onFilterClicked = {
                     showFilterPopup = true
                 }
@@ -102,7 +102,10 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
     }
     if (showFilterPopup) {
         searchData.data?.aggregations.let { aggregations ->
-            SearchFilterPopup(aggregations = aggregations, onSaveAction = { showFilterPopup = false }, onExitAction = { showFilterPopup = false })
+            SearchFilterPopup(
+                aggregations = aggregations,
+                onSaveAction = { showFilterPopup = false },
+                onExitAction = { showFilterPopup = false })
         }
     }
 }
