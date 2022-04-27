@@ -57,8 +57,7 @@ fun ArticleView(articleID: String) {
 @Composable
 fun ArticleViewContent(article: ArticleResponse) {
 
-    var showBibleRefsPopup by remember { mutableStateOf(false) }
-    var bibleRefs = remember { mutableListOf<BibleRefVerse>() }
+    val bibleRefs = remember { mutableStateListOf<BibleRefVerse>() }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -135,13 +134,11 @@ fun ArticleViewContent(article: ArticleResponse) {
                                 start = offset,
                                 end = offset
                             ).firstOrNull()
-                            if (annotation != null) {
+
+                            bibleRefs.clear()
+
+                            if (annotation != null)
                                 bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
-                                showBibleRefsPopup = true
-                            } else { // dismiss popup
-                                bibleRefs.clear()
-                                showBibleRefsPopup = false
-                            }
                         }
                     )
                 }
@@ -149,7 +146,7 @@ fun ArticleViewContent(article: ArticleResponse) {
         }
     }
 
-    if (showBibleRefsPopup) {
+    if (bibleRefs.isNotEmpty()) {
         BibleRefsPopup(bibleRefs)
     }
 }
