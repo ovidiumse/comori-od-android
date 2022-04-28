@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
@@ -39,7 +40,7 @@ enum class FilterCategory(val value: String) {
 
 
 @Composable
-fun FilterCategoryView(category: FilterCategory, buckets: List<Bucket>, isDark: Boolean) {
+fun FilterCategoryView(category: FilterCategory, buckets: List<Bucket>, onCheck: (FilterCategory, String) -> Unit, isDark: Boolean) {
 
     val selected = remember { mutableStateListOf<String>() }
 
@@ -66,14 +67,13 @@ fun FilterCategoryView(category: FilterCategory, buckets: List<Bucket>, isDark: 
                     Checkbox(
                         checked = selected.contains(item.key),
                         onCheckedChange = {
-                              if (selected.contains(item.key)) {
-                                  selected.remove(item.key)
-                                  println("Selection: ${selected}")
-                              } else {
-                                  selected.add(item.key)
-                                  println("Selection: ${selected}")
-                              }
-                        },
+                            onCheck(category, item.key)
+                            if (selected.contains(item.key)) {
+                                selected.remove(item.key)
+                            } else {
+                                selected.add(item.key)
+                            }
+                                          },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.1f)

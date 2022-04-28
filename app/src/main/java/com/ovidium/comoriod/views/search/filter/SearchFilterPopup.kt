@@ -5,7 +5,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -18,7 +20,12 @@ import com.ovidium.comoriod.views.search.filter.FilterCategoryView
 import com.ovidium.comoriod.views.search.filter.FilterViewTopBar
 
 @Composable
-fun SearchFilterPopup(aggregations: Aggregations?, onSaveAction: () -> Unit, onExitAction: () -> Unit) {
+fun SearchFilterPopup(
+    aggregations: Aggregations?,
+    onCheck: (FilterCategory, String) -> Unit,
+    onSaveAction: () -> Unit,
+    onExitAction: () -> Unit
+) {
     Popup(
         alignment = Alignment.BottomCenter,
     ) {
@@ -40,16 +47,36 @@ fun SearchFilterPopup(aggregations: Aggregations?, onSaveAction: () -> Unit, onE
                     modifier = Modifier.padding(16.dp)
                 ) {
                     item {
-                        FilterCategoryView(category = FilterCategory.TYPES, buckets = aggregations?.types!!.buckets, isDark = isDark)
+                        FilterCategoryView(
+                            category = FilterCategory.TYPES,
+                            buckets = aggregations?.types!!.buckets,
+                            onCheck = onCheck,
+                            isDark = isDark
+                        )
                     }
                     item {
-                        FilterCategoryView(category = FilterCategory.AUTHORS, buckets = aggregations?.authors!!.buckets, isDark = isDark)
+                        FilterCategoryView(
+                            category = FilterCategory.AUTHORS,
+                            buckets = aggregations?.authors!!.buckets,
+                            onCheck = onCheck,
+                            isDark = isDark
+                        )
                     }
                     item {
-                        FilterCategoryView(category = FilterCategory.VOLUMES, buckets = aggregations?.volumes!!.buckets, isDark = isDark)
+                        FilterCategoryView(
+                            category = FilterCategory.VOLUMES,
+                            buckets = aggregations?.volumes!!.buckets,
+                            onCheck = onCheck,
+                            isDark = isDark
+                        )
                     }
                     item {
-                        FilterCategoryView(category = FilterCategory.BOOKS, buckets = aggregations?.books!!.buckets, isDark = isDark)
+                        FilterCategoryView(
+                            category = FilterCategory.BOOKS,
+                            buckets = aggregations?.books!!.buckets,
+                            onCheck = onCheck,
+                            isDark = isDark
+                        )
                     }
                 }
             }

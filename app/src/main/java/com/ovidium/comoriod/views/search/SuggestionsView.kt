@@ -70,7 +70,7 @@ fun SuggestionsView(coroutineScope: CoroutineScope, keyboardController: Software
                                         isSearch = true
                                         coroutineScope.launch {
                                             keyboardController?.hide()
-                                            searchModel.search()
+                                            searchModel.search(params = "")
                                         }
                                     }
                                 }

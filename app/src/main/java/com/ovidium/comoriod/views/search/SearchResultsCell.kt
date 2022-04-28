@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SearchResultsCell(hit: Hit, index: Int, navController: NavController) {
+fun SearchResultsCell(hit: Hit, index: Int, navController: NavController, params: String) {
 
     val searchModel: SearchModel = viewModel()
     val searchData by remember { searchModel.searchData }
@@ -73,10 +73,10 @@ fun SearchResultsCell(hit: Hit, index: Int, navController: NavController) {
     }
 
     LaunchedEffect(Unit) {
-        val searchResults = searchData.data?.hits?.hits?.count().let { it } ?: return@LaunchedEffect
+        val searchResultsCount = searchData.data?.hits?.hits?.count().let { it } ?: return@LaunchedEffect
         val totalHits = searchData.data?.hits?.total?.value.let { it } ?: return@LaunchedEffect
-        if ((searchResults < totalHits) && (searchResults == (index + 1))) {
-            searchModel.search(20, searchResults)
+        if ((searchResultsCount < totalHits) && (searchResultsCount == (index + 1))) {
+            searchModel.search(20, searchResultsCount, params = params)
         }
     }
 
