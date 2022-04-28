@@ -34,7 +34,10 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
     var currentJob by remember { mutableStateOf<Job?>(null) }
     var showFilterPopup by remember { mutableStateOf(false) }
     val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
-    var urlParams by remember { mutableStateOf("") }
+//    var typeParams by remember { mutableStateOf("") }
+//    var authorsParams by remember { mutableStateOf("") }
+//    var volumesParams by remember { mutableStateOf("") }
+//    var booksParams by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -72,7 +75,7 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
                         isSearch = true
                         keyboardController?.hide()
                         coroutineScope.launch {
-                            searchModel.search(params = "")
+                            searchModel.search()
                         }
                     }
                 })
@@ -91,7 +94,7 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
                     when (searchData.status) {
                         Status.SUCCESS -> {
                             searchData.data?.hits?.hits?.let { hits ->
-                                SearchResultsList(hits, navController, params = urlParams)
+                                SearchResultsList(hits, navController, searchParams = searchParams)
                             }
                         }
                         Status.LOADING -> {}
@@ -110,26 +113,21 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
                 onCheck = { category, item ->
                     if (searchParams[category] != null && (searchParams[category]!!.contains(item))) {
                         searchParams[category]!!.remove(item)
-                    } else if (searchParams[category] != null && !searchParams[category]!!.contains(
-                            item
-                        )
+                    } else if (searchParams[category] != null && !searchParams[category]!!.contains(item)
                     ) {
                         searchParams[category]!!.add(item)
                     } else if (searchParams[category] == null) {
                         searchParams.put(category, mutableListOf(item))
                     }
-                    urlParams = ""
-                    searchParams.forEach { entry ->
-                        if (entry.value.isNotEmpty()) {
-                            urlParams += "&${entry.key.value}=${entry.value.joinToString(",")}"
-                        }
-                    }
                 },
                 onSaveAction = {
                     showFilterPopup = false
-                    println("URLPARAMS: ${urlParams}")
                     coroutineScope.launch {
-                        searchModel.search(params = urlParams)
+                        val types = if (searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else searchParams[FilterCategory.TYPES]!!.joinToString(",")
+                        val authors = if (searchParams[FilterCategory.AUTHORS].isNullOrEmpty()) "" else searchParams[FilterCategory.AUTHORS]!!.joinToString(",")
+                        val volumes = if (searchParams[FilterCategory.VOLUMES].isNullOrEmpty()) "" else searchParams[FilterCategory.VOLUMES]!!.joinToString(",")
+                        val books = if (searchParams[FilterCategory.BOOKS].isNullOrEmpty()) "" else searchParams[FilterCategory.BOOKS]!!.joinToString(",")
+                        searchModel.search(type = types, authors = authors, volumes = volumes, books = books)
                     }
                 },
                 onExitAction = { showFilterPopup = false })

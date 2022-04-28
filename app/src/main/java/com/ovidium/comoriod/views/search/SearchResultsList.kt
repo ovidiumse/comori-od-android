@@ -10,13 +10,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.data.search.Hit
+import com.ovidium.comoriod.views.search.filter.FilterCategory
 
 @Composable
-fun SearchResultsList(hits: List<Hit>, navController: NavController, params: String) {
+fun SearchResultsList(hits: List<Hit>, navController: NavController, searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
@@ -24,7 +26,7 @@ fun SearchResultsList(hits: List<Hit>, navController: NavController, params: Str
             .padding(bottom = 56.dp)
     ) {
         itemsIndexed(hits) { index, hit ->
-            SearchResultsCell(hit = hit, index, navController, params = params)
+            SearchResultsCell(hit = hit, index, navController, searchParams = searchParams)
             Spacer(modifier = Modifier.height(16.dp))
         }
     }

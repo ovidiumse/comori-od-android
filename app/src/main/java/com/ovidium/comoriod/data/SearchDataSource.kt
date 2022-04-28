@@ -19,9 +19,8 @@ class SearchDataSource(
         return buildSharedFlow(externalScope) { apiService.autocomplete(prefix) }
     }
 
-    fun search(q: String, includeAggs: String, limit: Int = 20, offset: Int = 0, params: String = ""): SharedFlow<Resource<SearchResponse>> {
-        println("URL: https://testapi.comori-od.ro/odbeta/articles?q=${q}&include_aggs=${params.replace(" ", "%20")}&limit=${limit}&offset=${offset}")
-        return buildSharedFlow(externalScope) { apiService.search(q, includeAggs + params, limit, offset) }
+    fun search(q: String, includeAggs: String, limit: Int = 20, offset: Int = 0, type: String = "", authors: String = "", volumes: String = "", books: String = ""): SharedFlow<Resource<SearchResponse>> {
+        return buildSharedFlow(externalScope) { apiService.search(q, includeAggs, type, authors, volumes, books, limit, offset) }
     }
 
     fun getArticle(id: String): SharedFlow<Resource<ArticleResponse>> {

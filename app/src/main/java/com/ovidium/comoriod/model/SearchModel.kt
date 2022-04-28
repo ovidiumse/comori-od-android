@@ -30,9 +30,8 @@ class SearchModel : ViewModel() {
             .collectLatest { state -> autocompleteData.value = state }
     }
 
-    suspend fun search(limit: Int = 20, offset: Int = 0, params: String) {
-        dataSource.search(query.value, "", limit, offset, params).collectLatest { state ->
-            println("RECEIVED SEARCH: ${state.data?.hits?.total?.value} - PARAMS: ${params.replace(" ", "%20")}")
+    suspend fun search(limit: Int = 20, offset: Int = 0, type: String = "", authors: String = "", volumes: String = "", books: String = "") {
+        dataSource.search(query.value, "", limit, offset, type, authors, volumes, books).collectLatest { state ->
             if (offset == 0) {
                 searchData.value = state
             } else {

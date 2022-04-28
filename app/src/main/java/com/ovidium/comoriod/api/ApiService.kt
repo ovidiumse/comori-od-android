@@ -43,6 +43,10 @@ interface ApiService {
     suspend fun search(
         @Query("q") q: String,
         @Query("include_aggs") includeAggs: String = "",
+        @Query("type") type: String = "",
+        @Query("authors") authors: String = "",
+        @Query("volumes") volumes: String = "",
+        @Query("books") books: String = "",
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
     ): SearchResponse
