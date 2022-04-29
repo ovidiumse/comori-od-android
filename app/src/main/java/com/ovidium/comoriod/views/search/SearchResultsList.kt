@@ -23,7 +23,7 @@ fun SearchResultsList(hits: List<Hit>, navController: NavController, searchParam
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 16.dp)
-            .padding(bottom = 56.dp)
+            .padding(bottom = 16.dp)
     ) {
         itemsIndexed(hits) { index, hit ->
             SearchResultsCell(hit = hit, index, navController, searchParams = searchParams)

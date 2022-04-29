@@ -19,7 +19,7 @@ fun AutocompleteList(hits: List<Hit>, navController: NavController) {
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 16.dp)
-            .padding(bottom = 56.dp)
+            .padding(bottom = 16.dp)
     ) {
         items(hits) { hit ->
             AutocompleteCell(hit, navController)

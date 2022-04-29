@@ -4,9 +4,7 @@ import SuggestionsView
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -26,13 +24,12 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SearchScreen(navController: NavController, searchModel: SearchModel = viewModel()) {
+fun SearchScreen(navController: NavController, scaffoldState: ScaffoldState, searchModel: SearchModel = viewModel()) {
     var query by remember { searchModel.query }
     val autocompleteData by remember { searchModel.autocompleteData }
     val searchData by remember { searchModel.searchData }
     var isSearch by remember { searchModel.isSearch }
     val coroutineScope = rememberCoroutineScope()
-    val scaffoldState = rememberScaffoldState()
     val keyboardController = LocalSoftwareKeyboardController.current
     var currentJob by remember { mutableStateOf<Job?>(null) }
     var showFilterPopup by remember { mutableStateOf(false) }
@@ -76,7 +73,14 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
                     }
                 },
                 isSearch = isSearch,
-                onMenuClicked = { },
+                onMenuClicked = {
+                    coroutineScope.launch {
+                        if (scaffoldState.drawerState.isClosed)
+                            scaffoldState.drawerState.open()
+                        else
+                            scaffoldState.drawerState.close()
+                    }
+                },
                 onFilterClicked = {
                     showFilterPopup = true
                 }

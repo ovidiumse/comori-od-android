@@ -70,36 +70,8 @@ fun ComoriOdApp(context: Context) {
             },
             drawerContent = { Drawer(context) },
             scaffoldState = scaffoldState,
-            bottomBar = {
-                BottomNavigation {
-                    val currentDestination = navBackStackEntry?.destination
-                    Screens.values().forEach { screen ->
-                        if (screen.isMenu) {
-                            BottomNavigationItem(
-                                icon = {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(id = screen.icon),
-                                        contentDescription = screen.title
-                                    )
-                                },
-                                label = { Text(screen.title) },
-                                selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                                onClick = {
-                                    navController.navigate(screen.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        ) { _ ->
-            BottomBarMain(navController = navController, jwtUtils, signInModel)
+        ) {
+            BottomBarMain(navController = navController, scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel)
         }
     }
 }
@@ -108,6 +80,7 @@ fun ComoriOdApp(context: Context) {
 @Composable
 fun BottomBarMain(
     navController: NavHostController,
+    scaffoldState: ScaffoldState,
     jwtUtils: JWTUtils,
     signInModel: GoogleSignInModel
 ) {
@@ -117,7 +90,7 @@ fun BottomBarMain(
         }
 
         composable(Screens.Search.route) {
-            SearchScreen(navController)
+            SearchScreen(navController, scaffoldState = scaffoldState)
         }
 
         composable(Screens.Favourites.route) {
