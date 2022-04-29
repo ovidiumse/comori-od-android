@@ -42,7 +42,7 @@ fun SearchScreen(navController: NavController, searchModel: SearchModel = viewMo
     Scaffold(
         topBar = {
             SearchTopBar(
-                title = "${searchData.data?.hits?.hits?.count()} / ${searchData.data?.hits?.total?.value} rezultate",
+                title = if (searchData.data?.hits?.hits.isNullOrEmpty()) "" else "${searchData.data?.hits?.hits?.count()} / ${searchData.data?.hits?.total?.value} rezultate",
                 isSearch = isSearch,
                 onMenuClicked = { },
                 onFilterClicked = {
