@@ -145,7 +145,6 @@ fun LibraryScreen(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
 
 @Composable
 fun LibraryMain(signInModel: GoogleSignInModel, libraryModel: LibraryModel, isDark: Boolean) {
-    val bottomSpace = 50
 
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         if (signInModel.userResource.value.state == UserState.LoggedIn) {
@@ -174,9 +173,6 @@ fun LibraryMain(signInModel: GoogleSignInModel, libraryModel: LibraryModel, isDa
             StateHandler(libraryModel.volumesData) { data, isLoading ->
                 VolumesRow(data, isLoading, isDark)
             }
-        }
-        item {
-            Box(Modifier.height(bottomSpace.dp))
         }
     }
 }
@@ -484,7 +480,6 @@ fun AuthorsGrid(response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean)
     val itemsByRow = LocalConfiguration.current.screenWidthDp / itemMinWidth
     val itemSize =
         (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
-    val bottomSpace = 50
     val estimatedSize = 2
 
     LazyColumn(
@@ -525,10 +520,6 @@ fun AuthorsGrid(response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean)
                             )
                         }
                     }
-                }
-
-                item {
-                    Box(modifier = Modifier.height(bottomSpace.dp))
                 }
             }
         }
@@ -618,7 +609,6 @@ fun ItemsGrid(
     val itemsByRow = LocalConfiguration.current.screenWidthDp / itemMinWidth
     val itemSize =
         (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
-    val bottomSpace = 50
 
     LazyColumn(
         contentPadding = PaddingValues(horizontal = marginSize.dp, vertical = marginSize.dp),
@@ -694,10 +684,6 @@ fun ItemsGrid(
                     }
                 } else
                     renderItems(items)
-
-                item {
-                    Box(modifier = Modifier.height(bottomSpace.dp))
-                }
             }
         }
     }
