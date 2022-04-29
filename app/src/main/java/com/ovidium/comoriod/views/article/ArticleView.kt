@@ -65,7 +65,6 @@ fun ArticleViewContent(article: ArticleResponse) {
     ) {
         LazyColumn(
             modifier = Modifier
-                .padding(bottom = 64.dp)
                 .padding(horizontal = 16.dp)
         ) {
             item {
