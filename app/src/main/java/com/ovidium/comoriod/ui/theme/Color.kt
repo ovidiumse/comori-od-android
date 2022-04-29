@@ -3,9 +3,9 @@ package com.ovidium.comoriod.ui.theme
 import androidx.compose.ui.graphics.Color
 
 object colors {
-    val colorPrimary = Color(0xffd32f2f)
-    val colorLightPrimary = Color(0xffff6659)
-    val colorDarkPrimary = Color(0xff9a0007)
+    val colorPrimary = Color(0xFF08569B)
+    val colorLightPrimary = Color(0xFFEEEEEE)
+    val colorDarkPrimary = Color(0xFF414141)
     val colorSecondary =  Color(0xff9ccc65)
     val colorLightSecondary = Color(0xffcfff95)
     val colorDarkSecondary = Color(0xff6b9b37)
@@ -28,6 +28,12 @@ private val LightNamedColors = mapOf(
     "Prpl" to Color(0xFFE8DFFF),
     "Skye" to Color(0xFFDDEFF9),
     "Snow" to Color(0xFFEDD4E0),
+    "Highlight" to Color(0xFFADE8F4),
+    "Container" to Color(0xFFECECEC),
+    "Link" to Color(0xFF08569B),
+    "BibleRefBlue" to Color(0xFF90E0EF),
+    "PopupContainer" to Color(0xFF393939),
+    "InvertedText" to Color(0xFFF0EFF2)
 )
 
 private val DarkNamedColors = mapOf(
@@ -44,7 +50,13 @@ private val DarkNamedColors = mapOf(
     "Mint" to Color(.922f, .990f, .983f),
     "Prpl" to Color(0xFFE9E7FF),
     "Skye" to Color(0xFFE8F3FF),
-    "Snow" to Color(0xFFF9F1F5)
+    "Snow" to Color(0xFFF9F1F5),
+    "Highlight" to Color(0xFFCAF0F8),
+    "Container" to Color(0xFF3A3A3A),
+    "Link" to Color(0xFF198CF3),
+    "BibleRefBlue" to Color(0xFF0077B6),
+    "PopupContainer" to Color(0xFFDEDEDE),
+    "InvertedText" to Color(0xFF313131)
 )
 
 fun getNamedColor(name: String, isDark: Boolean): Color? {

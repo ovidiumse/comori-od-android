@@ -19,7 +19,7 @@ fun FavouritesScreen() {
             .background(MaterialTheme.colors.background)
     ) {
         Text(
-            text = Screen.Favourites.title,
+            text = Screens.Favourites.title,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colors.primary,
             modifier = Modifier.align(

@@ -1,12 +1,15 @@
 *.iml
 .gradle
 /local.properties
+/.idea/.name
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/gradle.xml
+/.idea/misc.xml
 .DS_Store
 /build
 /captures
@@ -14,3 +17,5 @@
 .cxx
 local.properties
 props.private
+.idea/deploymentTargetDropDown.xml
+props.rar

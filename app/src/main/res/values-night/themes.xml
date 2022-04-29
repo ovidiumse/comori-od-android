@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.ComoriOD" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/colorDarkPrimary</item>
-        <item name="colorPrimaryVariant">@color/colorLightPrimary</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorDarkPrimary</item>
         <item name="colorOnPrimary">@color/colorPrimaryText</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/colorDarkSecondary</item>

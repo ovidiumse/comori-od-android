@@ -10,15 +10,15 @@ private val DarkColorPalette = darkColors(
     primary = colors.colorDarkPrimary,
     primaryVariant = colors.colorLightPrimary,
     secondary = colors.colorSecondary,
-    onPrimary = colors.colorPrimaryText,
+    onPrimary = colors.colorPrimary,
     onSecondary = colors.colorSecondaryText
 )
 
 private val LightColorPalette = lightColors(
-    primary = colors.colorDarkPrimary,
-    primaryVariant = colors.colorLightPrimary,
+    primary = colors.colorLightPrimary,
+    primaryVariant = colors.colorDarkPrimary,
     secondary = colors.colorLightSecondary,
-    onPrimary = colors.colorPrimaryText,
+    onPrimary = colors.colorPrimary,
     onSecondary = colors.colorSecondaryText
 
     /* Other default colors to override

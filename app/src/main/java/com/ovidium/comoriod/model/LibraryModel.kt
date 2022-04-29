@@ -2,24 +2,23 @@ package com.ovidium.comoriod.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
-import com.ovidium.comoriod.data.DataSource
+import com.ovidium.comoriod.data.LibraryDataSource
 import com.ovidium.comoriod.utils.JWTUtils
-import kotlin.time.ExperimentalTime
 
 const val TAG = "AggregationsModel"
 
 class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     ViewModel() {
-    private val dataSource = DataSource(jwtUtils, RetrofitBuilder.apiService, signInModel)
+    private val dataSource = LibraryDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 
-    val authorsData by lazy { dataSource.authorsData.asLiveData() }
-    val volumesData by lazy { dataSource.volumesData.asLiveData() }
-    val booksData by lazy { dataSource.booksData.asLiveData() }
-    val recentlyAddedBooksData by lazy { dataSource.recentlyAddedBooksData.asLiveData() }
-    val recommendedData by lazy { dataSource.recommendedData.asLiveData() }
-    val trendingData by lazy { dataSource.trendingData.asLiveData()}
+    val authorsData by lazy { dataSource.authorsData }
+    val volumesData by lazy { dataSource.volumesData }
+    val booksData by lazy { dataSource.booksData }
+    val recentlyAddedBooksData by lazy { dataSource.recentlyAddedBooksData }
+    val recommendedData by lazy { dataSource.recommendedData }
+    val trendingData by lazy { dataSource.trendingData }
 }
 
 class LibraryModelFactory(
