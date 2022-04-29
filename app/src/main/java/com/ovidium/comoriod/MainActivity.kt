@@ -141,23 +141,6 @@ fun BottomBarMain(
 
             ArticleView(articleID = getArticleID())
         }
-
-//        composable(
-//            route = Screens.Filter.route + "/{query}",
-//            arguments = listOf(navArgument("query") {
-//                type = NavType.StringType
-//                defaultValue = ""
-//                nullable = true
-//            })
-//        ) { entry ->
-//            fun getQuery(): String {
-//                return if (entry.arguments == null)
-//                    ""
-//                else
-//                    entry.arguments!!.getString("query", "")
-//            }
-//            FilterView(query = getQuery())
-//        }
     }
 }
 

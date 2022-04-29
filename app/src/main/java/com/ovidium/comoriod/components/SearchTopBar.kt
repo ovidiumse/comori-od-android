@@ -20,16 +20,13 @@ import com.ovidium.comoriod.R
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
-fun SearchTopBar(title: String, isSearch: Boolean, onMenuClicked: () -> Unit, onFilterClicked: () -> Unit) {
+fun SearchTopBar(title: @Composable () -> Unit, isSearch: Boolean, onMenuClicked: () -> Unit, onFilterClicked: () -> Unit) {
     val isDark = isSystemInDarkTheme()
     val background = getNamedColor("Container", isDark = isDark)!!
 
     TopAppBar(
         title = {
-            Text(
-                text = title,
-                color = getNamedColor("Link", isDark = isDark)!!
-            )
+            title()
         },
         navigationIcon = {
             Spacer(modifier = Modifier.width(8.dp))
