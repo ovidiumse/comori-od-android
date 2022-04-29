@@ -88,8 +88,6 @@ fun SearchScreen(navController: NavController, scaffoldState: ScaffoldState, sea
         }
     ) {
         Column(
-            modifier = Modifier
-                .padding(top = 16.dp, bottom = 16.dp)
         ) {
             if (query.isNotEmpty()) {
                 if (!isSearch) {

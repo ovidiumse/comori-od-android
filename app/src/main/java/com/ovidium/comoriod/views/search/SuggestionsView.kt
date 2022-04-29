@@ -38,7 +38,7 @@ fun SuggestionsView(coroutineScope: CoroutineScope, keyboardController: Software
             color = Color.Gray,
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 8.dp)
+                .padding(vertical = 8.dp)
         )
         LazyColumn {
             items(Constants.suggestionsList.shuffled().take(12).chunked(4)) { items ->
