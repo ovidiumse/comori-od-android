@@ -27,18 +27,17 @@ fun BookScreen(book: String, jwtUtils: JWTUtils, signInModel: GoogleSignInModel)
     val pagerState = rememberPagerState()
     val titles = titlesData.data?.hits?.hits?.map { it._id }
 
-        if (titles.isNullOrEmpty()) {
-            Text(text = "Loading...")
-        } else {
-            HorizontalPager(
-                count = titles.count(),
-                contentPadding = PaddingValues(end = 16.dp),
-                verticalAlignment = Alignment.Top,
-            ) {
-                ArticleView(articleID = titles[it])
-            }
+    if (titles.isNullOrEmpty()) {
+        Text(text = "Loading...")
+    } else {
+        HorizontalPager(
+            count = titles.count(),
+            contentPadding = PaddingValues(end = 16.dp),
+            verticalAlignment = Alignment.Top,
+        ) {
+            ArticleView(articleID = titles[it])
         }
-
+    }
 
     LaunchedEffect(Unit) {
         libraryModel.getTitles(book)

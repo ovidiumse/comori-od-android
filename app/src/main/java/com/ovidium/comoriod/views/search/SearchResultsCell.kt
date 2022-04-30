@@ -21,17 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.search.Hit
-import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtVerses
 import com.ovidium.comoriod.utils.highlightText
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.filter.FilterCategory
-import kotlinx.coroutines.launch
 
 
 @Composable
