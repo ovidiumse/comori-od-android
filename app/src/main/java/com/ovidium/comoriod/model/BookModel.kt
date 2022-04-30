@@ -15,6 +15,10 @@ class BookModel: ViewModel() {
 
     var bookData = mutableStateMapOf<String, Resource<ArticleResponse>>();
 
+    fun clear() {
+        bookData.clear()
+    }
+
     suspend fun getArticle(id: String) {
         dataSource.getArticle(id).collectLatest { state -> bookData[id] = state }
     }

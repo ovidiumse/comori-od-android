@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerDefaults
 import com.google.accompanist.pager.rememberPagerState
+import com.ovidium.comoriod.model.BookModel
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
@@ -23,6 +24,7 @@ import com.ovidium.comoriod.views.article.ArticleView
 fun BookScreen(book: String, jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
 
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
+    val bookModel: BookModel = viewModel()
     val titlesData by remember { libraryModel.titlesData }
     val pagerState = rememberPagerState()
     val titles = titlesData.data?.hits?.hits?.map { it._id }
@@ -41,6 +43,6 @@ fun BookScreen(book: String, jwtUtils: JWTUtils, signInModel: GoogleSignInModel)
 
     LaunchedEffect(Unit) {
         libraryModel.getTitles(book)
+        bookModel.clear()
     }
-
 }
