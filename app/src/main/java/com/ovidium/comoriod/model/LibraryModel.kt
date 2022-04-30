@@ -1,11 +1,16 @@
 package com.ovidium.comoriod.model
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
+import com.ovidium.comoriod.data.search.SearchResponse
+import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.utils.Resource
+import kotlinx.coroutines.flow.collectLatest
 
 const val TAG = "AggregationsModel"
 
@@ -19,6 +24,15 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val recentlyAddedBooksData by lazy { dataSource.recentlyAddedBooksData }
     val recommendedData by lazy { dataSource.recommendedData }
     val trendingData by lazy { dataSource.trendingData }
+    var titlesData = mutableStateOf<Resource<TitlesResponse>>(Resource.loading(null))
+
+    suspend fun getTitles(bookTitle: String) {
+        dataSource.getTitles(bookTitle).collectLatest { state ->
+                println("Titles: $state.data")
+                titlesData.value = state
+            }
+    }
+
 }
 
 class LibraryModelFactory(

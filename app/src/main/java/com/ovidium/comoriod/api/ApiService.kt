@@ -7,6 +7,7 @@ import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.data.search.SearchResponse
+import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.data.trending.TrendingResponse
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import retrofit2.http.*
@@ -55,4 +56,11 @@ interface ApiService {
     suspend fun getArticle(
         @Path("id") id: String
     ): ArticleResponse
+
+    @GET("titles")
+    suspend fun getTitles(
+        @Query("books") books: String,
+        @Query("limit") limit: Int = 10000
+    ): TitlesResponse
+
 }

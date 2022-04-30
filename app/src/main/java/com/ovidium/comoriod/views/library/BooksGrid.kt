@@ -2,13 +2,16 @@ package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.DataItem
+import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun BooksGrid(response: BooksResponse?, isLoading: Boolean, isDark: Boolean) {
+fun BooksGrid(navController: NavController, response: BooksResponse?, isLoading: Boolean, isDark: Boolean) {
     fun getVolume(bucket: com.ovidium.comoriod.data.books.Bucket): String {
         val volumes = bucket.volumes.buckets
         return if (volumes.isEmpty()) "" else volumes[0].key
@@ -31,9 +34,10 @@ fun BooksGrid(response: BooksResponse?, isLoading: Boolean, isDark: Boolean) {
             secondary = author,
             detail = volume,
             imageId = author?.let { getDrawableByAuthor(author) },
-            gradient = getGradient(bucket)
+            gradient = getGradient(bucket),
+            type = ItemCategory.Book
         )
     }
 
-    ItemsGrid(names = Pair("carte", "cărți"), items, estimatedSize = 50, isLoading = isLoading)
+    ItemsGrid(navController, names = Pair("carte", "cărți"), items, estimatedSize = 50, isLoading = isLoading)
 }

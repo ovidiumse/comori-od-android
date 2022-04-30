@@ -13,6 +13,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.autocomplete.Hit
 import com.ovidium.comoriod.views.Screens

@@ -26,6 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
@@ -67,18 +69,25 @@ enum class TabCategory(val value: Int) {
     Cărți(3)
 }
 
+enum class ItemCategory {
+    Author,
+    Volume,
+    Book,
+    Article
+}
+
 class DataItem(
     val title: String,
     val secondary: String? = null,
     val detail: String? = null,
     val imageId: Int? = null,
     val gradient: List<Color>,
-    val type: TabCategory = TabCategory.Toate
+    val type: ItemCategory = ItemCategory.Article
 ) {
 }
 
 @Composable
-fun LibraryScreen(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
+fun LibraryScreen(navController: NavController, jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
     val tabsHeight = 40
     val dropShadowSize = 3
     val isDark = isSystemInDarkTheme()
@@ -132,15 +141,15 @@ fun LibraryScreen(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
                 ).scaleX
             }) {
                 when (TabCategory.values()[tab]) {
-                    TabCategory.Toate -> LibraryMain(signInModel, libraryModel, isDark)
-                    TabCategory.Autori -> StateHandler(libraryModel.authorsData) { data, isLoading ->
-                        AuthorsGrid(data, isLoading, isDark)
+                    TabCategory.Toate -> LibraryMain(navController, signInModel, libraryModel, isDark)
+                    TabCategory.Autori -> StateHandler(navController, libraryModel.authorsData) { data, isLoading ->
+                        AuthorsGrid(navController, data, isLoading, isDark)
                     }
-                    TabCategory.Volume -> StateHandler(libraryModel.volumesData) { data, isLoading ->
-                        VolumesGrid(data, isLoading, isDark)
+                    TabCategory.Volume -> StateHandler(navController, libraryModel.volumesData) { data, isLoading ->
+                        VolumesGrid(navController, data, isLoading, isDark)
                     }
-                    TabCategory.Cărți -> StateHandler(libraryModel.booksData) { data, isLoading ->
-                        BooksGrid(data, isLoading, isDark)
+                    TabCategory.Cărți -> StateHandler(navController, libraryModel.booksData) { data, isLoading ->
+                        BooksGrid(navController, data, isLoading, isDark)
                     }
                 }
             }
@@ -151,6 +160,7 @@ fun LibraryScreen(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
 
 @Composable
 fun <T> StateHandler(
+    navController: NavController,
     responseData: SharedFlow<Resource<T>>,
     showSuccess: @Composable (T?, Boolean) -> Unit
 ) {

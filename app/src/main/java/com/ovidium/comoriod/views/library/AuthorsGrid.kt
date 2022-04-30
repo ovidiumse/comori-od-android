@@ -10,15 +10,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.DataItem
+import com.ovidium.comoriod.views.ItemCategory
 import kotlin.math.ceil
 
 @Composable
-fun AuthorsGrid(response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean) {
+fun AuthorsGrid(navController: NavController, response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean) {
     fun getBooksNumber(bucket: com.ovidium.comoriod.data.authors.Bucket): String {
         return articulate(bucket.books.buckets.size, "cărți", "carte")
     }
@@ -28,7 +31,8 @@ fun AuthorsGrid(response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean)
             title = bucket.key,
             detail = getBooksNumber(bucket),
             imageId = getDrawableByAuthor(bucket.key),
-            gradient = getVolumeCoverGradient("", isDark = isDark)
+            gradient = getVolumeCoverGradient("", isDark = isDark),
+            type = ItemCategory.Author
         )
     }
 

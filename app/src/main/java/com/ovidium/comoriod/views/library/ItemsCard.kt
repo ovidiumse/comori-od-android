@@ -19,12 +19,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
+import com.ovidium.comoriod.views.Screens
 
 @Composable
 fun ItemCard(
+    navController: NavController,
     title: String,
     isLoading: Boolean,
     secondary: String? = null,
@@ -47,7 +52,7 @@ fun ItemCard(
                 color = Color.DarkGray,
                 highlight = PlaceholderHighlight.fade(highlightColor = Color.LightGray)
             )
-            .clickable { println("Item clicked: $title, $secondary, $detail") }
+            .clickable { navController.navigate(Screens.Book.withArgs(title)) }
         if (!isLoading)
             boxModifier = boxModifier.background(brush = Brush.verticalGradient(colors))
 

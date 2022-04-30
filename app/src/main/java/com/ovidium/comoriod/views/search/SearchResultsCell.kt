@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.search.Hit
 import com.ovidium.comoriod.model.ArticleModel

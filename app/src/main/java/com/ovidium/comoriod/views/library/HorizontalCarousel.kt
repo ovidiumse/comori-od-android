@@ -13,10 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.views.DataItem
 
 @Composable
 fun HorizontalCarousel(
+    navController: NavController,
     name: String,
     dataItems: List<DataItem>?,
     estimatedSize: Int,
@@ -55,6 +58,7 @@ fun HorizontalCarousel(
                 repeat(estimatedSize) {
                     item() {
                         ItemCard(
+                            navController = navController,
                             title = "",
                             isLoading = isLoading,
                             colors = emptyList(),
@@ -67,6 +71,7 @@ fun HorizontalCarousel(
                 dataItems?.let {
                     items(dataItems) { dataItem ->
                         ItemCard(
+                            navController,
                             dataItem.title,
                             isLoading,
                             dataItem.secondary,

@@ -1,14 +1,17 @@
 package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.volumes.Bucket
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.DataItem
+import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun VolumesGrid(response: VolumesResponse?, isLoading: Boolean, isDark: Boolean) {
+fun VolumesGrid(navController: NavController, response: VolumesResponse?, isLoading: Boolean, isDark: Boolean) {
     fun getAuthor(bucket: Bucket): String? {
         val authors = bucket.authors.buckets
         return if (authors.isEmpty()) null else authors[0].key
@@ -20,9 +23,10 @@ fun VolumesGrid(response: VolumesResponse?, isLoading: Boolean, isDark: Boolean)
             title = bucket.key,
             secondary = author,
             imageId = author?.let { getDrawableByAuthor(author) },
-            gradient = getVolumeCoverGradient(bucket.key, isDark)
+            gradient = getVolumeCoverGradient(bucket.key, isDark),
+            type = ItemCategory.Volume
         )
     }
 
-    ItemsGrid(names = Pair("volum", "volume"), items, estimatedSize = 12, isLoading = isLoading)
+    ItemsGrid(navController, names = Pair("volum", "volume"), items, estimatedSize = 12, isLoading = isLoading)
 }

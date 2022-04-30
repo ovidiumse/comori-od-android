@@ -12,12 +12,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.DataItem
 import kotlin.math.ceil
 
 @Composable
 fun ItemsGrid(
+    navController: NavController,
     names: Pair<String, String>,
     items: List<DataItem>?,
     estimatedSize: Int,
@@ -41,6 +44,7 @@ fun ItemsGrid(
                     Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
                         repeat(itemsByRow) {
                             ItemCard(
+                                navController,
                                 title = "",
                                 isLoading,
                                 itemSize = itemSize,
@@ -59,6 +63,7 @@ fun ItemsGrid(
                         Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
                             for (item in rowItems) {
                                 ItemCard(
+                                    navController,
                                     item.title,
                                     isLoading = isLoading,
                                     item.secondary,

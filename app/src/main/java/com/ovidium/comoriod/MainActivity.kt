@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -28,6 +29,7 @@ import com.ovidium.comoriod.views.FavouritesScreen
 import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
+import com.ovidium.comoriod.views.library.Books.BookScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -86,7 +88,7 @@ fun BottomBarMain(
 ) {
     NavHost(navController, startDestination = Screens.Library.route) {
         composable(Screens.Library.route) {
-            LibraryScreen(jwtUtils, signInModel)
+            LibraryScreen(navController, jwtUtils, signInModel)
         }
 
         composable(Screens.Search.route) {
@@ -114,6 +116,25 @@ fun BottomBarMain(
 
             ArticleView(articleID = getArticleID())
         }
+
+        composable(
+            route = Screens.Book.route + "/{book}",
+            arguments = listOf(navArgument("book") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getBook(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("book", "")
+            }
+
+            BookScreen(book = getBook(), jwtUtils, signInModel)
+        }
+
     }
 }
 

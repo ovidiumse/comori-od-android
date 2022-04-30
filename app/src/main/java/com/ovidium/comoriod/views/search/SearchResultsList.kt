@@ -14,6 +14,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.search.Hit
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 

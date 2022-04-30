@@ -12,6 +12,7 @@ enum class Screens(
 ) {
     Library(route = "library", title = "Library", icon = R.drawable.ic_outline_menu_book_24, true),
     Search(route = "search", title = "Search", icon = R.drawable.ic_baseline_search_24, true),
+    Book(route = "book", title = "Book", icon = R.drawable.ic_outline_menu_book_24),
     Favourites(
         route = "favourites",
         title = "Favourites",
@@ -35,7 +36,7 @@ enum class Screens(
             append(route)
             args.forEach { arg ->
                 val encodedArg = URLEncoder.encode(arg, "utf-8")
-                append("/$encodedArg")
+                append("/$arg")
             }
         }
     }
