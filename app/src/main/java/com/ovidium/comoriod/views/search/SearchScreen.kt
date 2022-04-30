@@ -3,15 +3,15 @@ package com.ovidium.comoriod.views.search
 import SuggestionsView
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.components.SearchTopBar
+import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
@@ -24,7 +24,11 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun SearchScreen(navController: NavController, scaffoldState: ScaffoldState, searchModel: SearchModel = viewModel()) {
+fun SearchScreen(
+    navController: NavController,
+    scaffoldState: ScaffoldState,
+    searchModel: SearchModel = viewModel()
+) {
     var query by remember { searchModel.query }
     val autocompleteData by remember { searchModel.autocompleteData }
     val searchData by remember { searchModel.searchData }
@@ -54,7 +58,8 @@ fun SearchScreen(navController: NavController, scaffoldState: ScaffoldState, sea
                             }, onClearClick = {
                                 query = ""
                                 currentJob?.cancel()
-                                searchModel.autocompleteData.value = Resource(Status.SUCCESS, null, null)
+                                searchModel.autocompleteData.value =
+                                    Resource(Status.SUCCESS, null, null)
                                 keyboardController?.show()
                             }, onSearchClick = {
                                 if (query.isNotEmpty()) {
@@ -74,12 +79,7 @@ fun SearchScreen(navController: NavController, scaffoldState: ScaffoldState, sea
                 },
                 isSearch = isSearch,
                 onMenuClicked = {
-                    coroutineScope.launch {
-                        if (scaffoldState.drawerState.isClosed)
-                            scaffoldState.drawerState.open()
-                        else
-                            scaffoldState.drawerState.close()
-                    }
+                    launchMenu(coroutineScope, scaffoldState)
                 },
                 onFilterClicked = {
                     showFilterPopup = true
@@ -87,8 +87,7 @@ fun SearchScreen(navController: NavController, scaffoldState: ScaffoldState, sea
             )
         }
     ) {
-        Column(
-        ) {
+        Column {
             if (query.isNotEmpty()) {
                 if (!isSearch) {
                     when (autocompleteData.status) {
@@ -129,7 +128,7 @@ fun SearchScreen(navController: NavController, scaffoldState: ScaffoldState, sea
                     ) {
                         searchParams[category]!!.add(item)
                     } else if (searchParams[category] == null) {
-                        searchParams.put(category, mutableListOf(item))
+                        searchParams[category] = mutableListOf(item)
                     }
                 },
                 onSaveAction = {

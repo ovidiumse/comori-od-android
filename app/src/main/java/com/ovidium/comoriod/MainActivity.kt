@@ -118,7 +118,7 @@ fun BottomBarMain(
 }
 
 
-private fun launchMenu(coroutineScope: CoroutineScope, scaffoldState: ScaffoldState) {
+fun launchMenu(coroutineScope: CoroutineScope, scaffoldState: ScaffoldState) {
     coroutineScope.launch {
         if (scaffoldState.drawerState.isClosed)
             scaffoldState.drawerState.open()
