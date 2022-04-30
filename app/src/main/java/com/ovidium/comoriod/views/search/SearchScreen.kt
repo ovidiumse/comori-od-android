@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.search
 import SuggestionsView
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -17,10 +18,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.search.filter.FilterCategory
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 @Composable
@@ -34,6 +32,7 @@ fun SearchScreen(
     val searchData by remember { searchModel.searchData }
     var isSearch by remember { searchModel.isSearch }
     val coroutineScope = rememberCoroutineScope()
+    val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
     var currentJob by remember { mutableStateOf<Job?>(null) }
     var showFilterPopup by remember { mutableStateOf(false) }
@@ -103,7 +102,7 @@ fun SearchScreen(
                     when (searchData.status) {
                         Status.SUCCESS -> {
                             searchData.data?.hits?.hits?.let { hits ->
-                                SearchResultsList(hits, navController, searchParams = searchParams)
+                                SearchResultsList(hits, navController, listState, searchParams = searchParams)
                             }
                         }
                         Status.LOADING -> {}
@@ -156,6 +155,9 @@ fun SearchScreen(
                             volumes = volumes,
                             books = books
                         )
+                    }
+                    CoroutineScope(Dispatchers.Main).launch {
+                        listState.scrollToItem(0, 0)
                     }
                 },
                 onExitAction = { showFilterPopup = false })

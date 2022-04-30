@@ -18,8 +18,10 @@ import com.ovidium.comoriod.data.search.Hit
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 
 @Composable
-fun SearchResultsList(hits: List<Hit>, navController: NavController, searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>) {
+fun SearchResultsList(hits: List<Hit>, navController: NavController, listState: LazyListState, searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>) {
+
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 16.dp)
