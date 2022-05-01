@@ -11,7 +11,7 @@ import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun VolumesRow(navController: NavController, response: VolumesResponse?, isLoading: Boolean, isDark: Boolean) {
+fun VolumesRow(navController: NavController, response: VolumesResponse?, isLoading: Boolean, isDark: Boolean, showAuthorAction: (com.ovidium.comoriod.data.authors.Bucket?) -> Unit) {
     fun getAuthor(bucket: Bucket): String? {
         val authors = bucket.authors.buckets
         return if (authors.isEmpty()) null else authors[0].key
@@ -29,5 +29,5 @@ fun VolumesRow(navController: NavController, response: VolumesResponse?, isLoadi
         )
     }
 
-    HorizontalCarousel(navController, name = "Volume", items, estimatedSize = 7, isLoading)
+    HorizontalCarousel(navController, name = "Volume", items, estimatedSize = 7, isLoading, showAuthorAction)
 }

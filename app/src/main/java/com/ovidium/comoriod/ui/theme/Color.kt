@@ -33,7 +33,8 @@ private val LightNamedColors = mapOf(
     "Link" to Color(0xFF08569B),
     "BibleRefBlue" to Color(0xFF90E0EF),
     "PopupContainer" to Color(0xFF393939),
-    "InvertedText" to Color(0xFFF0EFF2)
+    "InvertedText" to Color(0xFFF0EFF2),
+    "CardButton" to Color(0xFFA6CBDD)
 )
 
 private val DarkNamedColors = mapOf(
@@ -56,7 +57,8 @@ private val DarkNamedColors = mapOf(
     "Link" to Color(0xFF198CF3),
     "BibleRefBlue" to Color(0xFF0077B6),
     "PopupContainer" to Color(0xFFDEDEDE),
-    "InvertedText" to Color(0xFF313131)
+    "InvertedText" to Color(0xFF313131),
+    "CardButton" to Color(0xFFA6CBDD)
 )
 
 fun getNamedColor(name: String, isDark: Boolean): Color? {

@@ -11,7 +11,7 @@ import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun VolumesGrid(navController: NavController, response: VolumesResponse?, isLoading: Boolean, isDark: Boolean) {
+fun VolumesGrid(navController: NavController, response: VolumesResponse?, isLoading: Boolean, isDark: Boolean, showAuthorAction: (com.ovidium.comoriod.data.authors.Bucket?) -> Unit) {
     fun getAuthor(bucket: Bucket): String? {
         val authors = bucket.authors.buckets
         return if (authors.isEmpty()) null else authors[0].key
@@ -28,5 +28,5 @@ fun VolumesGrid(navController: NavController, response: VolumesResponse?, isLoad
         )
     }
 
-    ItemsGrid(navController, names = Pair("volum", "volume"), items, estimatedSize = 12, isLoading = isLoading)
+    ItemsGrid(navController, names = Pair("volum", "volume"), items, estimatedSize = 12, isLoading = isLoading, showAuthorAction)
 }

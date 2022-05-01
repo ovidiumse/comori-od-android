@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.authors.AuthorsResponse
+import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
@@ -21,20 +21,13 @@ import com.ovidium.comoriod.views.ItemCategory
 import kotlin.math.ceil
 
 @Composable
-fun AuthorsGrid(navController: NavController, response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean) {
-    fun getBooksNumber(bucket: com.ovidium.comoriod.data.authors.Bucket): String {
-        return articulate(bucket.books.buckets.size, "cărți", "carte")
-    }
-
-    val items = response?.aggregations?.authors?.buckets?.map { bucket ->
-        DataItem(
-            title = bucket.key,
-            detail = getBooksNumber(bucket),
-            imageId = getDrawableByAuthor(bucket.key),
-            gradient = getVolumeCoverGradient("", isDark = isDark),
-            type = ItemCategory.Author
-        )
-    }
+fun AuthorsGrid(
+    navController: NavController,
+    response: AuthorsResponse?,
+    isLoading: Boolean,
+    isDark: Boolean,
+    showAuthorAction: (Bucket?) -> Unit
+) {
 
     val itemMinWidth = 180
     val marginSize = 12
@@ -55,11 +48,12 @@ fun AuthorsGrid(navController: NavController, response: AuthorsResponse?, isLoad
                     Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
                         repeat(itemsByRow) {
                             AuthorCard(
-                                title = "",
+                                authorInfo = null,
                                 isLoading,
                                 itemSize = itemSize,
                                 colors = emptyList(),
-                                marginSize = marginSize
+                                marginSize = marginSize,
+                                showAuthorAction = showAuthorAction
                             )
                         }
 
@@ -67,17 +61,17 @@ fun AuthorsGrid(navController: NavController, response: AuthorsResponse?, isLoad
                 }
             }
         } else {
-            items?.let {
-                items(items.chunked(itemsByRow)) { rowItems ->
+            response?.aggregations?.authors?.buckets?.let { buckets ->
+                items(buckets.chunked(itemsByRow)) { rowItems ->
                     Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
                         for (item in rowItems) {
                             AuthorCard(
-                                item.title,
+                                item,
                                 isLoading,
-                                item.imageId,
-                                item.gradient,
+                                getVolumeCoverGradient("", isDark = isDark),
                                 itemSize,
-                                marginSize
+                                marginSize,
+                                showAuthorAction = showAuthorAction
                             )
                         }
                     }

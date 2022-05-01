@@ -9,13 +9,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.views.DataItem
+import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
 fun HorizontalCarousel(
@@ -23,7 +26,8 @@ fun HorizontalCarousel(
     name: String,
     dataItems: List<DataItem>?,
     estimatedSize: Int,
-    isLoading: Boolean
+    isLoading: Boolean,
+    showAuthorAction: (Bucket?) -> Unit
 ) {
     val itemMinWidth = 180
     val marginSize = 12
@@ -60,10 +64,12 @@ fun HorizontalCarousel(
                         ItemCard(
                             navController = navController,
                             title = "",
+                            itemType = ItemCategory.None,
                             isLoading = isLoading,
                             colors = emptyList(),
                             itemSize = itemSize,
-                            marginSize = marginSize
+                            marginSize = marginSize,
+                            showAuthorAction = showAuthorAction
                         )
                     }
                 }
@@ -73,13 +79,15 @@ fun HorizontalCarousel(
                         ItemCard(
                             navController,
                             dataItem.title,
+                            dataItem.type,
                             isLoading,
                             dataItem.secondary,
                             dataItem.detail,
                             dataItem.imageId,
                             dataItem.gradient,
                             itemSize,
-                            marginSize
+                            marginSize,
+                            showAuthorAction = showAuthorAction
                         )
                     }
 

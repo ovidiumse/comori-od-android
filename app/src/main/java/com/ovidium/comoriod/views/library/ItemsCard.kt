@@ -9,6 +9,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,19 +27,24 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
+import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.views.ItemCategory
 import com.ovidium.comoriod.views.Screens
+import com.ovidium.comoriod.views.library.authors.AuthorPopup
 
 @Composable
 fun ItemCard(
     navController: NavController,
     title: String,
+    itemType: ItemCategory,
     isLoading: Boolean,
     secondary: String? = null,
     detail: String? = null,
     imageId: Int? = null,
     colors: List<Color>,
     itemSize: Int,
-    marginSize: Int
+    marginSize: Int,
+    showAuthorAction: (Bucket?) -> Unit
 ) {
     val titleAreaSize = itemSize * 0.60
     val authorBarSize = itemSize * 0.18
@@ -52,7 +59,17 @@ fun ItemCard(
                 color = Color.DarkGray,
                 highlight = PlaceholderHighlight.fade(highlightColor = Color.LightGray)
             )
-            .clickable { navController.navigate(Screens.Book.withArgs(title)) }
+            .clickable {
+                when (itemType) {
+                    ItemCategory.Author -> { println("ITEM TYPE: $itemType") }
+                    ItemCategory.Volume -> { println("ITEM TYPE: $itemType") }
+                    ItemCategory.Book -> {
+                        navController.navigate(Screens.Book.withArgs(title))
+                        println("ITEM TYPE: $itemType")
+                    }
+                    ItemCategory.Article -> { println("ITEM TYPE: $itemType") }
+                }
+            }
         if (!isLoading)
             boxModifier = boxModifier.background(brush = Brush.verticalGradient(colors))
 

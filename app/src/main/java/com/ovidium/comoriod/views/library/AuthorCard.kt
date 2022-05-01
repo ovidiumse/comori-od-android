@@ -22,15 +22,18 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
+import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.mappings.getDrawableByAuthor
+import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
 fun AuthorCard(
-    title: String,
+    authorInfo: Bucket?,
     isLoading: Boolean,
-    imageId: Int? = null,
     colors: List<Color>,
     itemSize: Int,
-    marginSize: Int
+    marginSize: Int,
+    showAuthorAction: (Bucket?) -> Unit
 ) {
     val imageAreaSize = itemSize * 0.80
     val authorImageSize = imageAreaSize * 0.80
@@ -43,26 +46,24 @@ fun AuthorCard(
                 color = Color.DarkGray,
                 highlight = PlaceholderHighlight.fade(highlightColor = Color.LightGray)
             )
-            .clickable { println("Author clicked: $title") }
+            .clickable { showAuthorAction(authorInfo) }
         if (!isLoading)
             boxModifier = boxModifier.background(brush = Brush.verticalGradient(colors))
 
         Box(boxModifier) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Spacer(modifier = Modifier.height(20.dp))
-                imageId?.let {
-                    Image(
-                        painter = painterResource(imageId),
-                        contentDescription = "details",
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .requiredSize(authorImageSize.dp)
-                            .clip(RoundedCornerShape(100))
-                    )
-                }
+                Image(
+                    painter = painterResource(getDrawableByAuthor(authorInfo?.name ?: "")),
+                    contentDescription = "details",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .requiredSize(authorImageSize.dp)
+                        .clip(RoundedCornerShape(100))
+                )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = title,
+                    text = authorInfo?.name ?: "",
                     color = Color.Black,
                     style = MaterialTheme.typography.h6,
                     fontWeight = FontWeight.Bold,

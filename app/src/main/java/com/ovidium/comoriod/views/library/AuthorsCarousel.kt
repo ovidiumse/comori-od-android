@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -13,14 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.DataItem
 
 @Composable
 fun AuthorsCarousel(
-    name: String,
-    dataItems: List<DataItem>?,
+    title: String,
+    dataItems: List<Bucket>?,
     estimatedSize: Int,
-    isLoading: Boolean
+    isLoading: Boolean,
+    showAuthorAction: (Bucket?) -> Unit
 ) {
     val itemMinWidth = 180
     val marginSize = 12
@@ -45,7 +49,7 @@ fun AuthorsCarousel(
             .padding(marginSize.dp)
     ) {
         Text(
-            name,
+            title,
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold
         )
@@ -55,11 +59,12 @@ fun AuthorsCarousel(
                 repeat(estimatedSize) {
                     item() {
                         AuthorCard(
-                            title = "",
+                            null,
                             isLoading = isLoading,
                             colors = emptyList(),
                             itemSize = itemSize,
-                            marginSize = marginSize
+                            marginSize = marginSize,
+                            showAuthorAction = showAuthorAction
                         )
                     }
                 }
@@ -67,12 +72,12 @@ fun AuthorsCarousel(
                 dataItems?.let {
                     items(dataItems) { dataItem ->
                         AuthorCard(
-                            dataItem.title,
+                            dataItem,
                             isLoading,
-                            dataItem.imageId,
-                            dataItem.gradient,
+                            getVolumeCoverGradient("", isSystemInDarkTheme()),
                             itemSize,
-                            marginSize
+                            marginSize,
+                            showAuthorAction
                         )
                     }
 

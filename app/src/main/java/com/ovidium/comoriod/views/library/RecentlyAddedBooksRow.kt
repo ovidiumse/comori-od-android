@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.library
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponseItem
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
@@ -11,8 +12,14 @@ import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun RecentlyAddedBooksRow(navController: NavController, response: RecentlyAddedBooksResponse?, isLoading: Boolean, isDark: Boolean) {
-    fun getAuthor(item: RecentlyAddedBooksResponseItem) : String? {
+fun RecentlyAddedBooksRow(
+    navController: NavController,
+    response: RecentlyAddedBooksResponse?,
+    isLoading: Boolean,
+    isDark: Boolean,
+    showAuthorAction: (Bucket?) -> Unit
+) {
+    fun getAuthor(item: RecentlyAddedBooksResponseItem): String? {
         return if (item.authors.isEmpty()) null else item.authors[0]
     }
 
@@ -31,5 +38,5 @@ fun RecentlyAddedBooksRow(navController: NavController, response: RecentlyAddedB
 
     val show = isLoading || (items != null && items.isNotEmpty())
     if (show)
-        HorizontalCarousel(navController, "Adăugate recent", items, 2, isLoading)
+        HorizontalCarousel(navController, "Adăugate recent", items, 2, isLoading, showAuthorAction)
 }
