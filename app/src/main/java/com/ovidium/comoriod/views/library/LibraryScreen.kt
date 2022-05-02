@@ -100,7 +100,6 @@ fun LibraryScreen(navController: NavController, jwtUtils: JWTUtils, signInModel:
         HorizontalPager(count = TabCategory.values().size, state = pagerState) { tab ->
             Card(modifier = Modifier.graphicsLayer {
                 val pageOffset = calculateCurrentOffsetForPage(tab).absoluteValue
-
                 lerp(
                     start = ScaleFactor(0.85f, 0.85f),
                     stop = ScaleFactor(1f, 1f),

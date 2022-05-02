@@ -13,7 +13,16 @@ import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun BooksGrid(navController: NavController, response: BooksResponse?, isLoading: Boolean, isDark: Boolean, showAuthorAction: (com.ovidium.comoriod.data.authors.Bucket?) -> Unit) {
+fun BooksGrid(
+    navController: NavController,
+    response: BooksResponse?,
+    isLoading: Boolean,
+    isDark: Boolean,
+    volume: String = "",
+    showAuthorAction: (com.ovidium.comoriod.data.authors.Bucket?) -> Unit
+) {
+
+
     fun getVolume(bucket: Bucket): String {
         val volumes = bucket.volumes.buckets
         return if (volumes.isEmpty()) "" else volumes[0].key
@@ -28,18 +37,28 @@ fun BooksGrid(navController: NavController, response: BooksResponse?, isLoading:
         return if (authors.isEmpty()) null else authors[0].key
     }
 
-    val items = response?.aggregations?.books?.buckets?.map { bucket ->
-        val author = getAuthor(bucket)
-        val volume = getVolume(bucket)
-        DataItem(
-            title = bucket.key,
-            secondary = author,
-            detail = volume,
-            imageId = author?.let { getDrawableByAuthor(author) },
-            gradient = getGradient(bucket),
-            type = ItemCategory.Book
-        )
-    }
+    val items =
+        response?.aggregations?.books?.buckets?.filter { bucket ->
+            (getVolume(bucket) == volume || volume.isEmpty())
+        }?.map { bucket ->
+            val author = getAuthor(bucket)
+            val volume = getVolume(bucket)
+            DataItem(
+                title = bucket.key,
+                secondary = author,
+                detail = volume,
+                imageId = author?.let { getDrawableByAuthor(author) },
+                gradient = getGradient(bucket),
+                type = ItemCategory.Book
+            )
+        }
 
-    ItemsGrid(navController, names = Pair("carte", "cărți"), items, estimatedSize = 50, isLoading = isLoading, showAuthorAction)
+    ItemsGrid(
+        navController,
+        names = Pair("carte", "cărți"),
+        items,
+        estimatedSize = 50,
+        isLoading = isLoading,
+        showAuthorAction
+    )
 }
