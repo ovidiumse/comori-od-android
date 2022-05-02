@@ -14,14 +14,17 @@ fun VolumesGrid(
     navController: NavController,
     response: VolumesResponse?,
     isLoading: Boolean,
-    isDark: Boolean
+    isDark: Boolean,
+    authorFilter: String = ""
 ) {
     fun getAuthor(bucket: Bucket): String? {
         val authors = bucket.authors.buckets
         return if (authors.isEmpty()) null else authors[0].key
     }
 
-    val items = response?.aggregations?.volumes?.buckets?.map { bucket ->
+    val items = response?.aggregations?.volumes?.buckets?.filter{ bucket ->
+        (authorFilter.isEmpty() || getAuthor(bucket) == authorFilter)
+    }?.map { bucket ->
         val author = getAuthor(bucket)
         DataItem(
             title = bucket.key,

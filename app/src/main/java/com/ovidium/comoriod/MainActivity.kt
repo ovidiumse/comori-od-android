@@ -30,6 +30,7 @@ import com.ovidium.comoriod.views.library.Books.BookScreen
 import com.ovidium.comoriod.views.library.Books.BooksForAuthorScreen
 import com.ovidium.comoriod.views.library.Books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.BooksFilter
+import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -170,6 +171,28 @@ fun BottomBarMain(
             var filter = BooksFilter.AUTHOR
             filter.filterValue = getAuthor()
             BooksForAuthorScreen(navController = navController, authorFilter = filter, jwtUtils = jwtUtils, signInModel = signInModel)
+        }
+
+        composable(
+            route = Screens.VolumesForAuthor.route + "/{author}",
+            arguments = listOf(navArgument("author") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getAuthor(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("author", "")
+            }
+            VolumesForAuthorScreen(
+                navController = navController,
+                authorFilter = getAuthor(),
+                jwtUtils = jwtUtils,
+                signInModel = signInModel
+            )
         }
 
 

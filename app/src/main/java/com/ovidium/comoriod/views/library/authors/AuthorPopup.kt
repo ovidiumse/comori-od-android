@@ -135,7 +135,7 @@ fun AuthorPopup(
                                 .padding(end = 8.dp)
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
                                 .padding(8.dp)
-                                .clickable {  }
+                                .clickable { navController.navigate(Screens.VolumesForAuthor.withArgs(authorInfo.name)) }
                         )
                         Text(
                             text = getPoemsNumber(authorInfo),
