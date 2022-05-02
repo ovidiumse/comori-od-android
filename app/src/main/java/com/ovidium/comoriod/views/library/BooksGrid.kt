@@ -16,7 +16,7 @@ fun BooksGrid(
     response: BooksResponse?,
     isLoading: Boolean,
     isDark: Boolean,
-    volume: String = "",
+    volumeFilter: String = "",
 ) {
 
 
@@ -36,7 +36,7 @@ fun BooksGrid(
 
     val items =
         response?.aggregations?.books?.buckets?.filter { bucket ->
-            (getVolume(bucket) == volume || volume.isEmpty())
+            (volumeFilter.isEmpty() || getVolume(bucket) == volumeFilter)
         }?.map { bucket ->
             val author = getAuthor(bucket)
             val volume = getVolume(bucket)

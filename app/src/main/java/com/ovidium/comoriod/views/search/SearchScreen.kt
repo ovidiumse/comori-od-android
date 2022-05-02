@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.SearchModel
@@ -31,11 +30,11 @@ fun SearchScreen(
     var query by remember { searchModel.query }
     val autocompleteData by remember { searchModel.autocompleteData }
     val searchData by remember { searchModel.searchData }
-    var isSearch by remember { searchModel.isSearch }
+    var isSearchPending by remember { searchModel.isSearch }
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    var currentJob by remember { mutableStateOf<Job?>(null) }
+    var currentAutocompleteJob by remember { mutableStateOf<Job?>(null) }
     var showFilterPopup by remember { mutableStateOf(false) }
     val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
 
@@ -48,22 +47,24 @@ fun SearchScreen(
                         SearchBar(
                             searchText = query,
                             onSearchTextChanged = {
-                                query = it
-                                isSearch = false
-                                currentJob?.cancel()
-                                currentJob = coroutineScope.async {
-                                    delay(500L)
-                                    searchModel.autocomplete()
+                                if (!isSearchPending) {
+                                    query = it
+                                    isSearchPending = false
+                                    currentAutocompleteJob?.cancel()
+                                    currentAutocompleteJob = coroutineScope.async {
+                                        delay(300L)
+                                        searchModel.autocomplete()
+                                    }
                                 }
                             }, onClearClick = {
                                 query = ""
-                                currentJob?.cancel()
+                                currentAutocompleteJob?.cancel()
                                 searchModel.autocompleteData.value =
                                     Resource(Status.SUCCESS, null, null)
                                 keyboardController?.show()
                             }, onSearchClick = {
                                 if (query.isNotEmpty()) {
-                                    isSearch = true
+                                    isSearchPending = true
                                     keyboardController?.hide()
                                     coroutineScope.launch {
                                         searchModel.search()
@@ -77,7 +78,7 @@ fun SearchScreen(
                         )
                     }
                 },
-                isSearch = isSearch,
+                isSearch = isSearchPending,
                 onMenuClicked = {
                     launchMenu(coroutineScope, scaffoldState)
                 },
@@ -89,7 +90,7 @@ fun SearchScreen(
     ) {
         Column {
             if (query.isNotEmpty()) {
-                if (!isSearch) {
+                if (!isSearchPending) {
                     when (autocompleteData.status) {
                         Status.SUCCESS -> {
                             autocompleteData.data?.hits?.hits?.let { hits ->
