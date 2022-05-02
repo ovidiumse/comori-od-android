@@ -19,8 +19,10 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -39,8 +41,8 @@ fun SearchBar(
 
     OutlinedTextField(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+            .fillMaxWidth(1f)
+            .padding(vertical = 5.dp, horizontal = 5.dp)
             .onFocusChanged { focusState ->
                 showClearButton.value = (focusState.isFocused)
             }
@@ -48,11 +50,11 @@ fun SearchBar(
         value = searchText,
         onValueChange = onSearchTextChanged,
         placeholder = {
-            Text(text = placeholderText)
+            Text(text = placeholderText, fontSize = 12.5.sp)
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = getNamedColor("Container", isDark = isSystemInDarkTheme())!!,
-            cursorColor = colors.colorPrimary,
+            backgroundColor = getNamedColor("InvertedText", isDark = isSystemInDarkTheme())!!,
+            cursorColor = getNamedColor("Link", isDark = isSystemInDarkTheme())!!,
             focusedBorderColor = Color.Transparent,
         ),
         trailingIcon = {
@@ -70,6 +72,7 @@ fun SearchBar(
 
             }
         },
+        textStyle = TextStyle(fontSize = 12.5.sp),
         maxLines = 1,
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
