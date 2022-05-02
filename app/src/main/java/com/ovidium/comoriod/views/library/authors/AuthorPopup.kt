@@ -26,18 +26,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.navigation.NavController
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.data.search.Aggregations
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.articulate
+import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import com.ovidium.comoriod.views.search.filter.FilterCategoryView
 import com.ovidium.comoriod.views.search.filter.FilterViewTopBar
 
 @Composable
 fun AuthorPopup(
+    navController: NavController,
     authorInfo: Bucket,
     onExitAction: () -> Unit
 ) {
@@ -121,6 +124,7 @@ fun AuthorPopup(
                                 .padding(end = 8.dp)
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
                                 .padding(8.dp)
+                                .clickable { navController.navigate(Screens.BooksForAuthor.withArgs(authorInfo.name)) }
                         )
                         Text(
                             text = getVolumesNumber(authorInfo),
@@ -131,6 +135,7 @@ fun AuthorPopup(
                                 .padding(end = 8.dp)
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
                                 .padding(8.dp)
+                                .clickable { navController.navigate(Screens.VolumesForAuthor.withArgs(authorInfo.name)) }
                         )
                         Text(
                             text = getPoemsNumber(authorInfo),
@@ -141,6 +146,7 @@ fun AuthorPopup(
                                 .padding(end = 8.dp)
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
                                 .padding(8.dp)
+                                .clickable {  }
                         )
                         Text(
                             text = getArticlesNumber(authorInfo),
@@ -150,6 +156,7 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
                                 .padding(8.dp)
+                                .clickable {  }
                         )
                     }
                 }

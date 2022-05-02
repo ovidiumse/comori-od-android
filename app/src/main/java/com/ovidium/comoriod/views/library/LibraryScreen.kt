@@ -131,7 +131,7 @@ fun LibraryScreen(navController: NavController, jwtUtils: JWTUtils, signInModel:
         }
     }
         if (authorInfo.value != null) {
-            AuthorPopup(authorInfo.value!!) {
+            AuthorPopup(navController, authorInfo.value!!) {
                 authorInfo.value = null
             }
         }

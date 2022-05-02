@@ -26,8 +26,11 @@ import com.ovidium.comoriod.views.FavouritesScreen
 import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
-import com.ovidium.comoriod.views.library.books.BookScreen
+import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen
 import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
+import com.ovidium.comoriod.views.library.BooksFilter
+import com.ovidium.comoriod.views.library.books.BookScreen
+import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -145,7 +148,51 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("volume", "")
             }
-            BooksForVolumeScreen(navController = navController, volumeFilter = getVolume(), jwtUtils = jwtUtils, signInModel = signInModel)
+            var filter = BooksFilter.VOLUME
+            filter.filterValue = getVolume()
+            BooksForVolumeScreen(navController = navController, volumeFilter = filter, jwtUtils = jwtUtils, signInModel = signInModel)
+        }
+
+
+        composable(
+            route = Screens.BooksForAuthor.route + "/{author}",
+            arguments = listOf(navArgument("author") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getAuthor(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("author", "")
+            }
+            var filter = BooksFilter.AUTHOR
+            filter.filterValue = getAuthor()
+            BooksForAuthorScreen(navController = navController, authorFilter = filter, jwtUtils = jwtUtils, signInModel = signInModel)
+        }
+
+        composable(
+            route = Screens.VolumesForAuthor.route + "/{author}",
+            arguments = listOf(navArgument("author") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getAuthor(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("author", "")
+            }
+            VolumesForAuthorScreen(
+                navController = navController,
+                authorFilter = getAuthor(),
+                jwtUtils = jwtUtils,
+                signInModel = signInModel
+            )
         }
 
 
