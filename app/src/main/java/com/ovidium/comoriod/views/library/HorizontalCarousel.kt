@@ -69,7 +69,6 @@ fun HorizontalCarousel(
                             colors = emptyList(),
                             itemSize = itemSize,
                             marginSize = marginSize,
-                            showAuthorAction = showAuthorAction
                         )
                     }
                 }
@@ -86,11 +85,9 @@ fun HorizontalCarousel(
                             dataItem.imageId,
                             dataItem.gradient,
                             itemSize,
-                            marginSize,
-                            showAuthorAction = showAuthorAction
+                            marginSize
                         )
                     }
-
                 }
             }
         }

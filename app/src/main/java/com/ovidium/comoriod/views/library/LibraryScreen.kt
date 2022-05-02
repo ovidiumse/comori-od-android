@@ -121,10 +121,10 @@ fun LibraryScreen(navController: NavController, jwtUtils: JWTUtils, signInModel:
                         AuthorsGrid(navController, data, isLoading, isDark) { bucket -> authorInfo.value = bucket }
                     }
                     TabCategory.Volume -> StateHandler(navController, libraryModel.volumesData) { data, isLoading ->
-                        VolumesGrid(navController, data, isLoading, isDark) { bucket -> authorInfo.value = bucket }
+                        VolumesGrid(navController, data, isLoading, isDark)
                     }
                     TabCategory.Cărți -> StateHandler(navController, libraryModel.booksData) { data, isLoading ->
-                        BooksGrid(navController, data, isLoading, isDark) { bucket -> authorInfo.value = bucket }
+                        BooksGrid(navController, data, isLoading, isDark)
                     }
                 }
             }

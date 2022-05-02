@@ -8,14 +8,11 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
@@ -28,7 +25,6 @@ fun ItemsGrid(
     items: List<DataItem>?,
     estimatedSize: Int,
     isLoading: Boolean = false,
-    showAuthorAction: (Bucket?) -> Unit
 ) {
     val itemMinWidth = 180
     val marginSize = 12
@@ -55,7 +51,6 @@ fun ItemsGrid(
                                 itemSize = itemSize,
                                 colors = emptyList(),
                                 marginSize = marginSize,
-                                showAuthorAction = showAuthorAction
                             )
                         }
 
@@ -78,8 +73,7 @@ fun ItemsGrid(
                                     item.imageId,
                                     item.gradient,
                                     itemSize,
-                                    marginSize,
-                                    showAuthorAction = showAuthorAction
+                                    marginSize
                                 )
                             }
                         }

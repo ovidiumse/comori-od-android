@@ -1,10 +1,8 @@
 package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.books.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
@@ -19,7 +17,6 @@ fun BooksGrid(
     isLoading: Boolean,
     isDark: Boolean,
     volume: String = "",
-    showAuthorAction: (com.ovidium.comoriod.data.authors.Bucket?) -> Unit
 ) {
 
 
@@ -58,7 +55,6 @@ fun BooksGrid(
         names = Pair("carte", "cărți"),
         items,
         estimatedSize = 50,
-        isLoading = isLoading,
-        showAuthorAction
+        isLoading = isLoading
     )
 }

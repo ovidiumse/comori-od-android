@@ -43,8 +43,7 @@ fun ItemCard(
     imageId: Int? = null,
     colors: List<Color>,
     itemSize: Int,
-    marginSize: Int,
-    showAuthorAction: (Bucket?) -> Unit
+    marginSize: Int
 ) {
     val titleAreaSize = itemSize * 0.60
     val authorBarSize = itemSize * 0.18
