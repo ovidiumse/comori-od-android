@@ -10,30 +10,61 @@ import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.StateHandler
-import com.ovidium.comoriod.views.library.BooksFilter
 import com.ovidium.comoriod.views.library.BooksGrid
 
 @Composable
-fun BooksForVolumeScreen(navController: NavController, volumeFilter: BooksFilter, jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
+fun BooksForVolumeScreen(
+    navController: NavController,
+    volume: String,
+    jwtUtils: JWTUtils,
+    signInModel: GoogleSignInModel
+) {
 
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
 
     Column() {
-        StateHandler(navController = navController, responseData = libraryModel.booksData) { data, isLoading ->
-            BooksGrid(navController = navController, response = data, isLoading = isLoading, isDark = isSystemInDarkTheme(), booksFilter = volumeFilter)
+        StateHandler(
+            navController = navController,
+            responseData = libraryModel.booksData
+        ) { data, isLoading ->
+            BooksGrid(
+                navController = navController,
+                response = data,
+                isLoading = isLoading,
+                isDark = isSystemInDarkTheme(),
+                filter = { bucket -> bucket.volumes.buckets.isNotEmpty() && bucket.volumes.buckets[0].key == volume }
+            )
         }
     }
 }
 
 
 @Composable
-fun BooksForAuthorScreen(navController: NavController, authorFilter: BooksFilter, jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
+fun BooksForAuthorScreen(
+    navController: NavController,
+    author: String,
+    jwtUtils: JWTUtils,
+    signInModel: GoogleSignInModel
+) {
 
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
 
     Column() {
-        StateHandler(navController = navController, responseData = libraryModel.booksData) { data, isLoading ->
-            BooksGrid(navController = navController, response = data, isLoading = isLoading, isDark = isSystemInDarkTheme(), booksFilter = authorFilter)
+        StateHandler(
+            navController = navController,
+            responseData = libraryModel.booksData
+        ) { data, isLoading ->
+            BooksGrid(
+                navController = navController,
+                response = data,
+                isLoading = isLoading,
+                isDark = isSystemInDarkTheme(),
+                filter = { bucket ->
+                    var hasAuthor = false
+                    bucket.authors.buckets.forEach { a -> hasAuthor = a.key == author }
+                    hasAuthor
+                }
+            )
         }
     }
 }

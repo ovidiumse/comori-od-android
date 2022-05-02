@@ -63,7 +63,11 @@ class DataItem(
 }
 
 @Composable
-fun LibraryScreen(navController: NavController, jwtUtils: JWTUtils, signInModel: GoogleSignInModel) {
+fun LibraryScreen(
+    navController: NavController,
+    jwtUtils: JWTUtils,
+    signInModel: GoogleSignInModel
+) {
     val tabsHeight = 40
     val dropShadowSize = 3
     val isDark = isSystemInDarkTheme()
@@ -117,25 +121,49 @@ fun LibraryScreen(navController: NavController, jwtUtils: JWTUtils, signInModel:
                 ).scaleX
             }) {
                 when (TabCategory.values()[tab]) {
-                    TabCategory.Toate -> LibraryMain(navController, signInModel, libraryModel, isDark) { bucket -> authorInfo.value = bucket }
-                    TabCategory.Autori -> StateHandler(navController, libraryModel.authorsData) { data, isLoading ->
-                        AuthorsGrid(navController, data, isLoading, isDark) { bucket -> authorInfo.value = bucket }
+                    TabCategory.Toate -> LibraryMain(
+                        navController,
+                        signInModel,
+                        libraryModel,
+                        isDark
+                    ) { bucket -> authorInfo.value = bucket }
+                    TabCategory.Autori -> StateHandler(
+                        navController,
+                        libraryModel.authorsData
+                    ) { data, isLoading ->
+                        AuthorsGrid(
+                            navController,
+                            data,
+                            isLoading,
+                            isDark
+                        ) { bucket -> authorInfo.value = bucket }
                     }
-                    TabCategory.Volume -> StateHandler(navController, libraryModel.volumesData) { data, isLoading ->
+                    TabCategory.Volume -> StateHandler(
+                        navController,
+                        libraryModel.volumesData
+                    ) { data, isLoading ->
                         VolumesGrid(navController, data, isLoading, isDark)
                     }
-                    TabCategory.Cărți -> StateHandler(navController, libraryModel.booksData) { data, isLoading ->
-                        BooksGrid(navController, data, isLoading, isDark)
+                    TabCategory.Cărți -> StateHandler(
+                        navController,
+                        libraryModel.booksData
+                    ) { data, isLoading ->
+                        BooksGrid(navController, data, isLoading, isDark) { true }
                     }
                 }
             }
         }
     }
-        if (authorInfo.value != null) {
-            AuthorPopup(navController = navController, authorInfo = authorInfo.value!!, jwtUtils = jwtUtils, signInModel = signInModel) {
-                authorInfo.value = null
-            }
+    if (authorInfo.value != null) {
+        AuthorPopup(
+            navController = navController,
+            authorInfo = authorInfo.value!!,
+            jwtUtils = jwtUtils,
+            signInModel = signInModel
+        ) {
+            authorInfo.value = null
         }
+    }
 
 }
 

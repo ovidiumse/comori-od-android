@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,7 +28,6 @@ import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
 import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen
 import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
-import com.ovidium.comoriod.views.library.BooksFilter
 import com.ovidium.comoriod.views.library.authors.TitlesForAuthorScreen
 import com.ovidium.comoriod.views.library.books.BookScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
@@ -75,7 +73,13 @@ fun ComoriOdApp(context: Context) {
             drawerContent = { Drawer(context) },
             scaffoldState = scaffoldState,
         ) {
-            BottomBarMain(navController = navController, scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel, libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)))
+            BottomBarMain(
+                navController = navController,
+                scaffoldState = scaffoldState,
+                jwtUtils = jwtUtils,
+                signInModel = signInModel,
+                libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
+            )
         }
     }
 }
@@ -155,9 +159,13 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("volume", "")
             }
-            val filter = BooksFilter.VOLUME
-            filter.filterValue = getVolume()
-            BooksForVolumeScreen(navController = navController, volumeFilter = filter, jwtUtils = jwtUtils, signInModel = signInModel)
+
+            BooksForVolumeScreen(
+                navController = navController,
+                volume = getVolume(),
+                jwtUtils = jwtUtils,
+                signInModel = signInModel
+            )
         }
 
 
@@ -175,9 +183,13 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("author", "")
             }
-            val filter = BooksFilter.AUTHOR
-            filter.filterValue = getAuthor()
-            BooksForAuthorScreen(navController = navController, authorFilter = filter, jwtUtils = jwtUtils, signInModel = signInModel)
+
+            BooksForAuthorScreen(
+                navController = navController,
+                author = getAuthor(),
+                jwtUtils = jwtUtils,
+                signInModel = signInModel
+            )
         }
 
         composable(
@@ -196,7 +208,7 @@ fun BottomBarMain(
             }
             VolumesForAuthorScreen(
                 navController = navController,
-                authorFilter = getAuthor(),
+                author = getAuthor(),
                 jwtUtils = jwtUtils,
                 signInModel = signInModel
             )

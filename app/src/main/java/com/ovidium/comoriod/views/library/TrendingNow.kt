@@ -11,7 +11,12 @@ import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun TrendingRow(navController: NavController, response: TrendingResponse?, isLoading: Boolean, isDark: Boolean, showAuthorAction: (Bucket?) -> Unit) {
+fun TrendingRow(
+    navController: NavController,
+    response: TrendingResponse?,
+    isLoading: Boolean,
+    isDark: Boolean
+) {
     val items = response?.map { item ->
         DataItem(
             item.title,
@@ -25,5 +30,5 @@ fun TrendingRow(navController: NavController, response: TrendingResponse?, isLoa
 
     val show = isLoading || (items != null && items.isNotEmpty())
     if (show)
-        HorizontalCarousel(navController, "Populare acum", items, 5, isLoading, showAuthorAction)
+        HorizontalCarousel(navController, "Populare acum", items, 5, isLoading)
 }

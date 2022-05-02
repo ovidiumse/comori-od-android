@@ -13,23 +13,32 @@ import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.views.*
 
 @Composable
-fun LibraryMain(navController: NavController, signInModel: GoogleSignInModel, libraryModel: LibraryModel, isDark: Boolean, showAuthorAction: (Bucket?) -> Unit) {
+fun LibraryMain(
+    navController: NavController,
+    signInModel: GoogleSignInModel,
+    libraryModel: LibraryModel,
+    isDark: Boolean,
+    showAuthorAction: (Bucket?) -> Unit
+) {
 
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
         if (signInModel.userResource.value.state == UserState.LoggedIn) {
             item {
-                StateHandler(navController, libraryModel.recentlyAddedBooksData) { data, isLoading ->
-                    RecentlyAddedBooksRow(navController, data, isLoading, isDark, showAuthorAction)
+                StateHandler(
+                    navController,
+                    libraryModel.recentlyAddedBooksData
+                ) { data, isLoading ->
+                    RecentlyAddedBooksRow(navController, data, isLoading, isDark)
                 }
             }
             item {
                 StateHandler(navController, libraryModel.recommendedData) { data, isLoading ->
-                    RecommendedRow(navController, data, isLoading, isDark, showAuthorAction)
+                    RecommendedRow(navController, data, isLoading, isDark)
                 }
             }
             item {
                 StateHandler(navController, libraryModel.trendingData) { data, isLoading ->
-                    TrendingRow(navController, data, isLoading, isDark, showAuthorAction)
+                    TrendingRow(navController, data, isLoading, isDark)
                 }
             }
         }
@@ -40,7 +49,7 @@ fun LibraryMain(navController: NavController, signInModel: GoogleSignInModel, li
         }
         item {
             StateHandler(navController, libraryModel.volumesData) { data, isLoading ->
-                VolumesRow(navController, data, isLoading, isDark, showAuthorAction)
+                VolumesRow(navController, data, isLoading, isDark)
             }
         }
     }

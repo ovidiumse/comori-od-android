@@ -11,7 +11,12 @@ import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun RecommendedRow(navController: NavController, response: RecommendedResponse?, isLoading: Boolean, isDark: Boolean, showAuthorAction: (Bucket?) -> Unit) {
+fun RecommendedRow(
+    navController: NavController,
+    response: RecommendedResponse?,
+    isLoading: Boolean,
+    isDark: Boolean
+) {
     val items = response?.map { item ->
         DataItem(
             item.title,
@@ -25,5 +30,5 @@ fun RecommendedRow(navController: NavController, response: RecommendedResponse?,
 
     val show = isLoading || (items != null && items.isNotEmpty())
     if (show)
-        HorizontalCarousel(navController, "Recomandate", items, 5, isLoading, showAuthorAction)
+        HorizontalCarousel(navController, "Recomandate", items, 5, isLoading)
 }

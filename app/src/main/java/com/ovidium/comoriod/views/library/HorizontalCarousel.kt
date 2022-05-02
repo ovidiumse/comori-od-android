@@ -26,8 +26,7 @@ fun HorizontalCarousel(
     name: String,
     dataItems: List<DataItem>?,
     estimatedSize: Int,
-    isLoading: Boolean,
-    showAuthorAction: (Bucket?) -> Unit
+    isLoading: Boolean
 ) {
     val itemMinWidth = 180
     val marginSize = 12

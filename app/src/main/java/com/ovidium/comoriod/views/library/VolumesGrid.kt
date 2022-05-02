@@ -15,7 +15,7 @@ fun VolumesGrid(
     response: VolumesResponse?,
     isLoading: Boolean,
     isDark: Boolean,
-    authorFilter: String = ""
+    author: String = ""
 ) {
     fun getAuthor(bucket: Bucket): String? {
         val authors = bucket.authors.buckets
@@ -23,7 +23,7 @@ fun VolumesGrid(
     }
 
     val items = response?.aggregations?.volumes?.buckets?.filter{ bucket ->
-        (authorFilter.isEmpty() || getAuthor(bucket) == authorFilter)
+        (author.isEmpty() || getAuthor(bucket) == author)
     }?.map { bucket ->
         val author = getAuthor(bucket)
         DataItem(

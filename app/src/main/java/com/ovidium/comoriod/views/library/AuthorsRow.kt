@@ -10,7 +10,13 @@ import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
-fun AuthorsRow(navController: NavController, response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean, showAuthorAction: (Bucket?) -> Unit) {
+fun AuthorsRow(
+    navController: NavController,
+    response: AuthorsResponse?,
+    isLoading: Boolean,
+    isDark: Boolean,
+    showAuthorAction: (Bucket?) -> Unit
+) {
     val items = response?.aggregations?.authors?.buckets?.map { it }
 
     AuthorsCarousel("Autori", items, 2, isLoading, showAuthorAction)

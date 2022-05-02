@@ -15,6 +15,6 @@ class ArticleModel: ViewModel() {
     }
 
     fun getBibleRefs(articleId: String): SnapshotStateList<BibleRefVerse> {
-        return bibleRefs.getOrPut(articleId){ SnapshotStateList<BibleRefVerse>() };
+        return bibleRefs.getOrPut(articleId){ SnapshotStateList() };
     }
 }

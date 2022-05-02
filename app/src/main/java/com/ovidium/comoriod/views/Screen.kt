@@ -31,9 +31,9 @@ enum class Screens(
     ),
 
     BooksForAuthor(
-    route = "booksForAuthor",
-    title = "Books for author",
-    icon = R.drawable.ic_book
+        route = "booksForAuthor",
+        title = "Books for author",
+        icon = R.drawable.ic_book
     ),
 
     VolumesForAuthor(

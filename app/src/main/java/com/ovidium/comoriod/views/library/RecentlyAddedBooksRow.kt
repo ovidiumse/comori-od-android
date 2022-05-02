@@ -16,8 +16,7 @@ fun RecentlyAddedBooksRow(
     navController: NavController,
     response: RecentlyAddedBooksResponse?,
     isLoading: Boolean,
-    isDark: Boolean,
-    showAuthorAction: (Bucket?) -> Unit
+    isDark: Boolean
 ) {
     fun getAuthor(item: RecentlyAddedBooksResponseItem): String? {
         return if (item.authors.isEmpty()) null else item.authors[0]
@@ -38,5 +37,5 @@ fun RecentlyAddedBooksRow(
 
     val show = isLoading || (items != null && items.isNotEmpty())
     if (show)
-        HorizontalCarousel(navController, "Adăugate recent", items, 2, isLoading, showAuthorAction)
+        HorizontalCarousel(navController, "Adăugate recent", items, 2, isLoading)
 }
