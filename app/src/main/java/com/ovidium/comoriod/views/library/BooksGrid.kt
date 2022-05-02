@@ -10,13 +10,17 @@ import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
+enum class BooksFilter(var filterValue: String) {
+    VOLUME(""), AUTHOR("")
+}
+
 @Composable
 fun BooksGrid(
     navController: NavController,
     response: BooksResponse?,
     isLoading: Boolean,
     isDark: Boolean,
-    volumeFilter: String = "",
+    booksFilter: BooksFilter = BooksFilter.VOLUME,
 ) {
 
 
@@ -34,9 +38,12 @@ fun BooksGrid(
         return if (authors.isEmpty()) null else authors[0].key
     }
 
+
     val items =
         response?.aggregations?.books?.buckets?.filter { bucket ->
-            (volumeFilter.isEmpty() || getVolume(bucket) == volumeFilter)
+            if (booksFilter == BooksFilter.VOLUME)
+                (booksFilter.filterValue.isEmpty() || getVolume(bucket) == booksFilter.filterValue)
+            else (booksFilter.filterValue.isEmpty() || getAuthor(bucket) == booksFilter.filterValue)
         }?.map { bucket ->
             val author = getAuthor(bucket)
             val volume = getVolume(bucket)
