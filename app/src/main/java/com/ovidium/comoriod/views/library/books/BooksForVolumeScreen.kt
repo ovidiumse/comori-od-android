@@ -1,4 +1,4 @@
-package com.ovidium.comoriod.views.library.Books
+package com.ovidium.comoriod.views.library.books
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
