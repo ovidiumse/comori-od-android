@@ -24,10 +24,10 @@ enum class Screens(
         icon = R.drawable.ic_baseline_search_24
     ),
 
-    Filter(
-        route = "filter",
-        title = "Filter",
-        icon = R.drawable.ic_filter
+    BooksForVolume(
+        route = "booksForVolume",
+        title = "Books for volume",
+        icon = R.drawable.ic_book
     );
 
     fun withArgs(vararg args: String): String {

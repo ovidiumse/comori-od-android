@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.library
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -28,9 +30,16 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
 import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.data.books.BooksResponse
+import com.ovidium.comoriod.model.GoogleSignInModel
+import com.ovidium.comoriod.model.LibraryModel
+import com.ovidium.comoriod.model.LibraryModelFactory
+import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.ItemCategory
 import com.ovidium.comoriod.views.Screens
+import com.ovidium.comoriod.views.StateHandler
 import com.ovidium.comoriod.views.library.authors.AuthorPopup
+import io.fusionauth.jwks.JWKUtils
 
 @Composable
 fun ItemCard(
@@ -60,13 +69,16 @@ fun ItemCard(
             )
             .clickable {
                 when (itemType) {
-                    ItemCategory.Author -> { println("ITEM TYPE: $itemType") }
-                    ItemCategory.Volume -> { println("ITEM TYPE: $itemType") }
+                    ItemCategory.Volume -> {
+                        navController.navigate(Screens.BooksForVolume.withArgs(title))
+                    }
                     ItemCategory.Book -> {
                         navController.navigate(Screens.Book.withArgs(title))
                         println("ITEM TYPE: $itemType")
                     }
-                    ItemCategory.Article -> { println("ITEM TYPE: $itemType") }
+                    ItemCategory.Article -> {
+                        println("ITEM TYPE: $itemType")
+                    }
                 }
             }
         if (!isLoading)

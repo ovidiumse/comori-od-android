@@ -5,13 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,11 +27,10 @@ import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
 import com.ovidium.comoriod.views.library.Books.BookScreen
+import com.ovidium.comoriod.views.library.Books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
 
 class MainActivity : ComponentActivity() {
@@ -134,6 +130,24 @@ fun BottomBarMain(
 
             BookScreen(book = getBook(), jwtUtils, signInModel)
         }
+
+        composable(
+            route = Screens.BooksForVolume.route + "/{volume}",
+            arguments = listOf(navArgument("volume") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getVolume(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("volume", "")
+            }
+            BooksForVolumeScreen(navController = navController, volumeFilter = getVolume(), jwtUtils = jwtUtils, signInModel = signInModel)
+        }
+
 
     }
 }
