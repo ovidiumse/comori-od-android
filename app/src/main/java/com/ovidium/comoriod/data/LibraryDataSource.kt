@@ -2,6 +2,7 @@ package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
 import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
@@ -36,6 +37,7 @@ class LibraryDataSource(
     val authorsData by lazy { buildFlow(externalScope) { apiService.getAuthors() } }
     val volumesData by lazy { buildFlow(externalScope) { apiService.getVolumes() } }
     val booksData by lazy { buildFlow(externalScope) { apiService.getBooks() } }
+    val searchResultsData by lazy { buildFlow(externalScope) { apiService.getBooks() } }
 
 
     val recentlyAddedBooksData by lazy { buildFlow(externalScope) { apiService.getRecentlyAddedBooks() } }
@@ -54,6 +56,10 @@ class LibraryDataSource(
 
     fun getTitles(bookTitle: String): Flow<Resource<TitlesResponse>> {
         return buildFlow(externalScope) { apiService.getTitles(bookTitle) }
+    }
+
+    fun getTitlesForAuthor(authors: String, types: String, volumes: String, books: String, offset: Int): Flow<Resource<TitlesResponse>> {
+        return buildFlow(externalScope) { apiService.getTitlesForAuthor(authors = authors, type = types, volumes = volumes, books = books, offset = offset) }
     }
 
 }

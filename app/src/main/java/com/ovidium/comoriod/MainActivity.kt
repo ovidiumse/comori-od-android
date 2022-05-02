@@ -4,10 +4,9 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -20,6 +19,8 @@ import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.Drawer
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.GoogleSignInModelFactory
+import com.ovidium.comoriod.model.LibraryModel
+import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.FavouritesScreen
@@ -30,8 +31,10 @@ import com.ovidium.comoriod.views.library.Books.BookScreen
 import com.ovidium.comoriod.views.library.Books.BooksForAuthorScreen
 import com.ovidium.comoriod.views.library.Books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.BooksFilter
+import com.ovidium.comoriod.views.library.authors.TitlesForAuthorScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
 import com.ovidium.comoriod.views.search.SearchScreen
+import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -72,7 +75,7 @@ fun ComoriOdApp(context: Context) {
             drawerContent = { Drawer(context) },
             scaffoldState = scaffoldState,
         ) {
-            BottomBarMain(navController = navController, scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel)
+            BottomBarMain(navController = navController, scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel, libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)))
         }
     }
 }
@@ -83,8 +86,12 @@ fun BottomBarMain(
     navController: NavHostController,
     scaffoldState: ScaffoldState,
     jwtUtils: JWTUtils,
-    signInModel: GoogleSignInModel
+    signInModel: GoogleSignInModel,
+    libraryModel: LibraryModel
 ) {
+
+    val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
+
     NavHost(navController, startDestination = Screens.Library.route) {
         composable(Screens.Library.route) {
             LibraryScreen(navController, jwtUtils, signInModel)
@@ -148,7 +155,7 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("volume", "")
             }
-            var filter = BooksFilter.VOLUME
+            val filter = BooksFilter.VOLUME
             filter.filterValue = getVolume()
             BooksForVolumeScreen(navController = navController, volumeFilter = filter, jwtUtils = jwtUtils, signInModel = signInModel)
         }
@@ -168,7 +175,7 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("author", "")
             }
-            var filter = BooksFilter.AUTHOR
+            val filter = BooksFilter.AUTHOR
             filter.filterValue = getAuthor()
             BooksForAuthorScreen(navController = navController, authorFilter = filter, jwtUtils = jwtUtils, signInModel = signInModel)
         }
@@ -192,6 +199,57 @@ fun BottomBarMain(
                 authorFilter = getAuthor(),
                 jwtUtils = jwtUtils,
                 signInModel = signInModel
+            )
+        }
+
+
+        composable(
+            route = Screens.PoemsForAuthor.route + "/{author}",
+            arguments = listOf(navArgument("author") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getAuthor(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("author", "")
+            }
+            searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
+            searchParams[FilterCategory.TYPES] = mutableListOf("poezie")
+            TitlesForAuthorScreen(
+                navController = navController,
+                jwtUtils = jwtUtils,
+                signInModel = signInModel,
+                libraryModel = libraryModel,
+                searchParams = searchParams
+            )
+        }
+
+        composable(
+            route = Screens.ArticlesForAuthor.route + "/{author}",
+            arguments = listOf(navArgument("author") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getAuthor(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    entry.arguments!!.getString("author", "")
+            }
+            searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
+            searchParams[FilterCategory.TYPES] = mutableListOf("articol")
+            TitlesForAuthorScreen(
+                navController = navController,
+                jwtUtils = jwtUtils,
+                signInModel = signInModel,
+                libraryModel = libraryModel,
+                searchParams = searchParams
             )
         }
 

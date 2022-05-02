@@ -1,4 +1,4 @@
-package com.ovidium.comoriod.views.search
+package com.ovidium.comoriod.views.library.authors
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,34 +25,28 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
-import com.ovidium.comoriod.data.search.Hit
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
-import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.fmtVerses
-import com.ovidium.comoriod.utils.highlightText
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import java.net.URLEncoder
 
-enum class SearchSource {
-    SEARCH, AUTHOR
-}
-
-
 @Composable
-fun SearchResultsCell(
-    hit: Hit,
+fun TitlesForAuthorCell(
+    hit: com.ovidium.comoriod.data.titles.Hit,
     index: Int,
     navController: NavController,
+    jwtUtils: JWTUtils,
+    signInModel: GoogleSignInModel,
     searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?
 ) {
 
-    val searchModel: SearchModel = viewModel()
-    val searchData by remember { searchModel.searchData }
+    val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
+    val titlesForAuthor by remember { libraryModel.titlesForAuthorData }
 
     Column(
         modifier = Modifier
@@ -69,72 +66,62 @@ fun SearchResultsCell(
                 }
             }
     ) {
-        SearchResultsTitleView(hit, index)
+        TitlesForAuthorTitleView(hit, index)
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
+                .padding(bottom = 16.dp)
                 .wrapContentSize(Alignment.Center),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                SearchResultsBookView(hit)
-                SearchResultsAuthorView(hit)
+                TitlesForAuthorBookView(hit)
+                TitlesForAuthorAuthorView(hit)
             }
-
-            SearchResultsTypeView(hit)
+            TitlesForAuthorTypeView(hit)
         }
-
-        Text(
-            text = fmtVerses(hit.highlight.versesText.orEmpty(), isDark = isSystemInDarkTheme()),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(vertical = 10.dp)
-        )
     }
 
     LaunchedEffect(Unit) {
-        val searchParams = searchParams.let { it } ?: return@LaunchedEffect
+        val params = searchParams.let { it } ?: return@LaunchedEffect
         val types =
-            if (searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else searchParams[FilterCategory.TYPES]!!.joinToString(
+            if (params[FilterCategory.TYPES].isNullOrEmpty()) "" else params[FilterCategory.TYPES]!!.joinToString(
                 ","
             )
         val authors =
-            if (searchParams[FilterCategory.AUTHORS].isNullOrEmpty()) "" else searchParams[FilterCategory.AUTHORS]!!.joinToString(
+            if (params[FilterCategory.AUTHORS].isNullOrEmpty()) "" else params[FilterCategory.AUTHORS]!!.joinToString(
                 ","
             )
         val volumes =
-            if (searchParams[FilterCategory.VOLUMES].isNullOrEmpty()) "" else searchParams[FilterCategory.VOLUMES]!!.joinToString(
+            if (params[FilterCategory.VOLUMES].isNullOrEmpty()) "" else params[FilterCategory.VOLUMES]!!.joinToString(
                 ","
             )
         val books =
-            if (searchParams[FilterCategory.BOOKS].isNullOrEmpty()) "" else searchParams[FilterCategory.BOOKS]!!.joinToString(
+            if (params[FilterCategory.BOOKS].isNullOrEmpty()) "" else params[FilterCategory.BOOKS]!!.joinToString(
                 ","
             )
-        val searchResultsCount =
-            searchData.data?.hits?.hits?.count().let { it } ?: return@LaunchedEffect
-        val totalHits = searchData.data?.hits?.total?.value.let { it } ?: return@LaunchedEffect
-        if ((searchResultsCount < totalHits) && (searchResultsCount == (index + 1))) {
-            searchModel.search(
-                20,
-                searchResultsCount,
-                type = types,
+        val titlesForAuthorCount =
+            titlesForAuthor.data?.hits?.hits?.count().let { it } ?: return@LaunchedEffect
+        val titlesTotalHits =
+            titlesForAuthor.data?.hits?.total?.value.let { it } ?: return@LaunchedEffect
+        println("TITLES: ${titlesForAuthorCount} / ${titlesTotalHits}")
+        if ((titlesForAuthorCount < titlesTotalHits) && (titlesForAuthorCount == (index + 1))) {
+            libraryModel.getTitlesForAuthor(
                 authors = authors,
+                types = types,
                 volumes = volumes,
-                books = books
+                books = books,
+                limit = 20,
+                offset = titlesForAuthorCount
             )
         }
     }
+
 }
 
 
 @Composable
-fun SearchResultsTitleView(hit: Hit, index: Int) {
-    fun getTitle(hit: Hit): String {
-        return if (!hit.highlight.title.isNullOrEmpty()) {
-            hit.highlight.title[0]
-        } else hit._source.title
-    }
+fun TitlesForAuthorTitleView(hit: com.ovidium.comoriod.data.titles.Hit, index: Int) {
 
     Row(
         modifier = Modifier
@@ -151,7 +138,7 @@ fun SearchResultsTitleView(hit: Hit, index: Int) {
                 .padding(start = 16.dp)
         )
         Text(
-            text = highlightText(getTitle(hit), isDark = isSystemInDarkTheme()),
+            text = hit._source.title,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left,
@@ -165,7 +152,7 @@ fun SearchResultsTitleView(hit: Hit, index: Int) {
 
 
 @Composable
-fun SearchResultsBookView(hit: Hit) {
+fun TitlesForAuthorBookView(hit: com.ovidium.comoriod.data.titles.Hit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -187,7 +174,7 @@ fun SearchResultsBookView(hit: Hit) {
 
 
 @Composable
-fun SearchResultsAuthorView(hit: Hit) {
+fun TitlesForAuthorAuthorView(hit: com.ovidium.comoriod.data.titles.Hit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -209,7 +196,7 @@ fun SearchResultsAuthorView(hit: Hit) {
 
 
 @Composable
-fun SearchResultsTypeView(hit: Hit) {
+fun TitlesForAuthorTypeView(hit: com.ovidium.comoriod.data.titles.Hit) {
     Column(
         horizontalAlignment = Alignment.End,
         modifier = Modifier

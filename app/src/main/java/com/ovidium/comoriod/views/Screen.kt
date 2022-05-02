@@ -40,6 +40,18 @@ enum class Screens(
         route = "volumesForAuthor",
         title = "Volumes for author",
         icon = R.drawable.ic_book
+    ),
+
+    PoemsForAuthor(
+        route = "poemsForAuthor",
+        title = "Poems for author",
+        icon = R.drawable.ic_book
+    ),
+
+    ArticlesForAuthor(
+        route = "articlesForAuthor",
+        title = "Articles for author",
+        icon = R.drawable.ic_book
     );
 
     fun withArgs(vararg args: String): String {

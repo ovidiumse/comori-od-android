@@ -33,6 +33,7 @@ import com.ovidium.comoriod.views.library.authors.AuthorPopup
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 val TAG = "LibraryScreen"
 
@@ -131,7 +132,7 @@ fun LibraryScreen(navController: NavController, jwtUtils: JWTUtils, signInModel:
         }
     }
         if (authorInfo.value != null) {
-            AuthorPopup(navController, authorInfo.value!!) {
+            AuthorPopup(navController = navController, authorInfo = authorInfo.value!!, jwtUtils = jwtUtils, signInModel = signInModel) {
                 authorInfo.value = null
             }
         }

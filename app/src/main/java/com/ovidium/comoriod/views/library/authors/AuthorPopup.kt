@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,24 +27,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.data.search.Aggregations
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
+import com.ovidium.comoriod.model.GoogleSignInModel
+import com.ovidium.comoriod.model.LibraryModel
+import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import com.ovidium.comoriod.views.search.filter.FilterCategoryView
 import com.ovidium.comoriod.views.search.filter.FilterViewTopBar
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthorPopup(
     navController: NavController,
     authorInfo: Bucket,
-    onExitAction: () -> Unit
+    jwtUtils: JWTUtils,
+    signInModel: GoogleSignInModel,
+    onExitAction: () -> Unit,
 ) {
+
+    val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
+    val coroutineScope = rememberCoroutineScope()
+
     Popup(
         alignment = Alignment.Center,
     ) {
@@ -122,9 +135,18 @@ fun AuthorPopup(
                             maxLines = 1,
                             modifier = Modifier
                                 .padding(end = 8.dp)
-                                .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
+                                .background(
+                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    RoundedCornerShape(50)
+                                )
                                 .padding(8.dp)
-                                .clickable { navController.navigate(Screens.BooksForAuthor.withArgs(authorInfo.name)) }
+                                .clickable {
+                                    navController.navigate(
+                                        Screens.BooksForAuthor.withArgs(
+                                            authorInfo.name
+                                        )
+                                    )
+                                }
                         )
                         Text(
                             text = getVolumesNumber(authorInfo),
@@ -133,9 +155,18 @@ fun AuthorPopup(
                             maxLines = 1,
                             modifier = Modifier
                                 .padding(end = 8.dp)
-                                .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
+                                .background(
+                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    RoundedCornerShape(50)
+                                )
                                 .padding(8.dp)
-                                .clickable { navController.navigate(Screens.VolumesForAuthor.withArgs(authorInfo.name)) }
+                                .clickable {
+                                    navController.navigate(
+                                        Screens.VolumesForAuthor.withArgs(
+                                            authorInfo.name
+                                        )
+                                    )
+                                }
                         )
                         Text(
                             text = getPoemsNumber(authorInfo),
@@ -144,9 +175,18 @@ fun AuthorPopup(
                             maxLines = 1,
                             modifier = Modifier
                                 .padding(end = 8.dp)
-                                .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
+                                .background(
+                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    RoundedCornerShape(50)
+                                )
                                 .padding(8.dp)
-                                .clickable {  }
+                                .clickable {
+                                    navController.navigate(
+                                        Screens.PoemsForAuthor.withArgs(
+                                            authorInfo.name
+                                        )
+                                    )
+                                }
                         )
                         Text(
                             text = getArticlesNumber(authorInfo),
@@ -154,9 +194,18 @@ fun AuthorPopup(
                             fontSize = 11.sp,
                             maxLines = 1,
                             modifier = Modifier
-                                .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
+                                .background(
+                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    RoundedCornerShape(50)
+                                )
                                 .padding(8.dp)
-                                .clickable {  }
+                                .clickable {
+                                    navController.navigate(
+                                        Screens.ArticlesForAuthor.withArgs(
+                                            authorInfo.name
+                                        )
+                                    )
+                                }
                         )
                     }
                 }

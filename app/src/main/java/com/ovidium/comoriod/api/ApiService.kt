@@ -63,4 +63,15 @@ interface ApiService {
         @Query("limit") limit: Int = 10000
     ): TitlesResponse
 
+    @GET("titles")
+    suspend fun getTitlesForAuthor(
+        @Query("include_aggs") includeAggs: String = "",
+        @Query("types") type: String = "",
+        @Query("authors") authors: String = "",
+        @Query("volumes") volumes: String = "",
+        @Query("books") books: String = "",
+        @Query("limit") limit: Int = 20,
+        @Query("offset") offset: Int = 0,
+    ): TitlesResponse
+
 }

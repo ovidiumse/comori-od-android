@@ -104,7 +104,12 @@ fun SearchScreen(
                     when (searchData.status) {
                         Status.SUCCESS -> {
                             searchData.data?.hits?.hits?.let { hits ->
-                                SearchResultsList(hits, navController, listState, searchParams = searchParams)
+                                SearchResultsList(
+                                    hits = hits,
+                                    navController = navController,
+                                    listState = listState,
+                                    searchParams = searchParams,
+                                )
                             }
                         }
                         Status.LOADING -> {}
