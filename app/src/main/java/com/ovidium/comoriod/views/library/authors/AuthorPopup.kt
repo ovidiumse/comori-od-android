@@ -115,7 +115,8 @@ fun AuthorPopup(
                         Text(
                             text = getBooksNumber(authorInfo),
                             color = colors.colorSecondaryText,
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
+                            maxLines = 1,
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
@@ -124,7 +125,8 @@ fun AuthorPopup(
                         Text(
                             text = getVolumesNumber(authorInfo),
                             color = colors.colorSecondaryText,
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
+                            maxLines = 1,
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
@@ -133,7 +135,8 @@ fun AuthorPopup(
                         Text(
                             text = getPoemsNumber(authorInfo),
                             color = colors.colorSecondaryText,
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
+                            maxLines = 1,
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
@@ -142,7 +145,8 @@ fun AuthorPopup(
                         Text(
                             text = getArticlesNumber(authorInfo),
                             color = colors.colorSecondaryText,
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
+                            maxLines = 1,
                             modifier = Modifier
                                 .background(getNamedColor("CardButton", isDark = isDark)!!, RoundedCornerShape(50))
                                 .padding(8.dp)
@@ -164,7 +168,7 @@ fun getVolumesNumber(authorBucket: Bucket): String {
 
 fun getPoemsNumber(authorBucket: Bucket): String {
     val poems = authorBucket.types.buckets.filter({ type -> type.key == "poezie" }).first().doc_count
-    return articulate(authorBucket.volumes.buckets.size, "poezii", "poezie")
+    return articulate(poems, "poezii", "poezie")
 }
 
 fun getArticlesNumber(authorBucket: Bucket): String {
