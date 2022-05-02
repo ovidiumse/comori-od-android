@@ -12,13 +12,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.*
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.article.BibleRefVerse
+import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.model.BookModel
 import com.ovidium.comoriod.utils.*
 
@@ -27,7 +30,6 @@ fun ArticleView(articleID: String) {
 
     val articleModel: BookModel = viewModel()
     val bookData = remember { articleModel.bookData }
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -54,8 +56,8 @@ fun ArticleView(articleID: String) {
 
 @Composable
 fun ArticleViewContent(article: ArticleResponse) {
-
-    val bibleRefs = remember { mutableStateListOf<BibleRefVerse>() }
+    val articleModel: ArticleModel = viewModel()
+    val bibleRefs = articleModel.getBibleRefs(article._id)
 
     Column(
     ) {
@@ -133,7 +135,6 @@ fun ArticleViewContent(article: ArticleResponse) {
                             ).firstOrNull()
 
                             bibleRefs.clear()
-
                             if (annotation != null)
                                 bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
                         }

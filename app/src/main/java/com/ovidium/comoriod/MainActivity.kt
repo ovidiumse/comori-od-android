@@ -27,11 +27,11 @@ import com.ovidium.comoriod.views.FavouritesScreen
 import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
-import com.ovidium.comoriod.views.library.Books.BookScreen
-import com.ovidium.comoriod.views.library.Books.BooksForAuthorScreen
-import com.ovidium.comoriod.views.library.Books.BooksForVolumeScreen
+import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen
+import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.BooksFilter
 import com.ovidium.comoriod.views.library.authors.TitlesForAuthorScreen
+import com.ovidium.comoriod.views.library.books.BookScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import com.ovidium.comoriod.views.search.filter.FilterCategory
