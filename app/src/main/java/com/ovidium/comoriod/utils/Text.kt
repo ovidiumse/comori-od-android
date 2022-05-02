@@ -8,11 +8,11 @@ import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
-fun articulate(cnt: Int, many: String, single: String) : String {
+fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false) : String {
     return "$cnt " + when {
         cnt == 0 -> many
         cnt == 1 -> single
-        cnt > 20 -> "de $many"
+        cnt > 20 -> if (isShort) many else "de $many"
         else -> many
     }
 }

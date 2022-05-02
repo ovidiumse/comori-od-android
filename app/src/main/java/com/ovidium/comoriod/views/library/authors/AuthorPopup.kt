@@ -168,10 +168,10 @@ fun getVolumesNumber(authorBucket: Bucket): String {
 
 fun getPoemsNumber(authorBucket: Bucket): String {
     val poems = authorBucket.types.buckets.filter({ type -> type.key == "poezie" }).first().doc_count
-    return articulate(poems, "poezii", "poezie")
+    return articulate(poems, "poezii", "poezie", isShort = true)
 }
 
 fun getArticlesNumber(authorBucket: Bucket): String {
     val articles = authorBucket.types.buckets.filter({ type -> type.key == "articol" }).first().doc_count
-    return articulate(articles, "articole", "articol")
+    return articulate(articles, "articole", "articol", isShort = true)
 }
