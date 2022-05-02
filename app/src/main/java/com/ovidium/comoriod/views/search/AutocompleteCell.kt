@@ -17,6 +17,7 @@ import androidx.navigation.NavHostController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.autocomplete.Hit
 import com.ovidium.comoriod.views.Screens
+import java.net.URLEncoder
 
 
 @Composable
@@ -28,7 +29,14 @@ fun AutocompleteCell(hit: Hit, navController: NavController) {
             modifier = Modifier
                 .padding(vertical = 3.dp)
                 .clickable {
-                    navController.navigate(Screens.Article.withArgs(hit._id)) {
+                    navController.navigate(
+                        Screens.Article.withArgs(
+                            URLEncoder.encode(
+                                hit._id,
+                                "utf-8"
+                            )
+                        )
+                    ) {
                         launchSingleTop = true
                     }
                 }
