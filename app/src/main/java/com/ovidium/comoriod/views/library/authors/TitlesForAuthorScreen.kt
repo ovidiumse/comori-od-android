@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
@@ -46,13 +44,14 @@ import java.net.URLEncoder
 @Composable
 fun TitlesForAuthorScreen(
     navController: NavController,
+    scaffoldState: ScaffoldState,
     libraryModel: LibraryModel,
     searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?
 ) {
 
     var showFilterPopup by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -67,7 +66,7 @@ fun TitlesForAuthorScreen(
                     }
                 },
                 isSearch = true,
-                onMenuClicked = { },
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState = scaffoldState) },
                 onFilterClicked = { showFilterPopup = true }
             )
         }

@@ -35,6 +35,7 @@ import com.ovidium.comoriod.views.search.SearchScreen
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.coroutines.coroutineContext
 
 
 class MainActivity : ComponentActivity() {
@@ -240,7 +241,8 @@ fun BottomBarMain(
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
-                searchParams = searchParams
+                searchParams = searchParams,
+                scaffoldState = scaffoldState,
             )
         }
 
@@ -263,7 +265,8 @@ fun BottomBarMain(
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
-                searchParams = searchParams
+                searchParams = searchParams,
+                scaffoldState = scaffoldState
             )
         }
 
