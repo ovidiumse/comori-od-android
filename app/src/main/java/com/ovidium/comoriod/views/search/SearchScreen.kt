@@ -128,6 +128,7 @@ fun SearchScreen(
         searchData.data?.aggregations.let { aggregations ->
             SearchFilterPopup(
                 aggregations = aggregations,
+                searchSource = SearchSource.SEARCH,
                 onCheck = { category, item ->
                     if (searchParams[category] != null && (searchParams[category]!!.contains(item))) {
                         searchParams[category]!!.remove(item)

@@ -19,9 +19,15 @@ import com.ovidium.comoriod.views.search.filter.FilterCategory
 import com.ovidium.comoriod.views.search.filter.FilterCategoryView
 import com.ovidium.comoriod.views.search.filter.FilterViewTopBar
 
+enum class SearchSource {
+    SEARCH, AUTHOR
+}
+
+
 @Composable
 fun SearchFilterPopup(
     aggregations: Aggregations?,
+    searchSource: SearchSource,
     onCheck: (FilterCategory, String) -> Unit,
     onSaveAction: () -> Unit,
     onExitAction: () -> Unit
@@ -46,21 +52,23 @@ fun SearchFilterPopup(
                 LazyColumn(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    item {
-                        FilterCategoryView(
-                            category = FilterCategory.TYPES,
-                            buckets = aggregations?.types!!.buckets,
-                            onCheck = onCheck,
-                            isDark = isDark
-                        )
-                    }
-                    item {
-                        FilterCategoryView(
-                            category = FilterCategory.AUTHORS,
-                            buckets = aggregations?.authors!!.buckets,
-                            onCheck = onCheck,
-                            isDark = isDark
-                        )
+                    if (searchSource == SearchSource.SEARCH) {
+                        item {
+                            FilterCategoryView(
+                                category = FilterCategory.TYPES,
+                                buckets = aggregations?.types!!.buckets,
+                                onCheck = onCheck,
+                                isDark = isDark
+                            )
+                        }
+                        item {
+                            FilterCategoryView(
+                                category = FilterCategory.AUTHORS,
+                                buckets = aggregations?.authors!!.buckets,
+                                onCheck = onCheck,
+                                isDark = isDark
+                            )
+                        }
                     }
                     item {
                         FilterCategoryView(

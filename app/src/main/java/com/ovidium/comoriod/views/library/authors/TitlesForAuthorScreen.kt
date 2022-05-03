@@ -36,6 +36,7 @@ import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.fmtVerses
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.SearchFilterPopup
+import com.ovidium.comoriod.views.search.SearchSource
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -99,6 +100,7 @@ fun TitlesForAuthorScreen(
         libraryModel.titlesForAuthorData.value.data?.aggregations.let { aggregations ->
             SearchFilterPopup(
                 aggregations = aggregations,
+                searchSource = SearchSource.AUTHOR,
                 onCheck = { category, item ->
                     if (searchParams?.get(category) != null && (searchParams[category]!!.contains(item))) {
                         searchParams[category]!!.remove(item)
