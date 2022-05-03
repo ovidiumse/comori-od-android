@@ -35,11 +35,6 @@ import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import java.net.URLEncoder
 
-enum class SearchSource {
-    SEARCH, AUTHOR
-}
-
-
 @Composable
 fun SearchResultsCell(
     hit: Hit,

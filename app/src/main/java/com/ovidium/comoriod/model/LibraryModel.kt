@@ -6,11 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
-import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
-import com.ovidium.comoriod.utils.concatenate
+import com.ovidium.comoriod.utils.concatenateTitles
 import kotlinx.coroutines.flow.collectLatest
 
 const val TAG = "AggregationsModel"
@@ -48,10 +47,16 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
             types = types,
             volumes = volumes,
             books = books,
-            offset = offset
+            offset = offset,
+            limit = limit
         ).collectLatest { state ->
-            println("TITLES: ${state.data}")
-            titlesForAuthorData.value = state
+            if (offset == 0) {
+                titlesForAuthorData.value = state
+            } else {
+                if (titlesForAuthorData.value.data != null && state.data != null) {
+                    titlesForAuthorData.value = concatenateTitles(titlesForAuthorData.value.data!!, state.data)
+                }
+            }
         }
     }
 

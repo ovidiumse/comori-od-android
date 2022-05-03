@@ -30,6 +30,7 @@ fun TitlesForAuthorList(
 ) {
 
     val titlesForAuthorData by remember { libraryModel.titlesForAuthorData }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
@@ -45,8 +46,7 @@ fun TitlesForAuthorList(
                 index = index,
                 navController = navController,
                 searchParams = searchParams,
-                jwtUtils = jwtUtils,
-                signInModel = signInModel,
+                libraryModel = libraryModel
             )
             Spacer(modifier = Modifier.height(16.dp))
         }

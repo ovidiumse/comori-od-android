@@ -1,6 +1,6 @@
 package com.ovidium.comoriod.data.titles
 
-data class Hit(
+data class TitleHit(
     val _id: String,
     val _index: String,
     val _score: Any?,

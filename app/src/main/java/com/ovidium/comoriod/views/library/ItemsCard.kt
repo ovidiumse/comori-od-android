@@ -74,10 +74,8 @@ fun ItemCard(
                     }
                     ItemCategory.Book -> {
                         navController.navigate(Screens.Book.withArgs(title))
-                        println("ITEM TYPE: $itemType")
                     }
                     ItemCategory.Article -> {
-                        println("ITEM TYPE: $itemType")
                     }
                 }
             }

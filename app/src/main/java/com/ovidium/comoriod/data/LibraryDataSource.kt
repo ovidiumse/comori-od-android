@@ -37,8 +37,6 @@ class LibraryDataSource(
     val authorsData by lazy { buildFlow(externalScope) { apiService.getAuthors() } }
     val volumesData by lazy { buildFlow(externalScope) { apiService.getVolumes() } }
     val booksData by lazy { buildFlow(externalScope) { apiService.getBooks() } }
-    val searchResultsData by lazy { buildFlow(externalScope) { apiService.getBooks() } }
-
 
     val recentlyAddedBooksData by lazy { buildFlow(externalScope) { apiService.getRecentlyAddedBooks() } }
 
@@ -58,8 +56,8 @@ class LibraryDataSource(
         return buildFlow(externalScope) { apiService.getTitles(bookTitle) }
     }
 
-    fun getTitlesForAuthor(authors: String, types: String, volumes: String, books: String, offset: Int): Flow<Resource<TitlesResponse>> {
-        return buildFlow(externalScope) { apiService.getTitlesForAuthor(authors = authors, type = types, volumes = volumes, books = books, offset = offset) }
+    fun getTitlesForAuthor(authors: String, types: String, volumes: String, books: String, offset: Int, limit: Int): Flow<Resource<TitlesResponse>> {
+        return buildFlow(externalScope) { apiService.getTitlesForAuthor(authors = authors, type = types, volumes = volumes, books = books, offset = offset, limit = limit) }
     }
 
 }
