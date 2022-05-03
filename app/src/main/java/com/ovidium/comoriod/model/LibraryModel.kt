@@ -1,6 +1,8 @@
 package com.ovidium.comoriod.model
 
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,7 +12,9 @@ import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.concatenateTitles
+import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 const val TAG = "AggregationsModel"
 
@@ -27,6 +31,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val trendingData by lazy { dataSource.trendingData }
     var titlesData = mutableStateOf<Resource<TitlesResponse>>(Resource.loading(null))
     var titlesForAuthorData = mutableStateOf<Resource<TitlesResponse>>(Resource.loading(null))
+    val searchParams = mutableStateMapOf<FilterCategory, MutableList<String>>()
 
     suspend fun getTitles(bookTitle: String) {
         dataSource.getTitles(bookTitle).collectLatest { state ->
@@ -34,7 +39,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
         }
     }
 
-    suspend fun getTitlesForAuthor(
+    fun getTitlesForAuthor(
         authors: String = "",
         types: String = "",
         volumes: String = "",
@@ -42,19 +47,22 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
         limit: Int = 20,
         offset: Int = 0,
     ) {
-        dataSource.getTitlesForAuthor(
-            authors = authors,
-            types = types,
-            volumes = volumes,
-            books = books,
-            offset = offset,
-            limit = limit
-        ).collectLatest { state ->
-            if (offset == 0) {
-                titlesForAuthorData.value = state
-            } else {
-                if (titlesForAuthorData.value.data != null && state.data != null) {
-                    titlesForAuthorData.value = concatenateTitles(titlesForAuthorData.value.data!!, state.data)
+        viewModelScope.launch {
+            dataSource.getTitlesForAuthor(
+                authors = authors,
+                types = types,
+                volumes = volumes,
+                books = books,
+                offset = offset,
+                limit = limit
+            ).collectLatest { state ->
+                if (offset == 0) {
+                    titlesForAuthorData.value = state
+                } else {
+                    if (titlesForAuthorData.value.data != null && state.data != null) {
+                        titlesForAuthorData.value =
+                            concatenateTitles(titlesForAuthorData.value.data!!, state.data)
+                    }
                 }
             }
         }

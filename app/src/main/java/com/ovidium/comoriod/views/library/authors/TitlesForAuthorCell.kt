@@ -40,7 +40,6 @@ fun TitlesForAuthorCell(
     index: Int,
     navController: NavController,
     libraryModel: LibraryModel,
-    searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?
 ) {
 
     Column(
@@ -78,7 +77,7 @@ fun TitlesForAuthorCell(
     }
 
     LaunchedEffect(Unit) {
-        val params = searchParams.let { it } ?: return@LaunchedEffect
+        val params = libraryModel.searchParams.let { it } ?: return@LaunchedEffect
         val types =
             if (params[FilterCategory.TYPES].isNullOrEmpty()) "" else params[FilterCategory.TYPES]!!.joinToString(
                 ","

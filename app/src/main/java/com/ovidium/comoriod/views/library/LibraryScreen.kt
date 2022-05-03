@@ -65,14 +65,13 @@ class DataItem(
 @Composable
 fun LibraryScreen(
     navController: NavController,
-    jwtUtils: JWTUtils,
-    signInModel: GoogleSignInModel
+    signInModel: GoogleSignInModel,
+    libraryModel: LibraryModel
 ) {
     val tabsHeight = 40
     val dropShadowSize = 3
     val isDark = isSystemInDarkTheme()
 
-    val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     var authorInfo = remember { mutableStateOf<Bucket?>(null) }
@@ -158,8 +157,7 @@ fun LibraryScreen(
         AuthorPopup(
             navController = navController,
             authorInfo = authorInfo.value!!,
-            jwtUtils = jwtUtils,
-            signInModel = signInModel
+            libraryModel = libraryModel
         ) {
             authorInfo.value = null
         }

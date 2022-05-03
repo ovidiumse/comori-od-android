@@ -46,7 +46,6 @@ fun TitlesForAuthorScreen(
     navController: NavController,
     scaffoldState: ScaffoldState,
     libraryModel: LibraryModel,
-    searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?
 ) {
 
     var showFilterPopup by remember { mutableStateOf(false) }
@@ -75,22 +74,7 @@ fun TitlesForAuthorScreen(
             TitlesForAuthorList(
                 libraryModel = libraryModel,
                 navController = navController,
-                searchParams = searchParams
             )
-        }
-
-
-        LaunchedEffect(Unit) {
-            if (libraryModel.titlesForAuthorData.value.data == null) {
-                val authors =
-                    searchParams?.get(FilterCategory.AUTHORS).let { it } ?: return@LaunchedEffect
-                val types =
-                    searchParams?.get(FilterCategory.TYPES).let { it } ?: return@LaunchedEffect
-                libraryModel.getTitlesForAuthor(
-                    authors = authors.joinToString(","),
-                    types = types.joinToString(",")
-                )
-            }
         }
     }
 
@@ -101,34 +85,34 @@ fun TitlesForAuthorScreen(
                 aggregations = aggregations,
                 searchSource = SearchSource.AUTHOR,
                 onCheck = { category, item ->
-                    if (searchParams?.get(category) != null && (searchParams[category]!!.contains(item))) {
-                        searchParams[category]!!.remove(item)
-                    } else if (searchParams?.get(category) != null && !searchParams[category]!!.contains(
+                    if (libraryModel.searchParams[category] != null && (libraryModel.searchParams[category]!!.contains(item))) {
+                        libraryModel.searchParams[category]!!.remove(item)
+                    } else if (libraryModel.searchParams[category] != null && !libraryModel.searchParams[category]!!.contains(
                             item
                         )
                     ) {
-                        searchParams[category]!!.add(item)
-                    } else if (searchParams?.get(category) == null) {
-                        searchParams?.set(category, mutableListOf(item))
+                        libraryModel.searchParams[category]!!.add(item)
+                    } else if (libraryModel.searchParams[category] == null) {
+                        libraryModel.searchParams[category] = mutableListOf(item)
                     }
                 },
                 onSaveAction = {
                     showFilterPopup = false
                     coroutineScope.launch {
                         val types =
-                            if (searchParams?.get(FilterCategory.TYPES).isNullOrEmpty()) "" else searchParams?.get(FilterCategory.TYPES)!!.joinToString(
+                            if (libraryModel.searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else libraryModel.searchParams[FilterCategory.TYPES]!!.joinToString(
                                 ","
                             )
                         val authors =
-                            if (searchParams?.get(FilterCategory.AUTHORS).isNullOrEmpty()) "" else searchParams?.get(FilterCategory.AUTHORS)!!.joinToString(
+                            if (libraryModel.searchParams[FilterCategory.AUTHORS].isNullOrEmpty()) "" else libraryModel.searchParams[FilterCategory.AUTHORS]!!.joinToString(
                                 ","
                             )
                         val volumes =
-                            if (searchParams?.get(FilterCategory.VOLUMES).isNullOrEmpty()) "" else searchParams?.get(FilterCategory.VOLUMES)!!.joinToString(
+                            if (libraryModel.searchParams[FilterCategory.VOLUMES].isNullOrEmpty()) "" else libraryModel.searchParams[FilterCategory.VOLUMES]!!.joinToString(
                                 ","
                             )
                         val books =
-                            if (searchParams?.get(FilterCategory.BOOKS).isNullOrEmpty()) "" else searchParams?.get(FilterCategory.BOOKS)!!.joinToString(
+                            if (libraryModel.searchParams[FilterCategory.BOOKS].isNullOrEmpty()) "" else libraryModel.searchParams[FilterCategory.BOOKS]!!.joinToString(
                                 ","
                             )
                         libraryModel.getTitlesForAuthor(

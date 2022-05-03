@@ -24,7 +24,6 @@ import com.ovidium.comoriod.views.search.filter.FilterCategory
 fun TitlesForAuthorList(
     navController: NavController,
     libraryModel: LibraryModel,
-    searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?,
 ) {
 
     val titlesForAuthorData by remember { libraryModel.titlesForAuthorData }
@@ -43,7 +42,6 @@ fun TitlesForAuthorList(
                 hit = hit,
                 index = index,
                 navController = navController,
-                searchParams = searchParams,
                 libraryModel = libraryModel
             )
             Spacer(modifier = Modifier.height(16.dp))

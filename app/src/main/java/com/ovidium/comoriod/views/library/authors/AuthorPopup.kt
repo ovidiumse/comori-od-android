@@ -49,13 +49,9 @@ import kotlinx.coroutines.launch
 fun AuthorPopup(
     navController: NavController,
     authorInfo: Bucket,
-    jwtUtils: JWTUtils,
-    signInModel: GoogleSignInModel,
+    libraryModel: LibraryModel,
     onExitAction: () -> Unit,
 ) {
-
-    val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
-    val coroutineScope = rememberCoroutineScope()
 
     Popup(
         alignment = Alignment.Center,
@@ -186,6 +182,11 @@ fun AuthorPopup(
                                             authorInfo.name
                                         )
                                     )
+                                    libraryModel.searchParams.clear()
+                                    libraryModel.getTitlesForAuthor(
+                                        authors = authorInfo.name,
+                                        types = "poezie"
+                                    )
                                 }
                         )
                         Text(
@@ -204,6 +205,11 @@ fun AuthorPopup(
                                         Screens.ArticlesForAuthor.withArgs(
                                             authorInfo.name
                                         )
+                                    )
+                                    libraryModel.searchParams.clear()
+                                    libraryModel.getTitlesForAuthor(
+                                        authors = authorInfo.name,
+                                        types = "articol"
                                     )
                                 }
                         )

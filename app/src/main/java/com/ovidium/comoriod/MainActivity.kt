@@ -101,11 +101,11 @@ fun BottomBarMain(
     libraryModel: LibraryModel
 ) {
 
-    val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
+//    val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
 
     NavHost(navController, startDestination = Screens.Library.route) {
         composable(Screens.Library.route) {
-            LibraryScreen(navController, jwtUtils, signInModel)
+            LibraryScreen(navController, signInModel, libraryModel)
         }
 
         composable(Screens.Search.route) {
@@ -236,12 +236,11 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("author", "")
             }
-            searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
-            searchParams[FilterCategory.TYPES] = mutableListOf("poezie")
+            libraryModel.searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
+            libraryModel.searchParams[FilterCategory.TYPES] = mutableListOf("poezie")
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
-                searchParams = searchParams,
                 scaffoldState = scaffoldState,
             )
         }
@@ -260,12 +259,11 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("author", "")
             }
-            searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
-            searchParams[FilterCategory.TYPES] = mutableListOf("articol")
+            libraryModel.searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
+            libraryModel.searchParams[FilterCategory.TYPES] = mutableListOf("articol")
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
-                searchParams = searchParams,
                 scaffoldState = scaffoldState
             )
         }
