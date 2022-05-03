@@ -60,14 +60,20 @@ fun ComoriOdApp(context: Context) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         Scaffold(
             topBar = {
-                if (navBackStackEntry?.destination?.route != Screens.Search.route) {
-                    AppBar(
-                        onMenuClicked = {
-                            launchMenu(coroutineScope, scaffoldState)
-                        },
-                        onSearchClicked = {
-                            navController.navigate(Screens.Search.route)
-                        })
+                println("ROUTE: ${navBackStackEntry?.destination?.route?.replaceAfter("/", "")?.replace("/", "")}")
+                when (navBackStackEntry?.destination?.route?.replaceAfter("/", "")?.replace("/", "")) {
+                    Screens.Search.route -> {}
+                    Screens.ArticlesForAuthor.route -> {}
+                    Screens.PoemsForAuthor.route -> {}
+                    else -> {
+                        AppBar(
+                            onMenuClicked = {
+                                launchMenu(coroutineScope, scaffoldState)
+                            },
+                            onSearchClicked = {
+                                navController.navigate(Screens.Search.route)
+                            })
+                    }
                 }
             },
             drawerContent = { Drawer(context) },
@@ -233,8 +239,6 @@ fun BottomBarMain(
             searchParams[FilterCategory.TYPES] = mutableListOf("poezie")
             TitlesForAuthorScreen(
                 navController = navController,
-                jwtUtils = jwtUtils,
-                signInModel = signInModel,
                 libraryModel = libraryModel,
                 searchParams = searchParams
             )
@@ -258,8 +262,6 @@ fun BottomBarMain(
             searchParams[FilterCategory.TYPES] = mutableListOf("articol")
             TitlesForAuthorScreen(
                 navController = navController,
-                jwtUtils = jwtUtils,
-                signInModel = signInModel,
                 libraryModel = libraryModel,
                 searchParams = searchParams
             )

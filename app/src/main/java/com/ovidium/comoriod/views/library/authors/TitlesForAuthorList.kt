@@ -23,8 +23,6 @@ import com.ovidium.comoriod.views.search.filter.FilterCategory
 @Composable
 fun TitlesForAuthorList(
     navController: NavController,
-    jwtUtils: JWTUtils,
-    signInModel: GoogleSignInModel,
     libraryModel: LibraryModel,
     searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?,
 ) {

@@ -43,12 +43,14 @@ fun concatenateTitles(data: TitlesResponse, newData: TitlesResponse): Resource<T
     val existingHits = data.hits.hits
     val newHits = newData.hits.hits
     val total = data.hits.total.value
+    val aggs = data.aggregations
     val concatenatedHits = com.ovidium.comoriod.data.titles.Hits((existingHits + newHits), max_score = 0, total = com.ovidium.comoriod.data.titles.Total("", total))
     val response = TitlesResponse(
         newData._shards,
         hits = concatenatedHits,
         timed_out = false,
-        took = 0
+        took = 0,
+        aggregations = aggs
     )
     return Resource(Status.SUCCESS, response, message = null)
 }
