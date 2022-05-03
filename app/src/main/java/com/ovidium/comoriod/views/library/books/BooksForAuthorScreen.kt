@@ -13,9 +13,9 @@ import com.ovidium.comoriod.views.StateHandler
 import com.ovidium.comoriod.views.library.BooksGrid
 
 @Composable
-fun BooksForVolumeScreen(
+fun BooksForAuthorScreen(
     navController: NavController,
-    volume: String,
+    author: String,
     jwtUtils: JWTUtils,
     signInModel: GoogleSignInModel
 ) {
@@ -32,10 +32,12 @@ fun BooksForVolumeScreen(
                 response = data,
                 isLoading = isLoading,
                 isDark = isSystemInDarkTheme(),
-                filter = { bucket -> bucket.volumes.buckets.isNotEmpty() && bucket.volumes.buckets[0].key == volume }
+                filter = { bucket ->
+                    var hasAuthor = false
+                    bucket.authors.buckets.forEach { a -> hasAuthor = a.key == author }
+                    hasAuthor
+                }
             )
         }
     }
 }
-
-
