@@ -33,9 +33,11 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     var titlesForAuthorData = mutableStateOf<Resource<TitlesResponse>>(Resource.loading(null))
     val searchParams = mutableStateMapOf<FilterCategory, MutableList<String>>()
 
-    suspend fun getTitles(bookTitle: String) {
-        dataSource.getTitles(bookTitle).collectLatest { state ->
-            titlesData.value = state
+    fun getTitles(bookTitle: String) {
+        viewModelScope.launch {
+            dataSource.getTitles(bookTitle).collectLatest { state ->
+                titlesData.value = state
+            }
         }
     }
 
@@ -60,8 +62,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
                     titlesForAuthorData.value = state
                 } else {
                     if (titlesForAuthorData.value.data != null && state.data != null) {
-                        titlesForAuthorData.value =
-                            concatenateTitles(titlesForAuthorData.value.data!!, state.data)
+                        concatenateTitles(titlesForAuthorData.value.data!!, state.data).also { titlesForAuthorData.value = it }
                     }
                 }
             }

@@ -69,9 +69,7 @@ fun SearchScreen(
                                 if (query.isNotEmpty()) {
                                     isSearchPending = true
                                     keyboardController?.hide()
-                                    coroutineScope.launch {
-                                        searchModel.search()
-                                    }
+                                    searchModel.search()
                                 }
                             })
                     } else {
@@ -143,7 +141,6 @@ fun SearchScreen(
                 },
                 onSaveAction = {
                     showFilterPopup = false
-                    coroutineScope.launch {
                         val types =
                             if (searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else searchParams[FilterCategory.TYPES]!!.joinToString(
                                 ","
@@ -166,7 +163,6 @@ fun SearchScreen(
                             volumes = volumes,
                             books = books
                         )
-                    }
                     CoroutineScope(Dispatchers.Main).launch {
                         listState.scrollToItem(0, 0)
                     }

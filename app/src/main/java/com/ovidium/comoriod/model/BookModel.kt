@@ -9,6 +9,7 @@ import com.ovidium.comoriod.data.SearchDataSource
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class BookModel: ViewModel() {
     private val dataSource = SearchDataSource(RetrofitBuilder.apiService, viewModelScope)
@@ -19,7 +20,9 @@ class BookModel: ViewModel() {
         bookData.clear()
     }
 
-    suspend fun getArticle(id: String) {
-        dataSource.getArticle(id).collectLatest { state -> bookData[id] = state }
+    fun getArticle(id: String) {
+        viewModelScope.launch {
+            dataSource.getArticle(id).collectLatest { state -> bookData[id] = state }
+        }
     }
 }
