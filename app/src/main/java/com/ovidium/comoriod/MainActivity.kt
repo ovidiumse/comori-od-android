@@ -61,8 +61,8 @@ fun ComoriOdApp(context: Context) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         Scaffold(
             topBar = {
-                println("ROUTE: ${navBackStackEntry?.destination?.route?.replaceAfter("/", "")?.replace("/", "")}")
                 when (navBackStackEntry?.destination?.route?.replaceAfter("/", "")?.replace("/", "")) {
+                    Screens.Book.route -> {}
                     Screens.Search.route -> {}
                     Screens.ArticlesForAuthor.route -> {}
                     Screens.PoemsForAuthor.route -> {}
@@ -149,7 +149,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("book", "")
             }
 
-            BookScreen(book = getBook(), jwtUtils, signInModel)
+            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel)
         }
 
         composable(
