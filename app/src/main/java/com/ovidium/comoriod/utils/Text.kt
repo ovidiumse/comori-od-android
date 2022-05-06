@@ -106,3 +106,13 @@ fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
         }
     }
 }
+
+fun String.normalize(): String {
+    val original = arrayOf("ș", "ț", "ă", "î", "â")
+    val normalized =  arrayOf("s", "t", "a", "i", "a")
+
+    return this.map { it ->
+        val index = original.indexOf(it.toString())
+        if (index >= 0) normalized[index] else it
+    }.joinToString("")
+}

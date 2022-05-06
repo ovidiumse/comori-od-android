@@ -11,15 +11,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +34,8 @@ import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.normalize
+import com.ovidium.comoriod.views.search.SearchBar
 
 @Composable
 fun TOCPopup(
@@ -39,6 +46,7 @@ fun TOCPopup(
 ) {
 
     val listState = rememberLazyListState()
+    val searchText = remember { mutableStateOf("") }
 
     Popup(
         alignment = Alignment.BottomCenter,
@@ -56,12 +64,15 @@ fun TOCPopup(
                 )
         ) {
             Column() {
-                TOCTopBar(onExitAction = onExitAction)
+//                TOCTopBar(searchText = searchText, onExitAction = onExitAction)
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    itemsIndexed(titles) { index, item ->
+                    itemsIndexed(if (searchText.value.isEmpty()) titles else titles.filter {
+                        it._source.title.lowercase().normalize()
+                            .contains(searchText.value.lowercase().normalize())
+                    }) { index, item ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
@@ -95,7 +106,10 @@ fun TOCPopup(
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_left_24),
                                 contentDescription = "Selected",
-                                tint = if (currentIndex == index) getNamedColor("Link", isDark = isDark)!! else Color.Transparent,
+                                tint = if (currentIndex == index) getNamedColor(
+                                    "Link",
+                                    isDark = isDark
+                                )!! else Color.Transparent,
                                 modifier = Modifier
                                     .size(35.dp)
                                     .fillMaxWidth()
@@ -103,7 +117,7 @@ fun TOCPopup(
                             )
                         }
                         Divider(
-                            color = Color.DarkGray,
+                            color = Color.LightGray,
                             thickness = 0.8.dp
                         )
                     }
@@ -113,29 +127,45 @@ fun TOCPopup(
     }
 
     LaunchedEffect(Unit) {
-        listState.scrollToItem(currentIndex)
+        listState.animateScrollToItem(currentIndex)
     }
 
 }
 
 @Composable
-fun TOCTopBar(onExitAction: () -> Unit) {
+fun TOCTopBar(searchText: MutableState<String>, onExitAction: () -> Unit) {
     val isDark = isSystemInDarkTheme()
+    var showSearchBar by remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 20.dp)
     ) {
-        Text(
-            text = "Cuprins",
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center,
+        Icon(
+            imageVector = Icons.Default.Search,
+            contentDescription = "Search",
+            tint = getNamedColor("Link", isDark = isDark)!!,
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(top = 16.dp)
+                .clickable(onClick = { showSearchBar = true })
         )
+        if (showSearchBar) {
+            SearchBar(
+                searchText = searchText.value,
+                onClearClick = { showSearchBar = false },
+                onSearchTextChanged = { searchText.value = it }
+            )
+        } else {
+            Text(
+                text = "Cuprins",
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 16.dp)
+            )
+        }
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Menu",
