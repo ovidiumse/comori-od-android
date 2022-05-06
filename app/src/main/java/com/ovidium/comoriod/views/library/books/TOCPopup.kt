@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.titles.TitleHit
@@ -50,6 +51,7 @@ fun TOCPopup(
     val searchText = remember { mutableStateOf("") }
 
     Dialog(
+        properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onExitAction
     ) {
         val configuration = LocalConfiguration.current
