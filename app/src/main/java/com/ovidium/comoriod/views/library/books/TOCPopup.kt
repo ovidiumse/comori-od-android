@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -21,15 +20,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.titles.TitleHit
@@ -41,6 +41,7 @@ import com.ovidium.comoriod.views.search.SearchBar
 fun TOCPopup(
     titles: List<TitleHit>,
     currentIndex: Int,
+    focusRequester: FocusRequester,
     onSelectAction: (Int) -> Unit,
     onExitAction: () -> Unit
 ) {
@@ -48,8 +49,8 @@ fun TOCPopup(
     val listState = rememberLazyListState()
     val searchText = remember { mutableStateOf("") }
 
-    Popup(
-        alignment = Alignment.BottomCenter,
+    Dialog(
+        onDismissRequest = onExitAction
     ) {
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp
@@ -64,7 +65,11 @@ fun TOCPopup(
                 )
         ) {
             Column() {
-//                TOCTopBar(searchText = searchText, onExitAction = onExitAction)
+                TOCTopBar(
+                    searchText = searchText,
+                    focusRequester = focusRequester,
+                    onExitAction = onExitAction
+                )
                 LazyColumn(
                     state = listState,
                     modifier = Modifier.padding(16.dp)
@@ -73,15 +78,16 @@ fun TOCPopup(
                         it._source.title.lowercase().normalize()
                             .contains(searchText.value.lowercase().normalize())
                     }) { index, item ->
+                        var realIndex = titles.indexOf(item)
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
-                                .clickable { onSelectAction(index) }
+                                .clickable { onSelectAction(realIndex) }
                                 .padding(vertical = 8.dp),
                             horizontalArrangement = Arrangement.Start
                         ) {
                             Text(
-                                text = "${index + 1}",
+                                text = "${realIndex + 1}",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Medium,
                                 color = if (currentIndex == index) getNamedColor(
@@ -117,8 +123,8 @@ fun TOCPopup(
                             )
                         }
                         Divider(
-                            color = Color.LightGray,
-                            thickness = 0.8.dp
+                            color = if (isDark) Color.DarkGray else Color.LightGray,
+                            thickness = 0.7.dp
                         )
                     }
                 }
@@ -133,14 +139,18 @@ fun TOCPopup(
 }
 
 @Composable
-fun TOCTopBar(searchText: MutableState<String>, onExitAction: () -> Unit) {
+fun TOCTopBar(
+    searchText: MutableState<String>,
+    focusRequester: FocusRequester,
+    onExitAction: () -> Unit
+) {
     val isDark = isSystemInDarkTheme()
     var showSearchBar by remember { mutableStateOf(false) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .padding(bottom = 20.dp)
+            .padding(bottom = 20.dp, top = 10.dp)
     ) {
         Icon(
             imageVector = Icons.Default.Search,
@@ -152,7 +162,11 @@ fun TOCTopBar(searchText: MutableState<String>, onExitAction: () -> Unit) {
         if (showSearchBar) {
             SearchBar(
                 searchText = searchText.value,
-                onClearClick = { showSearchBar = false },
+                focusRequester = focusRequester,
+                onClearClick = {
+                    showSearchBar = false
+                    searchText.value = ""
+                },
                 onSearchTextChanged = { searchText.value = it }
             )
         } else {

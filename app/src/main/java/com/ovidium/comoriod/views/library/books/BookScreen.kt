@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.HorizontalPager
@@ -38,10 +40,10 @@ fun BookScreen(
     val titles = titlesData.data?.hits?.hits?.map { it }
     val coroutineScope = rememberCoroutineScope()
     var showTOCPopup by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
-            val isDark = isSystemInDarkTheme()
             BookTopBar(
                 title = { Text(text = "Comori OD") },
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
@@ -65,13 +67,14 @@ fun BookScreen(
             TOCPopup(
                 titles = titles,
                 currentIndex = pagerState.currentPage,
+                focusRequester = focusRequester,
                 onSelectAction = { selectedIndex ->
                     coroutineScope.launch {
                         pagerState.scrollToPage(selectedIndex)
                         showTOCPopup = false
                     }
                 },
-                onExitAction = { showTOCPopup = false }
+                onExitAction = { showTOCPopup = false },
             )
         }
     }

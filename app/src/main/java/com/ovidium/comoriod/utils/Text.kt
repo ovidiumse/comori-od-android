@@ -7,6 +7,7 @@ import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import java.text.Normalizer
 
 fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false) : String {
     return "$cnt " + when {
@@ -108,11 +109,12 @@ fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
 }
 
 fun String.normalize(): String {
-    val original = arrayOf("ș", "ț", "ă", "î", "â")
-    val normalized =  arrayOf("s", "t", "a", "i", "a")
-
-    return this.map { it ->
-        val index = original.indexOf(it.toString())
-        if (index >= 0) normalized[index] else it
-    }.joinToString("")
+    return this
+        .replace("ș", "s")
+        .replace("ț", "t")
+        .replace("ă", "a")
+        .replace("î", "i")
+        .replace("â", "a")
+        .replace("ţ", "t")
+        .replace("ş", "s")
 }

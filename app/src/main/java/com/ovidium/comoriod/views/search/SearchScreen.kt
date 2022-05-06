@@ -8,6 +8,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -40,6 +41,7 @@ fun SearchScreen(
     var currentAutocompleteJob by remember { mutableStateOf<Job?>(null) }
     var showFilterPopup by remember { mutableStateOf(false) }
     val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
@@ -49,6 +51,7 @@ fun SearchScreen(
                     if (searchData.data?.hits?.hits.isNullOrEmpty()) {
                         SearchBar(
                             searchText = query,
+                            focusRequester = focusRequester,
                             onSearchTextChanged = {
                                 if (!isSearchPending) {
                                     query = it
@@ -65,13 +68,13 @@ fun SearchScreen(
                                 searchModel.autocompleteData.value =
                                     Resource(Status.SUCCESS, null, null)
                                 keyboardController?.show()
-                            }, onSearchClick = {
-                                if (query.isNotEmpty()) {
-                                    isSearchPending = true
-                                    keyboardController?.hide()
-                                    searchModel.search()
-                                }
-                            })
+                            }) {
+                            if (query.isNotEmpty()) {
+                                isSearchPending = true
+                                keyboardController?.hide()
+                                searchModel.search()
+                            }
+                        }
                     } else {
                         Text(
                             text = "${searchData.data?.hits?.hits?.count()} / ${searchData.data?.hits?.total?.value} rezultate",
