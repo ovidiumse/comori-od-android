@@ -21,7 +21,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -45,6 +47,7 @@ import io.fusionauth.jwks.JWKUtils
 fun ItemCard(
     navController: NavController,
     title: String,
+    id: String,
     itemType: ItemCategory,
     isLoading: Boolean,
     secondary: String? = null,
@@ -76,7 +79,9 @@ fun ItemCard(
                         navController.navigate(Screens.Book.withArgs(title))
                     }
                     ItemCategory.Article -> {
+                        navController.navigate(Screens.Article.withArgs(id))
                     }
+                    else -> {}
                 }
             }
         if (!isLoading)
@@ -92,6 +97,8 @@ fun ItemCard(
                         text = title,
                         color = Color.Black,
                         style = MaterialTheme.typography.h6,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -141,9 +148,13 @@ fun ItemCard(
                             text = detail,
                             style = MaterialTheme.typography.caption,
                             fontWeight = FontWeight.Normal,
+                            letterSpacing = 0.5.sp,
                             textAlign = TextAlign.Center,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(horizontal = 8.dp)
                                 .align(Alignment.CenterVertically),
                             color = Color.DarkGray
                         )

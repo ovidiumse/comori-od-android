@@ -54,6 +54,7 @@ enum class ItemCategory {
 
 class DataItem(
     val title: String,
+    val id: String,
     val secondary: String? = null,
     val detail: String? = null,
     val imageId: Int? = null,

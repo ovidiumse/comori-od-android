@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit
 
 
 object RetrofitBuilder {
-    // private const val BASE_URL = "https://api.comori-od.ro/od/"
-    private const val BASE_URL = "https://testapi.comori-od.ro/odbeta/"
+     private const val BASE_URL = "https://api.comori-od.ro/od/"
+//    private const val BASE_URL = "https://testapi.comori-od.ro/odbeta/"
     // private const val BASE_URL = "https://750e-109-97-21-5.eu.ngrok.io/od/"
 
 

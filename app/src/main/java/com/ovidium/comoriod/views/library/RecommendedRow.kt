@@ -20,6 +20,7 @@ fun RecommendedRow(
     val items = response?.map { item ->
         DataItem(
             item.title,
+            item._id,
             item.author,
             item.book,
             getDrawableByAuthor(item.author),

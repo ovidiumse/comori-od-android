@@ -40,6 +40,7 @@ fun BooksGrid(
             val volume = getVolume(bucket)
             DataItem(
                 title = bucket.key,
+                id = bucket.key,
                 secondary = author,
                 detail = volume,
                 imageId = author?.let { getDrawableByAuthor(author) },

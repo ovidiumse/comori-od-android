@@ -20,6 +20,7 @@ fun TrendingRow(
     val items = response?.map { item ->
         DataItem(
             item.title,
+            item.id,
             item.author,
             item.book,
             getDrawableByAuthor(item.author),

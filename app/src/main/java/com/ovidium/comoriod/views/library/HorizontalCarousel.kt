@@ -63,6 +63,7 @@ fun HorizontalCarousel(
                         ItemCard(
                             navController = navController,
                             title = "",
+                            id = "",
                             itemType = ItemCategory.None,
                             isLoading = isLoading,
                             colors = emptyList(),
@@ -77,6 +78,7 @@ fun HorizontalCarousel(
                         ItemCard(
                             navController,
                             dataItem.title,
+                            dataItem.id,
                             dataItem.type,
                             isLoading,
                             dataItem.secondary,

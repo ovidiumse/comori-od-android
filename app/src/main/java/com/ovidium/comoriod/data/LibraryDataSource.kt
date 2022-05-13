@@ -29,7 +29,6 @@ class LibraryDataSource(
                     userData.user.id,
                     userData.user.issuer
                 )
-
             else -> null
         }
     }

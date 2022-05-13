@@ -27,6 +27,7 @@ fun VolumesRow(
         val imageId = if (author != null) getDrawableByAuthor(author) else null
         DataItem(
             bucket.key,
+            "",
             author,
             imageId = imageId,
             gradient = getVolumeCoverGradient(bucket.key, isDark),

@@ -39,13 +39,14 @@ fun ItemsGrid(
             .fillMaxHeight()
     ) {
         if (isLoading) {
-            repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) {
+            repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) { mainIndex ->
                 item() {
                     Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
                         repeat(itemsByRow) {
                             ItemCard(
                                 navController,
                                 title = "",
+                                id = "",
                                 itemType = ItemCategory.Article,
                                 isLoading,
                                 itemSize = itemSize,
@@ -66,6 +67,7 @@ fun ItemsGrid(
                                 ItemCard(
                                     navController,
                                     item.title,
+                                    item.id,
                                     item.type,
                                     isLoading = isLoading,
                                     item.secondary,

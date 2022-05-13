@@ -27,6 +27,7 @@ fun RecentlyAddedBooksRow(
 
         DataItem(
             item.name,
+            "",
             author,
             item.volume,
             author?.let { getDrawableByAuthor(author) },
