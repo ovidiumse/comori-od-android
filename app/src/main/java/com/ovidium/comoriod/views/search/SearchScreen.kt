@@ -13,15 +13,14 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.components.SearchTopBar
-import com.ovidium.comoriod.data.search.Hit
-import com.ovidium.comoriod.data.search.Hits
-import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.search.filter.FilterCategory
+import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
+import com.ovidium.comoriod.views.search.filter.SearchSource
 import kotlinx.coroutines.*
 
 

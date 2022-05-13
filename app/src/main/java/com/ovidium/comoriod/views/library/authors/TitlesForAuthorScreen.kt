@@ -1,45 +1,21 @@
 package com.ovidium.comoriod.views.library.authors
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.launchMenu
-import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.model.LibraryModelFactory
-import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.JWTUtils
-import com.ovidium.comoriod.utils.fmtVerses
-import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.search.SearchFilterPopup
-import com.ovidium.comoriod.views.search.SearchSource
+import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
+import com.ovidium.comoriod.views.search.filter.SearchSource
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
 
 @Composable
 fun TitlesForAuthorScreen(
