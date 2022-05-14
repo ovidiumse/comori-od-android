@@ -6,8 +6,10 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
@@ -21,18 +23,18 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.google.GoogleApiContract
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
-import kotlin.time.ExperimentalTime
+import com.ovidium.comoriod.views.Screens
 
 @Composable
-fun Drawer(applicationContext: Context) {
+fun Drawer(applicationContext: Context, navController: NavController) {
     val isDark = isSystemInDarkTheme()
     val lineColor = if (isDark) Color.DarkGray else Color.LightGray
 
@@ -121,17 +123,19 @@ fun Drawer(applicationContext: Context) {
                 }
             }
         }
-        Column(
+        LazyColumn(
             modifier = Modifier.padding(16.dp)
         ) {
-            repeat(5) { item ->
-                Row() {
+            if (userResource.state == UserState.LoggedIn) {
+                item() {
                     Text(
-                        text = "Item number $item",
-                        modifier = Modifier.padding(8.dp),
-                        color = MaterialTheme.colors.onSurface
+                        text = "Favorite",
+                        modifier = Modifier
+                            .clickable { navController.navigate(Screens.Favorites.route) }
                     )
                 }
+            } else {
+
             }
         }
     }

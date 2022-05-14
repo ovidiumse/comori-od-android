@@ -12,9 +12,9 @@ enum class Screens(
     Library(route = "library", title = "Library", icon = R.drawable.ic_outline_menu_book_24, true),
     Search(route = "search", title = "Search", icon = R.drawable.ic_baseline_search_24, true),
     Book(route = "book", title = "Book", icon = R.drawable.ic_outline_menu_book_24),
-    Favourites(
-        route = "favourites",
-        title = "Favourites",
+    Favorites(
+        route = "favorites",
+        title = "Favorites",
         icon = R.drawable.ic_baseline_star_border_24,
         true
     ),
