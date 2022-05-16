@@ -62,6 +62,7 @@ fun SearchScreen(
                                     }
                                 }
                             }, onClearClick = {
+                                isSearchPending = false
                                 query = ""
                                 currentAutocompleteJob?.cancel()
                                 searchModel.autocompleteData.value =
