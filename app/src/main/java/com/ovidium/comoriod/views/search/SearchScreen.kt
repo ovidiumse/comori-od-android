@@ -1,15 +1,20 @@
 package com.ovidium.comoriod.views.search
 
 import SuggestionsView
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.components.SearchTopBar
@@ -52,7 +57,6 @@ fun SearchScreen(
                             searchText = query,
                             focusRequester = focusRequester,
                             onSearchTextChanged = {
-                                if (!isSearchPending) {
                                     query = it
                                     isSearchPending = false
                                     currentAutocompleteJob?.cancel()
@@ -60,21 +64,22 @@ fun SearchScreen(
                                         delay(300L)
                                         searchModel.autocomplete()
                                     }
+                            },
+                            onSearchClick = {
+                                if (query.isNotEmpty()) {
+                                    isSearchPending = true
+                                    keyboardController?.hide()
+                                    searchModel.search()
                                 }
-                            }, onClearClick = {
+                            },
+                            onClearClick = {
                                 isSearchPending = false
                                 query = ""
                                 currentAutocompleteJob?.cancel()
                                 searchModel.autocompleteData.value =
                                     Resource(Status.SUCCESS, null, null)
                                 keyboardController?.show()
-                            }) {
-                            if (query.isNotEmpty()) {
-                                isSearchPending = true
-                                keyboardController?.hide()
-                                searchModel.search()
-                            }
-                        }
+                            })
                     } else {
                         Text(
                             text = "${searchData.data?.hits?.hits?.count()} / ${searchData.data?.hits?.total?.value} rezultate",
@@ -97,8 +102,18 @@ fun SearchScreen(
                 if (!isSearchPending) {
                     when (autocompleteData.status) {
                         Status.SUCCESS -> {
-                            autocompleteData.data?.hits?.hits?.let { hits ->
-                                AutocompleteList(hits, navController)
+                            if (autocompleteData.data?.hits?.hits.isNullOrEmpty()) {
+                                NoSearchResultsPlaceholder(query, true) {
+                                    if (query.isNotEmpty()) {
+                                        isSearchPending = true
+                                        keyboardController?.hide()
+                                        searchModel.search()
+                                    }
+                                }
+                            } else {
+                                autocompleteData.data?.hits?.hits?.let { hits ->
+                                    AutocompleteList(hits, navController)
+                                }
                             }
                         }
                         Status.LOADING -> {}
@@ -107,13 +122,17 @@ fun SearchScreen(
                 } else {
                     when (searchData.status) {
                         Status.SUCCESS -> {
-                            searchData.data?.hits?.hits?.let { hits ->
-                                SearchResultsList(
-                                    hits = hits,
-                                    navController = navController,
-                                    listState = listState,
-                                    searchParams = searchParams,
-                                )
+                            if (searchData.data?.hits?.hits.isNullOrEmpty()) {
+                                NoSearchResultsPlaceholder(query, false, {})
+                            } else {
+                                searchData.data?.hits?.hits?.let { hits ->
+                                    SearchResultsList(
+                                        hits = hits,
+                                        navController = navController,
+                                        listState = listState,
+                                        searchParams = searchParams,
+                                    )
+                                }
                             }
                         }
                         Status.LOADING -> {}
@@ -144,28 +163,28 @@ fun SearchScreen(
                 },
                 onSaveAction = {
                     showFilterPopup = false
-                        val types =
-                            if (searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else searchParams[FilterCategory.TYPES]!!.joinToString(
-                                ","
-                            )
-                        val authors =
-                            if (searchParams[FilterCategory.AUTHORS].isNullOrEmpty()) "" else searchParams[FilterCategory.AUTHORS]!!.joinToString(
-                                ","
-                            )
-                        val volumes =
-                            if (searchParams[FilterCategory.VOLUMES].isNullOrEmpty()) "" else searchParams[FilterCategory.VOLUMES]!!.joinToString(
-                                ","
-                            )
-                        val books =
-                            if (searchParams[FilterCategory.BOOKS].isNullOrEmpty()) "" else searchParams[FilterCategory.BOOKS]!!.joinToString(
-                                ","
-                            )
-                        searchModel.search(
-                            type = types,
-                            authors = authors,
-                            volumes = volumes,
-                            books = books
+                    val types =
+                        if (searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else searchParams[FilterCategory.TYPES]!!.joinToString(
+                            ","
                         )
+                    val authors =
+                        if (searchParams[FilterCategory.AUTHORS].isNullOrEmpty()) "" else searchParams[FilterCategory.AUTHORS]!!.joinToString(
+                            ","
+                        )
+                    val volumes =
+                        if (searchParams[FilterCategory.VOLUMES].isNullOrEmpty()) "" else searchParams[FilterCategory.VOLUMES]!!.joinToString(
+                            ","
+                        )
+                    val books =
+                        if (searchParams[FilterCategory.BOOKS].isNullOrEmpty()) "" else searchParams[FilterCategory.BOOKS]!!.joinToString(
+                            ","
+                        )
+                    searchModel.search(
+                        type = types,
+                        authors = authors,
+                        volumes = volumes,
+                        books = books
+                    )
                     CoroutineScope(Dispatchers.Main).launch {
                         listState.scrollToItem(0, 0)
                     }
