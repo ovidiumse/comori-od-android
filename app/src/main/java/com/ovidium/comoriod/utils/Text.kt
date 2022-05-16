@@ -7,12 +7,13 @@ import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import java.text.Normalizer
 
-fun articulate(cnt: Int, many: String, single: String) : String {
+fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false) : String {
     return "$cnt " + when {
         cnt == 0 -> many
         cnt == 1 -> single
-        cnt > 20 -> "de $many"
+        cnt > 20 -> if (isShort) many else "de $many"
         else -> many
     }
 }
@@ -105,4 +106,15 @@ fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
             append(" - " + item.text)
         }
     }
+}
+
+fun String.normalize(): String {
+    return this
+        .replace("ș", "s")
+        .replace("ț", "t")
+        .replace("ă", "a")
+        .replace("î", "i")
+        .replace("â", "a")
+        .replace("ţ", "t")
+        .replace("ş", "s")
 }

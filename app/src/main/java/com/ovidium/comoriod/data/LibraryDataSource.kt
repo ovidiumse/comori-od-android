@@ -1,16 +1,22 @@
 package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
+import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.search.SearchResponse
+import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 class LibraryDataSource(
     private val jwtUtils: JWTUtils,
     private val apiService: ApiService,
     private val signInModel: GoogleSignInModel,
-    externalScope: CoroutineScope
+    private val externalScope: CoroutineScope
 ) : DataSource() {
     private fun buildToken(): String? {
         val userData = signInModel.userResource.value
@@ -23,7 +29,6 @@ class LibraryDataSource(
                     userData.user.id,
                     userData.user.issuer
                 )
-
             else -> null
         }
     }
@@ -45,4 +50,13 @@ class LibraryDataSource(
             buildToken()?.let { token -> apiService.getTrending(token) }
         }
     }
+
+    fun getTitles(bookTitle: String): Flow<Resource<TitlesResponse>> {
+        return buildFlow(externalScope) { apiService.getTitles(bookTitle) }
+    }
+
+    fun getTitlesForAuthor(authors: String, types: String, volumes: String, books: String, offset: Int, limit: Int): Flow<Resource<TitlesResponse>> {
+        return buildFlow(externalScope) { apiService.getTitlesForAuthor(authors = authors, type = types, volumes = volumes, books = books, offset = offset, limit = limit) }
+    }
+
 }

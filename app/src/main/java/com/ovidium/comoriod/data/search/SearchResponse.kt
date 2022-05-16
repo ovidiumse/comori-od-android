@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.data.search
 
 import com.google.gson.annotations.SerializedName
+import com.ovidium.comoriod.data.titles.Shards
 
 data class SearchResponse(
     val _shards: Shards,

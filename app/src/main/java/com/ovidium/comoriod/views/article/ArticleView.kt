@@ -1,6 +1,5 @@
 package com.ovidium.comoriod.views.article
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,31 +12,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.solver.widgets.Rectangle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.viewmodel.compose.*
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.model.ArticleModel
-import com.ovidium.comoriod.ui.theme.colors
-import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.model.BookModel
 import com.ovidium.comoriod.utils.*
 
 @Composable
 fun ArticleView(articleID: String) {
 
-    val articleModel: ArticleModel = viewModel()
-    val articleData by remember { articleModel.articleData }
-    val coroutineScope = rememberCoroutineScope()
+    val articleModel: BookModel = viewModel()
+    val bookData = remember { articleModel.bookData }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxWidth()
     ) {
+        val articleData = bookData.getOrDefault(articleID, Resource.loading(data = null))
         when (articleData.status) {
             Status.SUCCESS -> {
                 articleData.data?.let { article ->
@@ -56,16 +56,16 @@ fun ArticleView(articleID: String) {
 
 @Composable
 fun ArticleViewContent(article: ArticleResponse) {
-
-    val bibleRefs = remember { mutableStateListOf<BibleRefVerse>() }
+    val articleModel: ArticleModel = viewModel()
+    val bibleRefs = articleModel.getBibleRefs(article._id)
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
         LazyColumn(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .fillMaxHeight()
         ) {
             item {
                 Text(
@@ -135,7 +135,6 @@ fun ArticleViewContent(article: ArticleResponse) {
                             ).firstOrNull()
 
                             bibleRefs.clear()
-
                             if (annotation != null)
                                 bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
                         }

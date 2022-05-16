@@ -14,11 +14,20 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.search.Hit
+import com.ovidium.comoriod.model.GoogleSignInModel
+import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.views.library.authors.TitlesForAuthorCell
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 
 @Composable
-fun SearchResultsList(hits: List<Hit>, navController: NavController, listState: LazyListState, searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>) {
+fun SearchResultsList(
+    hits: List<Hit>,
+    navController: NavController,
+    listState: LazyListState,
+    searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?,
+) {
 
     LazyColumn(
         state = listState,
@@ -30,10 +39,18 @@ fun SearchResultsList(hits: List<Hit>, navController: NavController, listState: 
             if (index == 0)
                 Spacer(modifier = Modifier.height(16.dp))
 
-            SearchResultsCell(hit = hit, index, navController, searchParams = searchParams)
+            SearchResultsCell(
+                hit = hit,
+                index = index,
+                navController = navController,
+                searchParams = searchParams,
+            )
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
+
+
+
 
 

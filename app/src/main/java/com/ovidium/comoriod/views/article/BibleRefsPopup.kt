@@ -2,9 +2,7 @@ package com.ovidium.comoriod.views.article
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,11 +27,12 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
     ) {
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp
-        val screenWidth = configuration.screenWidthDp.dp
         val isDark = isSystemInDarkTheme()
         Box(
             Modifier
-                .size(screenWidth, screenHeight / 3)
+                .heightIn(max = screenHeight / 3)
+                .fillMaxWidth()
+                .wrapContentHeight()
                 .background(
                     getNamedColor("PopupContainer", isDark = isDark)!!,
                     RoundedCornerShape(16.dp)
@@ -42,7 +41,7 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
             LazyColumn(
                 modifier = Modifier.padding(16.dp)
             ) {
-                itemsIndexed(bibleRefs) { index, item ->
+                itemsIndexed(bibleRefs) { idx, item ->
                     Text(
                         text = formatBibleRefs(item, isDark = isDark),
                         style = TextStyle(
@@ -51,7 +50,7 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
                             lineHeight = 22.sp,
                             fontWeight = FontWeight.Light
                         ),
-                        modifier = Modifier.padding(bottom = 10.dp)
+                        modifier = Modifier.padding(top = (if (idx != 0) 10.dp else 0.dp))
                     )
                 }
             }

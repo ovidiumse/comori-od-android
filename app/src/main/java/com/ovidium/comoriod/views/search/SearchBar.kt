@@ -31,13 +31,13 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 @Composable
 fun SearchBar(
     searchText: String,
+    focusRequester: FocusRequester,
     placeholderText: String = if (searchText.isEmpty()) "Caută..." else searchText,
     onSearchTextChanged: (String) -> Unit = {},
     onClearClick: () -> Unit = {},
     onSearchClick: () -> Unit = {}
 ) {
     var showClearButton: MutableState<Boolean> = remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
 
     OutlinedTextField(
         modifier = Modifier

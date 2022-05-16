@@ -8,6 +8,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -18,6 +19,8 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.search.filter.FilterCategory
+import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
+import com.ovidium.comoriod.views.search.filter.SearchSource
 import kotlinx.coroutines.*
 
 
@@ -30,13 +33,14 @@ fun SearchScreen(
     var query by remember { searchModel.query }
     val autocompleteData by remember { searchModel.autocompleteData }
     val searchData by remember { searchModel.searchData }
-    var isSearch by remember { searchModel.isSearch }
+    var isSearchPending by remember { searchModel.isSearch }
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
-    var currentJob by remember { mutableStateOf<Job?>(null) }
+    var currentAutocompleteJob by remember { mutableStateOf<Job?>(null) }
     var showFilterPopup by remember { mutableStateOf(false) }
     val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
+    val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
@@ -46,29 +50,30 @@ fun SearchScreen(
                     if (searchData.data?.hits?.hits.isNullOrEmpty()) {
                         SearchBar(
                             searchText = query,
+                            focusRequester = focusRequester,
                             onSearchTextChanged = {
-                                query = it
-                                isSearch = false
-                                currentJob?.cancel()
-                                currentJob = coroutineScope.async {
-                                    delay(500L)
-                                    searchModel.autocomplete()
+                                if (!isSearchPending) {
+                                    query = it
+                                    isSearchPending = false
+                                    currentAutocompleteJob?.cancel()
+                                    currentAutocompleteJob = coroutineScope.async {
+                                        delay(300L)
+                                        searchModel.autocomplete()
+                                    }
                                 }
                             }, onClearClick = {
                                 query = ""
-                                currentJob?.cancel()
+                                currentAutocompleteJob?.cancel()
                                 searchModel.autocompleteData.value =
                                     Resource(Status.SUCCESS, null, null)
                                 keyboardController?.show()
-                            }, onSearchClick = {
-                                if (query.isNotEmpty()) {
-                                    isSearch = true
-                                    keyboardController?.hide()
-                                    coroutineScope.launch {
-                                        searchModel.search()
-                                    }
-                                }
-                            })
+                            }) {
+                            if (query.isNotEmpty()) {
+                                isSearchPending = true
+                                keyboardController?.hide()
+                                searchModel.search()
+                            }
+                        }
                     } else {
                         Text(
                             text = "${searchData.data?.hits?.hits?.count()} / ${searchData.data?.hits?.total?.value} rezultate",
@@ -76,7 +81,7 @@ fun SearchScreen(
                         )
                     }
                 },
-                isSearch = isSearch,
+                isSearch = isSearchPending,
                 onMenuClicked = {
                     launchMenu(coroutineScope, scaffoldState)
                 },
@@ -88,7 +93,7 @@ fun SearchScreen(
     ) {
         Column {
             if (query.isNotEmpty()) {
-                if (!isSearch) {
+                if (!isSearchPending) {
                     when (autocompleteData.status) {
                         Status.SUCCESS -> {
                             autocompleteData.data?.hits?.hits?.let { hits ->
@@ -102,7 +107,12 @@ fun SearchScreen(
                     when (searchData.status) {
                         Status.SUCCESS -> {
                             searchData.data?.hits?.hits?.let { hits ->
-                                SearchResultsList(hits, navController, listState, searchParams = searchParams)
+                                SearchResultsList(
+                                    hits = hits,
+                                    navController = navController,
+                                    listState = listState,
+                                    searchParams = searchParams,
+                                )
                             }
                         }
                         Status.LOADING -> {}
@@ -118,6 +128,7 @@ fun SearchScreen(
         searchData.data?.aggregations.let { aggregations ->
             SearchFilterPopup(
                 aggregations = aggregations,
+                searchSource = SearchSource.SEARCH,
                 onCheck = { category, item ->
                     if (searchParams[category] != null && (searchParams[category]!!.contains(item))) {
                         searchParams[category]!!.remove(item)
@@ -132,7 +143,6 @@ fun SearchScreen(
                 },
                 onSaveAction = {
                     showFilterPopup = false
-                    coroutineScope.launch {
                         val types =
                             if (searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else searchParams[FilterCategory.TYPES]!!.joinToString(
                                 ","
@@ -155,7 +165,6 @@ fun SearchScreen(
                             volumes = volumes,
                             books = books
                         )
-                    }
                     CoroutineScope(Dispatchers.Main).launch {
                         listState.scrollToItem(0, 0)
                     }
