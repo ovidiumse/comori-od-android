@@ -6,11 +6,18 @@ import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.FavoritesDataSource
 import com.ovidium.comoriod.utils.JWTUtils
+import kotlinx.coroutines.launch
 
 class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewModel() {
     private val dataSource = FavoritesDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 
     val favoriteArticlesData by lazy { dataSource.favoriteArticlesData }
+
+    fun deleteFavoriteArticle(id: String) {
+        viewModelScope.launch {
+            dataSource.deleteFavoriteArticle(id)
+        }
+    }
 
 }
 

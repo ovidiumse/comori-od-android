@@ -1,10 +1,13 @@
 package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
+import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 
 class FavoritesDataSource(
     private val jwtUtils: JWTUtils,
@@ -33,4 +36,11 @@ class FavoritesDataSource(
             buildToken()?.let { token -> apiService.getFavorites(token) }
         }
     }
+
+    fun deleteFavoriteArticle(id: String) {
+        buildFlow(externalScope) {
+            buildToken()?.let { token -> apiService.deleteFavoriteArticle(token, id) }
+        }
+    }
+
 }

@@ -34,6 +34,7 @@ private val LightNamedColors = mapOf(
     "BibleRefBlue" to Color(0xFF90E0EF),
     "PopupContainer" to Color(0xFF393939),
     "InvertedText" to Color(0xFFF0EFF2),
+    "Text" to Color(0xFF1B1B1B),
     "CardButton" to Color(0xFFA6CBDD)
 )
 
@@ -58,6 +59,7 @@ private val DarkNamedColors = mapOf(
     "BibleRefBlue" to Color(0xFF0077B6),
     "PopupContainer" to Color(0xFFDEDEDE),
     "InvertedText" to Color(0xFF313131),
+    "Text" to Color(0xFFF0EFF2),
     "CardButton" to Color(0xFFA6CBDD)
 )
 

@@ -22,7 +22,6 @@ fun LibraryMain(
 ) {
 
     LazyColumn(modifier = Modifier.fillMaxHeight()) {
-        println("TRENDING: ${libraryModel.trendingData.value.data}")
         if (signInModel.userResource.value.state == UserState.LoggedIn) {
             item {
                 StateHandler(

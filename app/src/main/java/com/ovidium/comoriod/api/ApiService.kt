@@ -80,4 +80,10 @@ interface ApiService {
         @Header("Authorization") token: String,
     ): List<FavoriteArticle>
 
+    @DELETE("favorites/{id}")
+    suspend fun deleteFavoriteArticle(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    )
+
 }

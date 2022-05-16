@@ -8,8 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
@@ -18,14 +17,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.google.gson.internal.bind.util.ISO8601Utils
+import androidx.compose.ui.window.Dialog
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.model.FavoritesModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import java.text.ParsePosition
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -34,6 +31,7 @@ import java.util.*
 fun FavoritesScreen(favoritesModel: FavoritesModel) {
 
     val favoriteArticles = remember { favoritesModel.favoriteArticlesData }
+    val articleToDelete = remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -53,17 +51,54 @@ fun FavoritesScreen(favoritesModel: FavoritesModel) {
             LazyColumn() {
                 favoriteArticles.value.data.let { articles ->
                     itemsIndexed(articles ?: emptyList()) { _, favoriteArticle ->
-                        FavoriteArticleCell(favoriteArticle)
+                        FavoriteArticleCell(favoriteArticle) { idToDelete ->
+                            articleToDelete.value = idToDelete
+//                            favoritesModel.deleteFavoriteArticle(idToDelete)
+                        }
                     }
                 }
             }
+        }
+        if (articleToDelete.value.isNotEmpty()) {
+            AlertDialog(
+                onDismissRequest = { /*TODO*/ },
+                title = {
+                    Text(text = "Atenție")
+                },
+                text = {
+                    Text("Ești sigur că vrei să ștergi acest articol favorit?")
+                },
+                confirmButton = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color.Red,
+                            contentColor = Color.White),
+                        onClick = {
+                            favoritesModel.deleteFavoriteArticle(articleToDelete.value)
+                            articleToDelete.value = ""
+                        }) {
+                        Text("Șterge")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = getNamedColor("Link", isSystemInDarkTheme())!!,
+                            contentColor = Color.White),
+                        onClick = {
+                            articleToDelete.value = ""
+                        }) {
+                        Text("Renunță")
+                    }
+                }
+            )
         }
     }
 }
 
 
 @Composable
-fun FavoriteArticleCell(favoriteArticle: FavoriteArticle) {
+fun FavoriteArticleCell(favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
     Card(
         shape = RoundedCornerShape(10.dp),
         backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
@@ -78,12 +113,12 @@ fun FavoriteArticleCell(favoriteArticle: FavoriteArticle) {
                 text = favoriteArticle.title,
                 style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.Bold,
-                color = getNamedColor("InvertedText", isSystemInDarkTheme())!!,
+                color = Color.Black,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
             FavoriteCellTitle(favoriteArticle)
-            FavoriteCellInfo(favoriteArticle)
+            FavoriteCellInfo(favoriteArticle, deleteAction)
         }
     }
 }
@@ -101,20 +136,14 @@ fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
             contentDescription = "Menu",
-            tint = getNamedColor(
-                "InvertedText",
-                isSystemInDarkTheme()
-            )!!,
+            tint = Color.Black,
             modifier = Modifier
                 .size(16.dp)
         )
         Text(
             text = favoriteArticle.book,
             style = MaterialTheme.typography.caption,
-            color = getNamedColor(
-                "InvertedText",
-                isSystemInDarkTheme()
-            )!!,
+            color = Color.Black,
             modifier = Modifier
                 .padding(start = 8.dp)
         )
@@ -124,7 +153,7 @@ fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
 
 
 @Composable
-fun FavoriteCellInfo(favoriteArticle: FavoriteArticle) {
+fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
     Column(
         modifier = Modifier
             .background(Color.DarkGray)
@@ -144,6 +173,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_tag_24),
                         contentDescription = "Tag",
+                        tint = Color.White,
                         modifier = Modifier
                             .padding(end = 5.dp)
                     )
@@ -151,6 +181,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle) {
                         Text(
                             text = favoriteArticle.tags[it],
                             style = MaterialTheme.typography.caption,
+                            color = Color.White,
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(Color.Red, RoundedCornerShape(50))
@@ -163,6 +194,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_access_time_24),
                         contentDescription = "Menu",
+                        tint = Color.White,
                         modifier = Modifier
                             .padding(end = 5.dp)
                     )
@@ -172,6 +204,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle) {
                     Text(
                         text = formattedDate,
                         style = MaterialTheme.typography.caption,
+                        color = Color.White
                     )
                 }
 
@@ -189,7 +222,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle) {
                     tint = Color.Red,
                     modifier = Modifier
                         .size(25.dp)
-                        .clickable { /* Delete favorite article */ }
+                        .clickable { deleteAction(favoriteArticle.id) }
                 )
             }
         }
