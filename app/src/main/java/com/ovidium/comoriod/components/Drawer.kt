@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -21,8 +22,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -31,6 +34,7 @@ import com.ovidium.comoriod.R
 import com.ovidium.comoriod.google.GoogleApiContract
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
 
 @Composable
@@ -128,11 +132,23 @@ fun Drawer(applicationContext: Context, navController: NavController) {
         ) {
             if (userResource.state == UserState.LoggedIn) {
                 item() {
-                    Text(
-                        text = "Favorite",
-                        modifier = Modifier
-                            .clickable { navController.navigate(Screens.Favorites.route) }
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
+                            contentDescription = "Menu",
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                        )
+                        Text(
+                            text = "Favorite",
+                            style = MaterialTheme.typography.h6,
+                            modifier = Modifier
+                                .clickable { navController.navigate(Screens.Favorites.route) }
+                        )
+                    }
+
                 }
             } else {
 
