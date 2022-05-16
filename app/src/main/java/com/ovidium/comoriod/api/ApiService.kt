@@ -86,4 +86,10 @@ interface ApiService {
         @Path("id") id: String
     )
 
+    @POST("favorites")
+    suspend fun saveFavorite(
+        @Header("Authorization") token: String,
+        @Body favoriteArticle: FavoriteArticle
+    ): List<FavoriteArticle>
+
 }

@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
@@ -25,12 +24,11 @@ import com.ovidium.comoriod.model.FavoritesModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Composable
 fun FavoritesScreen(favoritesModel: FavoritesModel) {
 
-    val favoriteArticles = remember { favoritesModel.favoriteArticlesData }
+    val favoriteArticles by remember { favoritesModel.favoriteArticlesData }
     val articleToDelete = remember { mutableStateOf("") }
 
     Scaffold(
@@ -49,11 +47,10 @@ fun FavoritesScreen(favoritesModel: FavoritesModel) {
                 .background(MaterialTheme.colors.background)
         ) {
             LazyColumn() {
-                favoriteArticles.value.data.let { articles ->
-                    itemsIndexed(articles ?: emptyList()) { _, favoriteArticle ->
+                favoriteArticles.data?.let { articles ->
+                    itemsIndexed(articles) { _, favoriteArticle ->
                         FavoriteArticleCell(favoriteArticle) { idToDelete ->
                             articleToDelete.value = idToDelete
-//                            favoritesModel.deleteFavoriteArticle(idToDelete)
                         }
                     }
                 }
@@ -76,6 +73,7 @@ fun FavoritesScreen(favoritesModel: FavoritesModel) {
                         onClick = {
                             favoritesModel.deleteFavoriteArticle(articleToDelete.value)
                             articleToDelete.value = ""
+                            favoritesModel.updateFavorites()
                         }) {
                         Text("Șterge")
                     }
@@ -94,7 +92,13 @@ fun FavoritesScreen(favoritesModel: FavoritesModel) {
             )
         }
     }
+
+LaunchedEffect(Unit) {
+    favoritesModel.updateFavorites()
 }
+
+}
+
 
 
 @Composable

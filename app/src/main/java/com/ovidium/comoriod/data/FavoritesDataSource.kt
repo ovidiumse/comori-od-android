@@ -1,13 +1,13 @@
 package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
-import com.ovidium.comoriod.data.titles.TitlesResponse
+import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 
 class FavoritesDataSource(
     private val jwtUtils: JWTUtils,
@@ -31,15 +31,30 @@ class FavoritesDataSource(
         }
     }
 
-    val favoriteArticlesData by lazy {
-        buildFlow(externalScope) {
-            buildToken()?.let { token -> apiService.getFavorites(token) }
+//    val favoriteArticlesData by lazy {
+//        buildFlow(externalScope) {
+//            buildToken()?.let { token -> apiService.getFavorites(token) }
+//        }
+//    }
+
+
+    fun getFavoriteArticles(): SharedFlow<Resource<List<FavoriteArticle>?>> {
+        return buildSharedFlow(externalScope) {
+            buildToken()?.let { token ->
+                apiService.getFavorites(token)
+            }
         }
     }
 
     fun deleteFavoriteArticle(id: String) {
         buildFlow(externalScope) {
             buildToken()?.let { token -> apiService.deleteFavoriteArticle(token, id) }
+        }
+    }
+
+    fun saveFavorite(article: FavoriteArticle) {
+        buildFlow(externalScope) {
+            buildToken()?.let { token -> apiService.saveFavorite(token, article) }
         }
     }
 

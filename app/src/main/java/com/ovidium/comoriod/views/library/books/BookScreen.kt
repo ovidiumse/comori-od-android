@@ -29,7 +29,8 @@ fun BookScreen(
     book: String,
     jwtUtils: JWTUtils,
     scaffoldState: ScaffoldState,
-    signInModel: GoogleSignInModel
+    signInModel: GoogleSignInModel,
+    favoritesModel: FavoritesModel
 ) {
 
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
@@ -60,7 +61,7 @@ fun BookScreen(
                 contentPadding = PaddingValues(end = 16.dp),
                 verticalAlignment = Alignment.Top,
             ) { pageIdx ->
-                ArticleView(articleID = titles.map { it._id }[pageIdx])
+                ArticleView(articleID = titles.map { it._id }[pageIdx], favoritesModel)
             }
         }
         if (showTOCPopup && titles != null) {

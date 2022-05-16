@@ -1,8 +1,6 @@
 package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
-import com.ovidium.comoriod.data.article.ArticleResponse
-import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
@@ -10,7 +8,6 @@ import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
 
 class LibraryDataSource(
     private val jwtUtils: JWTUtils,

@@ -128,7 +128,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("articleID", "")
             }
 
-            ArticleView(articleID = getArticleID())
+            ArticleView(articleID = getArticleID(), favoritesModel)
         }
 
         composable(
@@ -146,7 +146,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("book", "")
             }
 
-            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel)
+            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel, favoritesModel = favoritesModel)
         }
 
         composable(
