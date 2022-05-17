@@ -19,27 +19,20 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewMo
 
     var favoriteArticlesData = mutableStateOf<Resource<List<FavoriteArticle>?>>(Resource.loading(null))
     var filteredArticles = mutableStateListOf<FavoriteArticle>()
-    var selectedTags = mutableStateListOf<String>()
+    var selectedTag = mutableStateOf("")
 
     init {
         updateFavorites()
     }
 
     fun filterArticles() {
-        var tempList = mutableListOf<FavoriteArticle>()
-        for (selectedTag in selectedTags) {
-            for (article in favoriteArticlesData.value.data.let { it } ?: emptyList()) {
-                if (article.tags.contains(selectedTag)) {
-                    if (!tempList.contains(article)) {
-                        tempList.add(article)
-                    }
-                }
+        if (selectedTag.value.isNotEmpty()) {
+            val filtered = favoriteArticlesData.value.data.let { it }!!.filter { it.tags.contains(selectedTag.value) }
+            filteredArticles.clear()
+            filteredArticles.addAll(filtered)
+            if (filteredArticles.isEmpty()) {
+                selectedTag.value = ""
             }
-        }
-        filteredArticles.clear()
-        filteredArticles.addAll(tempList)
-        if (filteredArticles.isEmpty()) {
-            selectedTags.clear()
         }
     }
 

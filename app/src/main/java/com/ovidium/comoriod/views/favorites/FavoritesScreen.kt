@@ -58,10 +58,10 @@ fun FavoritesScreen(favoritesModel: FavoritesModel, scaffoldState: ScaffoldState
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            TagsRow(favoriteArticles, favoritesModel.selectedTags, onTagsChanged = { favoritesModel.filterArticles() })
+            TagsRow(favoriteArticles, favoritesModel.selectedTag, onTagsChanged = { favoritesModel.filterArticles() })
             LazyColumn() {
                 favoriteArticles.data?.let { articles ->
-                itemsIndexed(if (favoritesModel.selectedTags.isEmpty()) articles else favoritesModel.filteredArticles) { _, favoriteArticle ->
+                itemsIndexed(if (favoritesModel.selectedTag.value.isEmpty()) articles else favoritesModel.filteredArticles) { _, favoriteArticle ->
                     FavoriteArticleCell(favoriteArticle) { idToDelete ->
                         articleToDelete.value = idToDelete
                     }
@@ -83,7 +83,7 @@ fun FavoritesScreen(favoritesModel: FavoritesModel, scaffoldState: ScaffoldState
 
 
 @Composable
-fun TagsRow(favoriteArticles: Resource<List<FavoriteArticle>?>, selectedTags: SnapshotStateList<String>, onTagsChanged: () -> Unit) {
+fun TagsRow(favoriteArticles: Resource<List<FavoriteArticle>?>, selectedTag: MutableState<String>, onTagsChanged: () -> Unit) {
 
     val isDark = isSystemInDarkTheme()
 
@@ -96,9 +96,9 @@ fun TagsRow(favoriteArticles: Resource<List<FavoriteArticle>?>, selectedTags: Sn
                 CapsuleButton(
                     text = "Toate",
                     isDark = isDark,
-                    isSelected = selectedTags.isEmpty(),
+                    isSelected = selectedTag.value.isEmpty(),
                     action = {
-                        selectedTags.clear()
+                        selectedTag.value = ""
                         onTagsChanged()
                     }
                 )
@@ -108,12 +108,12 @@ fun TagsRow(favoriteArticles: Resource<List<FavoriteArticle>?>, selectedTags: Sn
                 CapsuleButton(
                     text = tags[index],
                     isDark = isDark,
-                    isSelected = selectedTags.contains(tags[index]),
+                    isSelected = selectedTag.value == tags[index],
                     action = { tag ->
-                        if (selectedTags.contains(tag)) {
-                            selectedTags.remove(tag)
+                        if (selectedTag.value == tag) {
+                            selectedTag.value = ""
                         } else {
-                            selectedTags.add(tag)
+                            selectedTag.value = tag
                         }
                         onTagsChanged()
                     }
