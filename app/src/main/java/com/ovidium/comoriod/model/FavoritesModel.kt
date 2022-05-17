@@ -1,6 +1,8 @@
 package com.ovidium.comoriod.model
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -16,11 +18,31 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewMo
     private val dataSource = FavoritesDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 
     var favoriteArticlesData = mutableStateOf<Resource<List<FavoriteArticle>?>>(Resource.loading(null))
-
+    var filteredArticles = mutableStateListOf<FavoriteArticle>()
+    var selectedTags = mutableStateListOf<String>()
 
     init {
         updateFavorites()
     }
+
+    fun filterArticles() {
+        var tempList = mutableListOf<FavoriteArticle>()
+        for (selectedTag in selectedTags) {
+            for (article in favoriteArticlesData.value.data.let { it } ?: emptyList()) {
+                if (article.tags.contains(selectedTag)) {
+                    if (!tempList.contains(article)) {
+                        tempList.add(article)
+                    }
+                }
+            }
+        }
+        filteredArticles.clear()
+        filteredArticles.addAll(tempList)
+        if (filteredArticles.isEmpty()) {
+            selectedTags.clear()
+        }
+    }
+
 
     fun deleteFavoriteArticle(id: String) {
         viewModelScope.launch {
@@ -40,6 +62,7 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewMo
         viewModelScope.launch {
             dataSource.getFavoriteArticles().collectLatest { state ->
                 favoriteArticlesData.value = state
+                filterArticles()
             }
         }
     }

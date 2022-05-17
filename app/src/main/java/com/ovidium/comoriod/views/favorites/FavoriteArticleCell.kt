@@ -30,7 +30,8 @@ fun FavoriteArticleCell(favoriteArticle: FavoriteArticle, deleteAction: (String)
         backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
         elevation = 1.dp,
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 8.dp)
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
