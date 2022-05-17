@@ -120,7 +120,7 @@ fun SaveFavoriteDialog(
                             contentColor = Color.White),
                         enabled = currentTag.isNotEmpty()
                     ) {
-                        Text(text = "#") //Am vrut sa fie mic butonul si nu am avut inspiratie pentru altceva, revenim :)
+                        Text(text = "+") //Am vrut sa fie mic butonul si nu am avut inspiratie pentru altceva, revenim :)
                     }
                 }
                 Button(

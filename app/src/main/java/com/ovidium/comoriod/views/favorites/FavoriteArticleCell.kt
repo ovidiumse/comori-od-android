@@ -26,7 +26,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun FavoriteArticleCell(navController: NavController, favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
+fun FavoriteArticleCell(
+    navController: NavController,
+    favoriteArticle: FavoriteArticle,
+    deleteAction: (String) -> Unit
+) {
     Card(
         shape = RoundedCornerShape(10.dp),
         backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
@@ -107,16 +111,18 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
                         modifier = Modifier
                             .padding(end = 5.dp)
                     )
-                    repeat(favoriteArticle.tags.count()) {
-                        Text(
-                            text = favoriteArticle.tags[it],
-                            style = MaterialTheme.typography.caption,
-                            color = Color.White,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .background(Color.Red, RoundedCornerShape(50))
-                                .padding(5.dp)
-                        )
+
+                    favoriteArticle.tags.forEach { tag ->
+                        if (tag.isNotEmpty())
+                            Text(
+                                text = tag,
+                                style = MaterialTheme.typography.caption,
+                                color = Color.White,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .background(Color.Red, RoundedCornerShape(50))
+                                    .padding(5.dp)
+                            )
                     }
                 }
 

@@ -28,6 +28,7 @@ import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.FavoritesModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
+import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
 import com.ovidium.comoriod.views.favorites.FavoriteArticleCell
 import kotlinx.coroutines.delay
@@ -37,12 +38,30 @@ import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
 @Composable
-fun FavoritesScreen(navController: NavController, favoritesModel: FavoritesModel, scaffoldState: ScaffoldState) {
+fun FavoritesScreen(
+    navController: NavController,
+    favoritesModel: FavoritesModel,
+    scaffoldState: ScaffoldState
+) {
+    val favoritesData = favoritesModel.articles
+    val tags = favoritesData.value.data?.map { article -> article.tags }?.flatten()?.distinct()
+        ?.filter { tag -> tag.isNotEmpty() }
+        ?: emptyList()
 
-    val favoriteArticles by remember { favoritesModel.favoriteArticlesData }
     val articleToDelete = remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
+    var selectedTag by remember { mutableStateOf("") }
 
+    fun getArticles(): List<FavoriteArticle>? {
+        // selectedTag may not be in the list of tags after a deletion
+        if (!tags.contains(selectedTag))
+            selectedTag = ""
+
+        return if (selectedTag.isEmpty())
+            favoritesData.value.data
+        else
+            favoritesData.value.data?.filter { fav -> fav.tags.contains(selectedTag) }
+    }
 
     Scaffold(
         topBar = {
@@ -50,7 +69,6 @@ fun FavoritesScreen(navController: NavController, favoritesModel: FavoritesModel
                 title = { Text(text = "Favorite") },
                 isSearch = false,
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
-
             }
         }
     ) {
@@ -59,17 +77,29 @@ fun FavoritesScreen(navController: NavController, favoritesModel: FavoritesModel
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background)
         ) {
-            TagsRow(favoriteArticles, favoritesModel.selectedTag, onTagsChanged = { favoritesModel.filterArticles() })
-            LazyColumn() {
-                favoriteArticles.data?.let { articles ->
-                itemsIndexed(if (favoritesModel.selectedTag.value.isEmpty()) articles else favoritesModel.filteredArticles) { _, favoriteArticle ->
-                    FavoriteArticleCell(navController, favoriteArticle) { idToDelete ->
-                        articleToDelete.value = idToDelete
+            when (favoritesData.value.status) {
+                Status.SUCCESS -> {
+                    val favorites = getArticles()
+
+                    TagsRow(
+                        tags,
+                        selectedTag,
+                        onTagsChanged = { tag -> selectedTag = tag })
+
+                    LazyColumn() {
+                        favorites?.forEach { article ->
+                            item() {
+                                FavoriteArticleCell(navController, article) { idToDelete ->
+                                    articleToDelete.value = idToDelete
+                                }
+                            }
+                        }
                     }
                 }
-                }
+
             }
         }
+
         if (articleToDelete.value.isNotEmpty()) {
             DeleteFavoriteConfirmationDialog(
                 deleteAction = {
@@ -84,40 +114,35 @@ fun FavoritesScreen(navController: NavController, favoritesModel: FavoritesModel
 
 
 @Composable
-fun TagsRow(favoriteArticles: Resource<List<FavoriteArticle>?>, selectedTag: MutableState<String>, onTagsChanged: () -> Unit) {
-
+fun TagsRow(
+    tags: List<String>,
+    selectedTag: String,
+    onTagsChanged: (String) -> Unit
+) {
     val isDark = isSystemInDarkTheme()
 
     LazyRow(
         modifier = Modifier
             .padding(16.dp)
     ) {
-        val tags = favoriteArticles.data?.map { it.tags }?.flatten()?.distinct().let { it } ?: emptyList()
+        item {
+            CapsuleButton(
+                text = "Toate",
+                isDark = isDark,
+                isSelected = selectedTag.isEmpty(),
+                action = {
+                    onTagsChanged("")
+                }
+            )
+        }
+
+        tags.forEach { tag ->
             item {
                 CapsuleButton(
-                    text = "Toate",
+                    text = tag,
                     isDark = isDark,
-                    isSelected = selectedTag.value.isEmpty(),
-                    action = {
-                        selectedTag.value = ""
-                        onTagsChanged()
-                    }
-                )
-            }
-        repeat(tags.count()) { index ->
-            item {
-                CapsuleButton(
-                    text = tags[index],
-                    isDark = isDark,
-                    isSelected = selectedTag.value == tags[index],
-                    action = { tag ->
-                        if (selectedTag.value == tag) {
-                            selectedTag.value = ""
-                        } else {
-                            selectedTag.value = tag
-                        }
-                        onTagsChanged()
-                    }
+                    isSelected = selectedTag == tag,
+                    action = { tag -> onTagsChanged(tag) }
                 )
             }
         }

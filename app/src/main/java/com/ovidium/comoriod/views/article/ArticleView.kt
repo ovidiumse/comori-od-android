@@ -161,20 +161,17 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
         ) {
                 FloatingActionButton(
                     onClick = {
-                        if (isCurrentArticleFavorite(favoritesModel, article)) {
+                        if (favoritesModel.isFavorite(article._id)) {
                             showDeleteFavoriteDialog = true
                         } else {
                             showSaveFavoriteDialog = true
                         }
                     },
                     modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                    backgroundColor = if (isCurrentArticleFavorite(
-                            favoritesModel,
-                            article
-                        )
+                    backgroundColor = if (favoritesModel.isFavorite(article._id)
                     ) Color.Red else getNamedColor("Link", isSystemInDarkTheme())!!
                 ) {
-                    if (isCurrentArticleFavorite(favoritesModel, article)) {
+                    if (favoritesModel.isFavorite(article._id)) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
                             contentDescription = "Delete",
@@ -248,15 +245,5 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
     }
 
 
-}
-
-fun isCurrentArticleFavorite(favoritesModel: FavoritesModel, article: ArticleResponse): Boolean {
-    favoritesModel.favoriteArticlesData.value.data.let { favorites ->
-        if (favorites != null) {
-            return favorites.isNotEmpty() && favorites.map { it.id }.contains(article._id)
-        } else {
-            return false
-        }
-    }
 }
 

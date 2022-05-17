@@ -1,7 +1,7 @@
 package com.ovidium.comoriod.model
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,28 +13,20 @@ import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewModel() {
-    private val dataSource = FavoritesDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
+class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewModel() {
+    private val dataSource =
+        FavoritesDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 
-    var favoriteArticlesData = mutableStateOf<Resource<List<FavoriteArticle>?>>(Resource.loading(null))
-    var filteredArticles = mutableStateListOf<FavoriteArticle>()
-    var selectedTag = mutableStateOf("")
+    val articles =
+        mutableStateOf<Resource<List<FavoriteArticle>?>>(Resource.loading(null))
 
     init {
         updateFavorites()
     }
 
-    fun filterArticles() {
-        if (selectedTag.value.isNotEmpty()) {
-            val filtered = favoriteArticlesData.value.data?.filter { it.tags.contains(selectedTag.value) }
-            filteredArticles.clear()
-            filteredArticles.addAll(filtered ?: emptyList())
-            if (filteredArticles.isEmpty()) {
-                selectedTag.value = ""
-            }
-        }
+    fun isFavorite(id: String): Boolean {
+        return articles.value.data?.map { fav-> fav.id }?.contains(id) ?: false
     }
-
 
     fun deleteFavoriteArticle(id: String) {
         viewModelScope.launch {
@@ -53,12 +45,10 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewMo
     private fun updateFavorites() {
         viewModelScope.launch {
             dataSource.getFavoriteArticles().collectLatest { state ->
-                favoriteArticlesData.value = state
-                filterArticles()
+                articles.value = state
             }
         }
     }
-
 }
 
 
