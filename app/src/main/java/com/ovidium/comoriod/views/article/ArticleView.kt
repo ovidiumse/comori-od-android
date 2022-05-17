@@ -9,27 +9,24 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.viewmodel.compose.*
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.article.ArticleResponse
-import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.model.BookModel
 import com.ovidium.comoriod.model.FavoritesModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.*
+import com.ovidium.comoriod.utils.Resource
+import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.utils.parseVerses
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 
 @Composable
@@ -162,42 +159,52 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            FloatingActionButton(
-                onClick = {
-                          if (isCurrentArticleFavorite(favoritesModel, article)) {
-                              showDeleteFavoriteDialog = true
-                          } else {
-                              showSaveFavoriteDialog = true
-                          }
-                },
-                modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                backgroundColor = if (isCurrentArticleFavorite(favoritesModel, article)) Color.Red else getNamedColor("Link", isSystemInDarkTheme())!!
-            ) {
-                if (isCurrentArticleFavorite(favoritesModel, article)) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
-                        contentDescription = "Delete",
-                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
-                    )
-                } else {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
-                        contentDescription = "Favorite",
-                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
-                    )
+                FloatingActionButton(
+                    onClick = {
+                        if (isCurrentArticleFavorite(favoritesModel, article)) {
+                            showDeleteFavoriteDialog = true
+                        } else {
+                            showSaveFavoriteDialog = true
+                        }
+                    },
+                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+                    backgroundColor = if (isCurrentArticleFavorite(
+                            favoritesModel,
+                            article
+                        )
+                    ) Color.Red else getNamedColor("Link", isSystemInDarkTheme())!!
+                ) {
+                    if (isCurrentArticleFavorite(favoritesModel, article)) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
+                            contentDescription = "Delete",
+                            tint = getNamedColor("Container", isSystemInDarkTheme())!!,
+                        )
+                    } else {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
+                            contentDescription = "Favorite",
+                            tint = getNamedColor("Container", isSystemInDarkTheme())!!,
+                        )
+                    }
                 }
-            }
         }
     }
     if (showSaveFavoriteDialog) {
         SaveFavoriteDialog(
             articleToSave = article,
             onSaveAction = { tags ->
-            val favoriteArticle = FavoriteArticle(id = article._id, title = article.title, tags = tags, author = article.author, book = article.book, timestamp = "")
+                val favoriteArticle = FavoriteArticle(
+                    id = article._id,
+                    title = article.title,
+                    tags = tags,
+                    author = article.author,
+                    book = article.book,
+                    timestamp = ""
+                )
                 favoritesModel.saveFavorite(favoriteArticle)
-                favoritesModel.updateFavorites()
                 showSaveFavoriteDialog = false
-        },
+            },
             onExitAction = {
                 showSaveFavoriteDialog = false
             }
@@ -216,11 +223,11 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = Color.Red,
-                        contentColor = Color.White),
+                        contentColor = Color.White
+                    ),
                     onClick = {
                         favoritesModel.deleteFavoriteArticle(article._id)
                         showDeleteFavoriteDialog = false
-                        favoritesModel.updateFavorites()
                     }) {
                     Text("Șterge")
                 }
@@ -229,7 +236,8 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                 Button(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = getNamedColor("Link", isSystemInDarkTheme())!!,
-                        contentColor = Color.White),
+                        contentColor = Color.White
+                    ),
                     onClick = {
                         showDeleteFavoriteDialog = false
                     }) {
@@ -238,6 +246,7 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
             }
         )
     }
+
 
 }
 
