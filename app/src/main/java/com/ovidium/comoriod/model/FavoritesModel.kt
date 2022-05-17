@@ -2,7 +2,6 @@ package com.ovidium.comoriod.model
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -27,9 +26,9 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewMo
 
     fun filterArticles() {
         if (selectedTag.value.isNotEmpty()) {
-            val filtered = favoriteArticlesData.value.data.let { it }!!.filter { it.tags.contains(selectedTag.value) }
+            val filtered = favoriteArticlesData.value.data?.filter { it.tags.contains(selectedTag.value) }
             filteredArticles.clear()
-            filteredArticles.addAll(filtered)
+            filteredArticles.addAll(filtered ?: emptyList())
             if (filteredArticles.isEmpty()) {
                 selectedTag.value = ""
             }

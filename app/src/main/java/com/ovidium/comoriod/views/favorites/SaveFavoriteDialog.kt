@@ -83,29 +83,46 @@ fun SaveFavoriteDialog(
                         )
                     }
                 }
-                OutlinedTextField(
-                    value = currentTag,
-                    onValueChange = { text -> currentTag = text },
-                    textStyle = TextStyle(fontSize = 12.5.sp),
-                    maxLines = 1,
-                    singleLine = true,
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = getNamedColor("InvertedText", isDark = isDark)!!,
-                        cursorColor = getNamedColor("Link", isDark = isDark)!!,
-                        focusedBorderColor = Color.Transparent,
-                    ),
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = currentTag,
+                        onValueChange = { text -> currentTag = text },
+                        textStyle = TextStyle(fontSize = 12.5.sp),
+                        maxLines = 1,
+                        singleLine = true,
+                        colors = TextFieldDefaults.outlinedTextFieldColors(
+                            backgroundColor = getNamedColor("InvertedText", isDark = isDark)!!,
+                            cursorColor = getNamedColor("Link", isDark = isDark)!!,
+                            focusedBorderColor = Color.Transparent,
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                if (currentTag.isNotEmpty())
+                                    tags.add(currentTag.lowercase())
+                                currentTag = ""
+                            }
+                        ),
+                        shape = Shapes.medium,
+                        modifier = Modifier
+                            .padding(16.dp)
+                    )
+                    Button(
+                        onClick = {
                             if (currentTag.isNotEmpty())
                                 tags.add(currentTag.lowercase())
                             currentTag = ""
-                        }
-                    ),
-                    shape = Shapes.medium,
-                    modifier = Modifier
-                        .padding(16.dp)
-                )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = getNamedColor("Link", isDark)!!,
+                            contentColor = Color.White),
+                        enabled = currentTag.isNotEmpty()
+                    ) {
+                        Text(text = "#") //Am vrut sa fie mic butonul si nu am avut inspiratie pentru altceva, revenim :)
+                    }
+                }
                 Button(
                     onClick = {
                         if (tags.isNotEmpty()) {
@@ -117,6 +134,9 @@ fun SaveFavoriteDialog(
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = getNamedColor("Link", isDark)!!,
                         contentColor = Color.White),
+                    modifier = Modifier
+                        .defaultMinSize(minWidth = 200.dp, minHeight = 50.dp)
+                        .padding(top = 16.dp)
                 ) {
                     Text(text = "Salvează")
                 }

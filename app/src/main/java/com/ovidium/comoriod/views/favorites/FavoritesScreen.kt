@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.launchMenu
@@ -36,7 +37,7 @@ import kotlin.properties.Delegates
 import kotlin.reflect.KProperty
 
 @Composable
-fun FavoritesScreen(favoritesModel: FavoritesModel, scaffoldState: ScaffoldState) {
+fun FavoritesScreen(navController: NavController, favoritesModel: FavoritesModel, scaffoldState: ScaffoldState) {
 
     val favoriteArticles by remember { favoritesModel.favoriteArticlesData }
     val articleToDelete = remember { mutableStateOf("") }
@@ -62,7 +63,7 @@ fun FavoritesScreen(favoritesModel: FavoritesModel, scaffoldState: ScaffoldState
             LazyColumn() {
                 favoriteArticles.data?.let { articles ->
                 itemsIndexed(if (favoritesModel.selectedTag.value.isEmpty()) articles else favoritesModel.filteredArticles) { _, favoriteArticle ->
-                    FavoriteArticleCell(favoriteArticle) { idToDelete ->
+                    FavoriteArticleCell(navController, favoriteArticle) { idToDelete ->
                         articleToDelete.value = idToDelete
                     }
                 }

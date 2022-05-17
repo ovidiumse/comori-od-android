@@ -17,14 +17,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.views.Screens
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun FavoriteArticleCell(favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
+fun FavoriteArticleCell(navController: NavController, favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
     Card(
         shape = RoundedCornerShape(10.dp),
         backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
@@ -35,7 +37,10 @@ fun FavoriteArticleCell(favoriteArticle: FavoriteArticle, deleteAction: (String)
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .clickable { navController.navigate(Screens.Article.withArgs(favoriteArticle.id)) }
+        ) {
             Text(
                 text = favoriteArticle.title,
                 style = MaterialTheme.typography.h6,
