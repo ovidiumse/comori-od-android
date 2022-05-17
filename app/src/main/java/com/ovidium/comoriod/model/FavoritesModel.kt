@@ -23,6 +23,12 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel): ViewMo
 
     var favoriteArticlesData = mutableStateOf<Resource<List<FavoriteArticle>?>>(Resource.loading(null))
 
+
+    init {
+        updateFavorites()
+    }
+
+
     fun deleteFavoriteArticle(id: String) {
         viewModelScope.launch {
             dataSource.deleteFavoriteArticle(id)

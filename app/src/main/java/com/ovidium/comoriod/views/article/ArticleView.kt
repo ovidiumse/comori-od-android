@@ -67,7 +67,6 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
     val bibleRefs = articleModel.getBibleRefs(article._id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
 
     Box() {
         Column(
@@ -193,7 +192,6 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
     if (showSaveFavoriteDialog) {
         SaveFavoriteDialog(
             articleToSave = article,
-            focusRequester = focusRequester,
             onSaveAction = { tags ->
             val favoriteArticle = FavoriteArticle(id = article._id, title = article.title, tags = tags, author = article.author, book = article.book, timestamp = "")
                 favoritesModel.saveFavorite(favoriteArticle)

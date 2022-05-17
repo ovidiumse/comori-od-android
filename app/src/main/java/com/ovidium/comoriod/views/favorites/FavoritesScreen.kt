@@ -20,23 +20,28 @@ import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
+import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.FavoritesModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
+import com.ovidium.comoriod.views.favorites.FavoriteArticleCell
+import kotlinx.coroutines.CoroutineScope
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun FavoritesScreen(favoritesModel: FavoritesModel) {
+fun FavoritesScreen(favoritesModel: FavoritesModel, scaffoldState: ScaffoldState) {
 
     val favoriteArticles by remember { favoritesModel.favoriteArticlesData }
     val articleToDelete = remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             SearchTopBar(
                 title = { Text(text = "Favorite") },
                 isSearch = false,
-                onMenuClicked = { }) {
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
 
             }
         }
@@ -57,178 +62,19 @@ fun FavoritesScreen(favoritesModel: FavoritesModel) {
             }
         }
         if (articleToDelete.value.isNotEmpty()) {
-            AlertDialog(
-                onDismissRequest = { /*TODO*/ },
-                title = {
-                    Text(text = "Atenție")
+            DeleteFavoriteConfirmationDialog(
+                deleteAction = {
+                    favoritesModel.deleteFavoriteArticle(articleToDelete.value)
+                    articleToDelete.value = ""
+                    favoritesModel.updateFavorites()
                 },
-                text = {
-                    Text("Ești sigur că vrei să ștergi acest articol favorit?")
-                },
-                confirmButton = {
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = Color.Red,
-                            contentColor = Color.White),
-                        onClick = {
-                            favoritesModel.deleteFavoriteArticle(articleToDelete.value)
-                            articleToDelete.value = ""
-                            favoritesModel.updateFavorites()
-                        }) {
-                        Text("Șterge")
-                    }
-                },
-                dismissButton = {
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = getNamedColor("Link", isSystemInDarkTheme())!!,
-                            contentColor = Color.White),
-                        onClick = {
-                            articleToDelete.value = ""
-                        }) {
-                        Text("Renunță")
-                    }
-                }
+                dismissAction = { articleToDelete.value = "" }
             )
         }
     }
 
-LaunchedEffect(Unit) {
-    favoritesModel.updateFavorites()
-}
-
-}
-
-
-
-@Composable
-fun FavoriteArticleCell(favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
-    Card(
-        shape = RoundedCornerShape(10.dp),
-        backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
-        elevation = 1.dp,
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        Column {
-            Text(
-                text = favoriteArticle.title,
-                style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            FavoriteCellTitle(favoriteArticle)
-            FavoriteCellInfo(favoriteArticle, deleteAction)
-        }
+    LaunchedEffect(Unit) {
+        favoritesModel.updateFavorites()
     }
-}
 
-
-
-@Composable
-fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
-    Row(
-        verticalAlignment = CenterVertically,
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
-            contentDescription = "Menu",
-            tint = Color.Black,
-            modifier = Modifier
-                .size(16.dp)
-        )
-        Text(
-            text = favoriteArticle.book,
-            style = MaterialTheme.typography.caption,
-            color = Color.Black,
-            modifier = Modifier
-                .padding(start = 8.dp)
-        )
-    }
-}
-
-
-
-@Composable
-fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
-    Column(
-        modifier = Modifier
-            .background(Color.DarkGray)
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Row(
-            verticalAlignment = CenterVertically,
-        ) {
-            Column(horizontalAlignment = Alignment.Start) {
-
-                Row(
-                    verticalAlignment = CenterVertically,
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_tag_24),
-                        contentDescription = "Tag",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .padding(end = 5.dp)
-                    )
-                    repeat(favoriteArticle.tags.count()) {
-                        Text(
-                            text = favoriteArticle.tags[it],
-                            style = MaterialTheme.typography.caption,
-                            color = Color.White,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .background(Color.Red, RoundedCornerShape(50))
-                                .padding(5.dp)
-                        )
-                    }
-                }
-
-                Row(verticalAlignment = CenterVertically) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_access_time_24),
-                        contentDescription = "Menu",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .padding(end = 5.dp)
-                    )
-                    var inFormatter = DateTimeFormatter.ISO_DATE_TIME
-                    val rawDate = LocalDate.parse(favoriteArticle.timestamp, inFormatter)
-                    val formattedDate = "${rawDate.dayOfMonth} ${rawDate.month} - ${rawDate.year}"
-                    Text(
-                        text = formattedDate,
-                        style = MaterialTheme.typography.caption,
-                        color = Color.White
-                    )
-                }
-
-            }
-            Column(
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
-                    contentDescription = "Menu",
-                    tint = Color.Red,
-                    modifier = Modifier
-                        .size(25.dp)
-                        .clickable { deleteAction(favoriteArticle.id) }
-                )
-            }
-        }
-    }
 }

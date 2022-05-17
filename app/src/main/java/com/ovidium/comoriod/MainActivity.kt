@@ -110,7 +110,7 @@ fun BottomBarMain(
         }
 
         composable(Screens.Favorites.route) {
-            FavoritesScreen(favoritesModel)
+            FavoritesScreen(favoritesModel, scaffoldState)
         }
 
         composable(

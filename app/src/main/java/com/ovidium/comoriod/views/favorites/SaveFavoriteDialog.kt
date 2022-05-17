@@ -31,7 +31,6 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 @Composable
 fun SaveFavoriteDialog(
     articleToSave: ArticleResponse,
-    focusRequester: FocusRequester,
     onSaveAction: (List<String>) -> Unit,
     onExitAction: () -> Unit
 ) {
@@ -92,8 +91,8 @@ fun SaveFavoriteDialog(
                     maxLines = 1,
                     singleLine = true,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
-                        backgroundColor = getNamedColor("InvertedText", isDark = isSystemInDarkTheme())!!,
-                        cursorColor = getNamedColor("Link", isDark = isSystemInDarkTheme())!!,
+                        backgroundColor = getNamedColor("InvertedText", isDark = isDark)!!,
+                        cursorColor = getNamedColor("Link", isDark = isDark)!!,
                         focusedBorderColor = Color.Transparent,
                     ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
