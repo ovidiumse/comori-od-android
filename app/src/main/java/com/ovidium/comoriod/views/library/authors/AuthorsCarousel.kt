@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.DataItem
 
@@ -26,6 +27,8 @@ fun AuthorsCarousel(
     isLoading: Boolean,
     showAuthorAction: (Bucket?) -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+
     val itemMinWidth = 180
     val marginSize = 12
     var screenWidth = LocalConfiguration.current.screenWidthDp
@@ -51,7 +54,8 @@ fun AuthorsCarousel(
         Text(
             title,
             style = MaterialTheme.typography.h5,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = getNamedColor("OnBackground", isDark)
         )
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {

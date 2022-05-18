@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
@@ -30,13 +31,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppBar(onMenuClicked: () -> Unit, onSearchClicked: () -> Unit) {
     val isDark = isSystemInDarkTheme()
-    val background = getNamedColor("Container", isDark = isDark)!!
+    val background = getNamedColor("HeaderBar", isDark = isDark)!!
 
     TopAppBar(
         title = {
             Text(
                 text = stringResource(id = R.string.app_title),
-                color = getNamedColor("Link", isDark = isDark)!!
+                fontWeight = FontWeight.Bold,
+                color = getNamedColor("HeaderText", isDark = isDark)!!
             )
         },
         navigationIcon = {
@@ -45,7 +47,7 @@ fun AppBar(onMenuClicked: () -> Unit, onSearchClicked: () -> Unit) {
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
                 modifier = Modifier.clickable(onClick = onMenuClicked),
-                tint = getNamedColor("Link", isDark = isDark)!!
+                tint = getNamedColor("HeaderText", isDark = isDark)!!
             )
         },
         elevation = 8.dp,
@@ -55,7 +57,7 @@ fun AppBar(onMenuClicked: () -> Unit, onSearchClicked: () -> Unit) {
                 imageVector = Icons.Default.Search,
                 contentDescription = "Search",
                 modifier = Modifier.clickable(onClick = onSearchClicked),
-                tint = getNamedColor("Link", isDark = isDark)!!
+                tint = getNamedColor("HeaderText", isDark = isDark)!!
             )
             Spacer(modifier = Modifier.width(8.dp))
         }

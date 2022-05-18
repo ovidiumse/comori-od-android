@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
 
@@ -28,6 +30,8 @@ fun HorizontalCarousel(
     estimatedSize: Int,
     isLoading: Boolean
 ) {
+    val isDark = isSystemInDarkTheme()
+
     val itemMinWidth = 180
     val marginSize = 12
     var screenWidth = LocalConfiguration.current.screenWidthDp
@@ -53,7 +57,8 @@ fun HorizontalCarousel(
         Text(
             name,
             style = MaterialTheme.typography.h5,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = getNamedColor("OnBackground", isDark)
         )
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
@@ -69,6 +74,7 @@ fun HorizontalCarousel(
                             colors = emptyList(),
                             itemSize = itemSize,
                             marginSize = marginSize,
+                            isDark = isDark
                         )
                     }
                 }
@@ -86,7 +92,8 @@ fun HorizontalCarousel(
                             dataItem.imageId,
                             dataItem.gradient,
                             itemSize,
-                            marginSize
+                            marginSize,
+                            isDark
                         )
                     }
                 }

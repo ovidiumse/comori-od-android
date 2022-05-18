@@ -31,13 +31,6 @@ class FavoritesDataSource(
         }
     }
 
-//    val favoriteArticlesData by lazy {
-//        buildFlow(externalScope) {
-//            buildToken()?.let { token -> apiService.getFavorites(token) }
-//        }
-//    }
-
-
     fun getFavoriteArticles(): SharedFlow<Resource<List<FavoriteArticle>?>> {
         return buildSharedFlow(externalScope) {
             buildToken()?.let { token ->

@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.navigation.NavController
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.DataItem
@@ -41,6 +43,7 @@ fun AuthorsGrid(
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
         modifier = Modifier
             .fillMaxHeight()
+            .background(color = getNamedColor("Background", isDark))
     ) {
         if (isLoading) {
             repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) {

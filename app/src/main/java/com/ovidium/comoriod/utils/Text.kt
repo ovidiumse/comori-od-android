@@ -3,6 +3,7 @@ package com.ovidium.comoriod.utils
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.*
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
@@ -47,7 +48,7 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
 fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : AnnotatedString {
     fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
-            var style = SpanStyle()
+            var style = SpanStyle(letterSpacing = 0.3.sp)
             for (s in styles) {
                 when (s) {
                     "italic" -> style = style.merge(SpanStyle(fontStyle = FontStyle.Italic))

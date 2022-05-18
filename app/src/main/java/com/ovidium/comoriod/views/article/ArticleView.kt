@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.article
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -60,12 +61,17 @@ fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
 
 @Composable
 fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel) {
+    val isDark = isSystemInDarkTheme()
+
     val articleModel: ArticleModel = viewModel()
     val bibleRefs = articleModel.getBibleRefs(article._id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
 
-    Box() {
+    val mutedTextColor = getNamedColor("MutedText", isDark)
+    val textColor = getNamedColor("Text", isDark)
+
+    Box(modifier = Modifier.background(getNamedColor("Background", isDark))) {
         Column(
         ) {
             LazyColumn(
@@ -79,8 +85,8 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                         text = article.title,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        color = getNamedColor("OnBackground", isDark)
                     )
                 }
                 item {
@@ -104,21 +110,21 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                             Text(
                                 text = article.author,
                                 fontSize = 14.sp,
-                                color = Color.Gray,
+                                color = mutedTextColor,
                                 modifier = Modifier
                                     .padding(bottom = 3.dp)
                             )
                             Text(
                                 text = article.volume,
                                 fontSize = 14.sp,
-                                color = Color.Gray,
+                                color = mutedTextColor,
                                 modifier = Modifier
                                     .padding(bottom = 3.dp)
                             )
                             Text(
                                 text = article.full_book,
                                 fontSize = 14.sp,
-                                color = Color.Gray,
+                                color = mutedTextColor,
                             )
                         }
                     }
@@ -130,7 +136,7 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                         ClickableText(
                             text = parsedText,
                             style = TextStyle(
-                                color = MaterialTheme.colors.onBackground,
+                                color = textColor,
                                 fontSize = 18.sp,
                                 lineHeight = 25.sp
                             ),
@@ -159,32 +165,32 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
             modifier = Modifier
                 .fillMaxSize()
         ) {
-                FloatingActionButton(
-                    onClick = {
-                        if (favoritesModel.isFavorite(article._id)) {
-                            showDeleteFavoriteDialog = true
-                        } else {
-                            showSaveFavoriteDialog = true
-                        }
-                    },
-                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                    backgroundColor = if (favoritesModel.isFavorite(article._id)
-                    ) Color.Red else getNamedColor("Link", isSystemInDarkTheme())!!
-                ) {
+            FloatingActionButton(
+                onClick = {
                     if (favoritesModel.isFavorite(article._id)) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
-                            contentDescription = "Delete",
-                            tint = getNamedColor("Container", isSystemInDarkTheme())!!,
-                        )
+                        showDeleteFavoriteDialog = true
                     } else {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
-                            contentDescription = "Favorite",
-                            tint = getNamedColor("Container", isSystemInDarkTheme())!!,
-                        )
+                        showSaveFavoriteDialog = true
                     }
+                },
+                modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+                backgroundColor = if (favoritesModel.isFavorite(article._id)
+                ) Color.Red else getNamedColor("Link", isSystemInDarkTheme())!!
+            ) {
+                if (favoritesModel.isFavorite(article._id)) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
+                        contentDescription = "Delete",
+                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
+                    )
+                } else {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
+                        contentDescription = "Favorite",
+                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
+                    )
                 }
+            }
         }
     }
     if (showSaveFavoriteDialog) {
