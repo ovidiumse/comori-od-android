@@ -4,6 +4,7 @@ import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
 import com.ovidium.comoriod.data.books.BooksResponse
+import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.data.search.SearchResponse
@@ -73,5 +74,22 @@ interface ApiService {
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
     ): TitlesResponse
+
+    @GET("favorites")
+    suspend fun getFavorites(
+        @Header("Authorization") token: String,
+    ): List<FavoriteArticle>
+
+    @DELETE("favorites/{id}")
+    suspend fun deleteFavoriteArticle(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    )
+
+    @POST("favorites")
+    suspend fun saveFavorite(
+        @Header("Authorization") token: String,
+        @Body favoriteArticle: FavoriteArticle
+    ): List<FavoriteArticle>
 
 }

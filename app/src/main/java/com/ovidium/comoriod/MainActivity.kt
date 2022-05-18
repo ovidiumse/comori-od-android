@@ -16,13 +16,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.Drawer
-import com.ovidium.comoriod.model.GoogleSignInModel
-import com.ovidium.comoriod.model.GoogleSignInModelFactory
-import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.model.LibraryModelFactory
+import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.utils.JWTUtils
-import com.ovidium.comoriod.views.FavouritesScreen
+import com.ovidium.comoriod.views.FavoritesScreen
 import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
@@ -35,7 +32,6 @@ import com.ovidium.comoriod.views.search.SearchScreen
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.coroutines.coroutineContext
 
 
 class MainActivity : ComponentActivity() {
@@ -66,6 +62,7 @@ fun ComoriOdApp(context: Context) {
                     Screens.Search.route -> {}
                     Screens.ArticlesForAuthor.route -> {}
                     Screens.PoemsForAuthor.route -> {}
+                    Screens.Favorites.route -> {}
                     else -> {
                         AppBar(
                             onMenuClicked = {
@@ -77,7 +74,7 @@ fun ComoriOdApp(context: Context) {
                     }
                 }
             },
-            drawerContent = { Drawer(context) },
+            drawerContent = { Drawer(context, navController) },
             scaffoldState = scaffoldState,
         ) {
             BottomBarMain(
@@ -85,7 +82,8 @@ fun ComoriOdApp(context: Context) {
                 scaffoldState = scaffoldState,
                 jwtUtils = jwtUtils,
                 signInModel = signInModel,
-                libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
+                libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)),
+                favoritesModel = viewModel(factory = FavoritesModelFactory(jwtUtils, signInModel))
             )
         }
     }
@@ -98,10 +96,9 @@ fun BottomBarMain(
     scaffoldState: ScaffoldState,
     jwtUtils: JWTUtils,
     signInModel: GoogleSignInModel,
-    libraryModel: LibraryModel
+    libraryModel: LibraryModel,
+    favoritesModel: FavoritesModel
 ) {
-
-//    val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
 
     NavHost(navController, startDestination = Screens.Library.route) {
         composable(Screens.Library.route) {
@@ -112,8 +109,8 @@ fun BottomBarMain(
             SearchScreen(navController, scaffoldState = scaffoldState)
         }
 
-        composable(Screens.Favourites.route) {
-            FavouritesScreen()
+        composable(Screens.Favorites.route) {
+            FavoritesScreen(navController, favoritesModel, scaffoldState)
         }
 
         composable(
@@ -131,7 +128,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("articleID", "")
             }
 
-            ArticleView(articleID = getArticleID())
+            ArticleView(articleID = getArticleID(), favoritesModel)
         }
 
         composable(
@@ -149,7 +146,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("book", "")
             }
 
-            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel)
+            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel, favoritesModel = favoritesModel)
         }
 
         composable(
