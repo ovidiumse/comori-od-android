@@ -1,4 +1,4 @@
-package com.ovidium.comoriod.views.favorites
+package com.ovidium.comoriod.views.markups
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,20 +20,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
+import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun FavoriteArticleCell(
+fun MarkupCell(
     navController: NavController,
-    favoriteArticle: FavoriteArticle,
+    markup: Markup,
     deleteAction: (String) -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
+        backgroundColor = getNamedColor(markup.bgColor, isSystemInDarkTheme())!!,
         elevation = 1.dp,
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -43,41 +44,53 @@ fun FavoriteArticleCell(
     ) {
         Column(
             modifier = Modifier
-                .clickable { navController.navigate(Screens.Article.withArgs(favoriteArticle.id)) }
+                .clickable { navController.navigate(Screens.Article.withArgs(markup.articleID)) }
         ) {
             Text(
-                text = favoriteArticle.title,
+                text = markup.title,
                 style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
-            FavoriteCellTitle(favoriteArticle)
-            FavoriteCellInfo(favoriteArticle, deleteAction)
+            MarkupCellTitle(markup)
+            MarkupCellInfo(markup, deleteAction)
         }
     }
 }
 
 
 @Composable
-fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+fun MarkupCellTitle(markup: Markup) {
+    Column(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 16.dp)
     ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
-            contentDescription = "Menu",
-            tint = Color.Black,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .size(16.dp)
-        )
+                .padding(bottom = 8.dp)
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
+                contentDescription = "Menu",
+                tint = Color.Black,
+                modifier = Modifier
+                    .size(16.dp)
+            )
+            Text(
+                text = markup.book,
+                style = MaterialTheme.typography.caption,
+                color = Color.Black,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            )
+        }
         Text(
-            text = favoriteArticle.book,
-            style = MaterialTheme.typography.caption,
+            text = markup.selection,
+            style = MaterialTheme.typography.body1,
             color = Color.Black,
             modifier = Modifier
                 .padding(start = 8.dp)
@@ -87,7 +100,7 @@ fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
 
 
 @Composable
-fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
+fun MarkupCellInfo(markup: Markup, deleteAction: (String) -> Unit) {
     Column(
         modifier = Modifier
             .background(Color.DarkGray)
@@ -99,7 +112,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
         ) {
             Column(horizontalAlignment = Alignment.Start) {
 
-                if (favoriteArticle.tags.isNotEmpty()) {
+                if (markup.tags.isNotEmpty()) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
@@ -113,7 +126,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
                                 .padding(end = 5.dp)
                         )
 
-                        favoriteArticle.tags.forEach { tag ->
+                        markup.tags.forEach { tag ->
                             if (tag.isNotEmpty())
                                 Text(
                                     text = tag,
@@ -137,7 +150,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
                             .padding(end = 5.dp)
                     )
                     var inFormatter = DateTimeFormatter.ISO_DATE_TIME
-                    val rawDate = LocalDate.parse(favoriteArticle.timestamp, inFormatter)
+                    val rawDate = LocalDate.parse(markup.timestamp, inFormatter)
                     val formattedDate = "${rawDate.dayOfMonth} ${rawDate.month} - ${rawDate.year}"
                     Text(
                         text = formattedDate,
@@ -160,7 +173,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
                     tint = Color.Red,
                     modifier = Modifier
                         .size(25.dp)
-                        .clickable { deleteAction(favoriteArticle.id) }
+                        .clickable { deleteAction(markup.id) }
                 )
             }
         }

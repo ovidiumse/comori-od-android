@@ -5,6 +5,7 @@ import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
+import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.data.search.SearchResponse
@@ -91,5 +92,22 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body favoriteArticle: FavoriteArticle
     ): List<FavoriteArticle>
+
+    @GET("markups")
+    suspend fun getMarkups(
+        @Header("Authorization") token: String,
+    ): List<Markup>
+
+    @DELETE("markups/{id}")
+    suspend fun deleteMarkup(
+        @Header("Authorization") token: String,
+        @Path("id") id: String
+    )
+
+    @POST("markups")
+    suspend fun saveMarkup(
+        @Header("Authorization") token: String,
+        @Body markup: Markup
+    ): List<Markup>
 
 }

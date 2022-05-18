@@ -132,12 +132,15 @@ fun Drawer(applicationContext: Context, navController: NavController) {
         ) {
             if (userResource.state == UserState.LoggedIn) {
                 item() {
+
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .padding(bottom = 16.dp)
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
-                            contentDescription = "Menu",
+                            contentDescription = "Favorites",
                             modifier = Modifier
                                 .padding(end = 8.dp)
                         )
@@ -146,6 +149,23 @@ fun Drawer(applicationContext: Context, navController: NavController) {
                             style = MaterialTheme.typography.h6,
                             modifier = Modifier
                                 .clickable { navController.navigate(Screens.Favorites.route) }
+                        )
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_article_24),
+                            contentDescription = "Markups",
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                        )
+                        Text(
+                            text = "Pasaje",
+                            style = MaterialTheme.typography.h6,
+                            modifier = Modifier
+                                .clickable { navController.navigate(Screens.Markups.route) }
                         )
                     }
 

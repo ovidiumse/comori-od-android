@@ -35,7 +35,14 @@ private val LightNamedColors = mapOf(
     "PopupContainer" to Color(0xFF393939),
     "InvertedText" to Color(0xFFF0EFF2),
     "Text" to Color(0xFF1B1B1B),
-    "CardButton" to Color(0xFFA6CBDD)
+    "CardButton" to Color(0xFFA6CBDD),
+    //Markup colors
+    "markupChoc" to Color(0xFFF1DBCC),
+    "markupCrayola" to Color(0xFFFAE6B3),
+    "markupMorn" to Color(0xFF26F7BF),
+    "markupPers" to Color(0xFFDFC5FB),
+    "markupSkye" to Color(0xFF99DBFF),
+    "markupSlate" to Color(0xFFE0DFE2)
 )
 
 private val DarkNamedColors = mapOf(
@@ -60,7 +67,14 @@ private val DarkNamedColors = mapOf(
     "PopupContainer" to Color(0xFFDEDEDE),
     "InvertedText" to Color(0xFF313131),
     "Text" to Color(0xFFF0EFF2),
-    "CardButton" to Color(0xFFA6CBDD)
+    "CardButton" to Color(0xFFA6CBDD),
+    //Markup colors
+    "markupChoc" to Color(0xFFF1DBCC),
+    "markupCrayola" to Color(0xFFFAE6B3),
+    "markupMorn" to Color(0xFF26F7BF),
+    "markupPers" to Color(0xFFDFC5FB),
+    "markupSkye" to Color(0xFF99DBFF),
+    "markupSlate" to Color(0xFFE0DFE2)
 )
 
 fun getNamedColor(name: String, isDark: Boolean): Color? {

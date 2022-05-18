@@ -28,6 +28,7 @@ import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.authors.TitlesForAuthorScreen
 import com.ovidium.comoriod.views.library.books.BookScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
+import com.ovidium.comoriod.views.markups.MarkupsScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.CoroutineScope
@@ -63,6 +64,7 @@ fun ComoriOdApp(context: Context) {
                     Screens.ArticlesForAuthor.route -> {}
                     Screens.PoemsForAuthor.route -> {}
                     Screens.Favorites.route -> {}
+                    Screens.Markups.route -> {}
                     else -> {
                         AppBar(
                             onMenuClicked = {
@@ -83,7 +85,8 @@ fun ComoriOdApp(context: Context) {
                 jwtUtils = jwtUtils,
                 signInModel = signInModel,
                 libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)),
-                favoritesModel = viewModel(factory = FavoritesModelFactory(jwtUtils, signInModel))
+                favoritesModel = viewModel(factory = FavoritesModelFactory(jwtUtils, signInModel)),
+                markupsModel = viewModel(factory = MarkupsModelFactory(jwtUtils, signInModel))
             )
         }
     }
@@ -97,7 +100,8 @@ fun BottomBarMain(
     jwtUtils: JWTUtils,
     signInModel: GoogleSignInModel,
     libraryModel: LibraryModel,
-    favoritesModel: FavoritesModel
+    favoritesModel: FavoritesModel,
+    markupsModel: MarkupsModel
 ) {
 
     NavHost(navController, startDestination = Screens.Library.route) {
@@ -111,6 +115,10 @@ fun BottomBarMain(
 
         composable(Screens.Favorites.route) {
             FavoritesScreen(navController, favoritesModel, scaffoldState)
+        }
+
+        composable(Screens.Markups.route) {
+            MarkupsScreen(navController, markupsModel, scaffoldState)
         }
 
         composable(

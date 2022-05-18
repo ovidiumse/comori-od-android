@@ -18,6 +18,14 @@ enum class Screens(
         icon = R.drawable.ic_baseline_star_border_24,
         true
     ),
+
+    Markups(
+        route = "markups",
+        title = "Markups",
+        icon = R.drawable.ic_baseline_star_border_24,
+        true
+    ),
+
     Article(
         route = "article",
         title = "Article",
