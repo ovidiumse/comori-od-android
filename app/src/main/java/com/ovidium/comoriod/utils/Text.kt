@@ -20,23 +20,28 @@ fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false)
 }
 
 fun highlightText(text: String, isDark: Boolean): AnnotatedString {
+    val highlightColor = getNamedColor("Highlight", isDark)
+
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
 
-        var highlighted = false
-        for (part in parts) {
-            if (highlighted) {
-                withStyle(
-                    style = SpanStyle(
-                        color = colorSecondaryText,
-                        background = getNamedColor("Highlight", isDark = isDark)!!),
-                ) {
+        withStyle(style=SpanStyle(letterSpacing = 0.3.sp)) {
+            var highlighted = false
+            for (part in parts) {
+                if (highlighted) {
+                    withStyle(
+                        style = SpanStyle(
+                            color = colorSecondaryText,
+                            background = highlightColor
+                        ),
+                    ) {
+                        append(part)
+                    }
+                } else
                     append(part)
-                }
-            } else
-                append(part)
 
-            highlighted = !highlighted
+                highlighted = !highlighted
+            }
         }
     }
 }

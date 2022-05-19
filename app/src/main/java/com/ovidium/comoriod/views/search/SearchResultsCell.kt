@@ -1,10 +1,12 @@
 package com.ovidium.comoriod.views.search
 
+import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -15,9 +17,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -70,7 +74,7 @@ fun SearchResultsCell(
         SearchResultsTitleView(hit, index, isDark)
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 5.dp)
                 .wrapContentSize(Alignment.Center),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -82,13 +86,22 @@ fun SearchResultsCell(
             SearchResultsTypeView(hit, isDark)
         }
 
-        Text(
-            text = fmtVerses(hit.highlight.versesText.orEmpty(), isDark = isSystemInDarkTheme()),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .padding(vertical = 10.dp)
-        )
+        if (hit.highlight.versesText.orEmpty().isNotEmpty()) {
+            Divider()
+
+            Text(
+                text = fmtVerses(
+                    hit.highlight.versesText.orEmpty(),
+                    isDark = isSystemInDarkTheme()
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 10.dp)
+            )
+        }
+        else
+            Spacer(modifier = Modifier.height(11.dp))
     }
 
     LaunchedEffect(Unit) {
@@ -128,6 +141,8 @@ fun SearchResultsCell(
 
 @Composable
 fun SearchResultsTitleView(hit: Hit, index: Int, isDark: Boolean) {
+    val mutedTextColor = getNamedColor("MutedText", isDark)
+
     fun getTitle(hit: Hit): String {
         return if (!hit.highlight.title.isNullOrEmpty()) {
             hit.highlight.title[0]
@@ -144,12 +159,16 @@ fun SearchResultsTitleView(hit: Hit, index: Int, isDark: Boolean) {
     ) {
         Text(
             text = buildAnnotatedString {
-                append("${index + 1}.  ")
-                append(highlightText(getTitle(hit), isDark))
+                withStyle(style=SpanStyle(color = mutedTextColor)) {
+                    append("${index + 1}.  ")
+                }
+
+                withStyle(style=SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(highlightText(getTitle(hit), isDark))
+                }
             },
             fontSize = 20.sp,
             maxLines = 2,
-            fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Left
         )
     }
@@ -158,7 +177,6 @@ fun SearchResultsTitleView(hit: Hit, index: Int, isDark: Boolean) {
 
 @Composable
 fun SearchResultsBookView(hit: Hit, isDark: Boolean) {
-    val tintColor = getNamedColor("OnBackground", isDark)
     val mutedTextColor = getNamedColor("MutedText", isDark)
 
     Row(
@@ -168,7 +186,7 @@ fun SearchResultsBookView(hit: Hit, isDark: Boolean) {
             modifier = Modifier.size(14.dp),
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
             contentDescription = "Some icon",
-            tint = tintColor
+            tint = mutedTextColor
         )
         Spacer(modifier = Modifier.width(5.dp))
         Text(
@@ -183,7 +201,6 @@ fun SearchResultsBookView(hit: Hit, isDark: Boolean) {
 
 @Composable
 fun SearchResultsAuthorView(hit: Hit, isDark: Boolean) {
-    val tintColor = getNamedColor("OnBackground", isDark)
     val mutedTextColor = getNamedColor("MutedText", isDark)
 
     Row(
@@ -193,7 +210,7 @@ fun SearchResultsAuthorView(hit: Hit, isDark: Boolean) {
             modifier = Modifier.size(14.dp),
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_author),
             contentDescription = "Some icon",
-            tint = tintColor
+            tint = mutedTextColor
         )
         Spacer(modifier = Modifier.width(5.dp))
         Text(
