@@ -13,5 +13,5 @@ data class Markup(
     val length: Int,
     val bgColor: String = "",
     val timestamp: String = "",
-    val tags: List<String> = emptyList()
+    var tags: List<String> = emptyList()
 )

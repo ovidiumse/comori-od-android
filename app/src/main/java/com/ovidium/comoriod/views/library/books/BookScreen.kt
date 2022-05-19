@@ -1,5 +1,7 @@
 package com.ovidium.comoriod.views.library.books
 
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Scaffold
@@ -30,7 +32,9 @@ fun BookScreen(
     jwtUtils: JWTUtils,
     scaffoldState: ScaffoldState,
     signInModel: GoogleSignInModel,
-    favoritesModel: FavoritesModel
+    favoritesModel: FavoritesModel,
+    markupsModel: MarkupsModel,
+    clipboardManager: ClipboardManager
 ) {
 
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
@@ -61,7 +65,7 @@ fun BookScreen(
                 contentPadding = PaddingValues(end = 16.dp),
                 verticalAlignment = Alignment.Top,
             ) { pageIdx ->
-                ArticleView(articleID = titles.map { it._id }[pageIdx], favoritesModel)
+                ArticleView(articleID = titles.map { it._id }[pageIdx], favoritesModel, markupsModel, clipboardManager)
             }
         }
         if (showTOCPopup && titles != null) {

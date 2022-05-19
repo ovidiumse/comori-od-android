@@ -1,6 +1,8 @@
 package com.ovidium.comoriod
 
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -39,14 +41,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         setContent {
-            ComoriOdApp(applicationContext)
+            ComoriOdApp(applicationContext, clipboardManager)
         }
     }
 }
 
 @Composable
-fun ComoriOdApp(context: Context) {
+fun ComoriOdApp(context: Context, clipboardManager: ClipboardManager) {
     val signInModel: GoogleSignInModel = viewModel(factory = GoogleSignInModelFactory(context))
     val jwtUtils = JWTUtils()
 
@@ -80,6 +83,8 @@ fun ComoriOdApp(context: Context) {
             scaffoldState = scaffoldState,
         ) {
             BottomBarMain(
+                context = context,
+                clipboardManager,
                 navController = navController,
                 scaffoldState = scaffoldState,
                 jwtUtils = jwtUtils,
@@ -95,6 +100,8 @@ fun ComoriOdApp(context: Context) {
 
 @Composable
 fun BottomBarMain(
+    context: Context,
+    clipboardManager: ClipboardManager,
     navController: NavHostController,
     scaffoldState: ScaffoldState,
     jwtUtils: JWTUtils,
@@ -136,7 +143,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("articleID", "")
             }
 
-            ArticleView(articleID = getArticleID(), favoritesModel)
+            ArticleView(articleID = getArticleID(), favoritesModel, markupsModel, clipboardManager)
         }
 
         composable(
@@ -154,7 +161,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("book", "")
             }
 
-            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel, favoritesModel = favoritesModel)
+            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel, favoritesModel = favoritesModel, markupsModel = markupsModel, clipboardManager = clipboardManager)
         }
 
         composable(

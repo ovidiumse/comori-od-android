@@ -1,9 +1,8 @@
-package com.ovidium.comoriod.views.favorites
+package com.ovidium.comoriod.views.markups
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,13 +23,16 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.parseVerses
 
 @Composable
-fun SaveFavoriteDialog(
+fun SaveMarkupDialog(
     articleToSave: ArticleResponse,
-    onSaveAction: (List<String>) -> Unit,
+    selection: String,
+    onSaveAction: (Markup) -> Unit,
     onExitAction: () -> Unit
 ) {
 
@@ -44,6 +46,9 @@ fun SaveFavoriteDialog(
         val isDark = isSystemInDarkTheme()
         var tags = remember { mutableStateListOf<String>() }
         var currentTag by remember { mutableStateOf("") }
+        var selectedColor by remember { mutableStateOf("markupMorn") }
+        var availableColors = listOf("markupChoc", "markupCrayola", "markupMorn", "markupPers", "markupSkye", "markupSlate")
+
 
         Box(
             Modifier
@@ -58,7 +63,7 @@ fun SaveFavoriteDialog(
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SaveFavoriteTopBar(
+                SaveMarkupTopBar(
                     onExitAction = onExitAction
                 )
                 Text(
@@ -120,15 +125,84 @@ fun SaveFavoriteDialog(
                             contentColor = Color.White),
                         enabled = currentTag.isNotEmpty()
                     ) {
-                        Text(text = "+") //Am vrut sa fie mic butonul si nu am avut inspiratie pentru altceva, revenim :)
+                        Text(text = "+")
+                    }
+                }
+                Card(
+                    backgroundColor = getNamedColor(selectedColor, isDark)!!,
+                    modifier = Modifier
+                        .wrapContentHeight()
+                ) {
+                    Column() {
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = "“",
+                            color = Color.Black,
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            text = selection,
+                            color = Color.Black
+                        )
+                        Text(
+                            text = "„",
+                            color = Color.Black,
+                            fontSize = 30.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.End,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier
+                                .background(Color.DarkGray)
+                                .padding(8.dp)
+                                .fillMaxWidth()
+                        ) {
+                            repeat(availableColors.count()) { index ->
+                                Box(
+                                    modifier = Modifier
+                                        .border(BorderStroke( 2.dp,if (selectedColor == availableColors[index]) Color.White else Color.Transparent), CircleShape)
+                                        .background(
+                                            getNamedColor(availableColors[index], isDark)!!,
+                                            shape = CircleShape
+                                        )
+                                        .padding(8.dp)
+                                        .size(20.dp)
+                                        .clickable {
+                                            selectedColor = availableColors[index]
+                                        }
+                                )
+                            }
+                        }
                     }
                 }
                 Button(
                     onClick = {
+                        val tempMarkup = Markup(
+                            id = "",
+                            title = articleToSave.title,
+                            book = articleToSave.book,
+                            articleID = articleToSave._id,
+                            selection = parseVerses(articleToSave.verses, isDark).take(300).toString(),
+                            index = 0,
+                            length = 300,
+                            bgColor = selectedColor
+                        )
                         if (tags.isNotEmpty()) {
-                            onSaveAction(tags)
+                            tempMarkup.tags = tags
+                            onSaveAction(tempMarkup)
                         } else {
-                            onSaveAction(listOf(currentTag))
+                            tempMarkup.tags = listOf(currentTag)
+                            onSaveAction(tempMarkup)
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -147,7 +221,7 @@ fun SaveFavoriteDialog(
 
 
 @Composable
-fun SaveFavoriteTopBar(
+fun SaveMarkupTopBar(
     onExitAction: () -> Unit
 ) {
 
@@ -160,7 +234,7 @@ fun SaveFavoriteTopBar(
             .padding(bottom = 20.dp, top = 10.dp)
     ) {
         Text(
-            text = "Salvează articolul",
+            text = "Salvează pasajul",
             fontSize = 18.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier

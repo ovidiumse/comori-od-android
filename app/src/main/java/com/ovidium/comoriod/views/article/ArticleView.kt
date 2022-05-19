@@ -1,5 +1,10 @@
 package com.ovidium.comoriod.views.article
 
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,14 +29,16 @@ import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.model.BookModel
 import com.ovidium.comoriod.model.FavoritesModel
+import com.ovidium.comoriod.model.MarkupsModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.parseVerses
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
+import com.ovidium.comoriod.views.markups.SaveMarkupDialog
 
 @Composable
-fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
+fun ArticleView(articleID: String, favoritesModel: FavoritesModel, markupsModel: MarkupsModel, clipboardManager: ClipboardManager) {
 
     val articleModel: BookModel = viewModel()
     val bookData = remember { articleModel.bookData }
@@ -45,7 +53,7 @@ fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
         when (articleData.status) {
             Status.SUCCESS -> {
                 articleData.data?.let { article ->
-                    ArticleViewContent(article, favoritesModel)
+                    ArticleViewContent(article, favoritesModel, markupsModel, clipboardManager)
                 }
             }
             Status.LOADING -> {}
@@ -57,13 +65,20 @@ fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
     }
 }
 
+fun Context.findActivity(): AppCompatActivity? = when (this) {
+    is AppCompatActivity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
 
 @Composable
-fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel) {
+fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel, markupsModel: MarkupsModel, clipboardManager: ClipboardManager) {
     val articleModel: ArticleModel = viewModel()
     val bibleRefs = articleModel.getBibleRefs(article._id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
+    var markupSelection = remember { mutableStateOf("") }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Box() {
         Column(
@@ -207,6 +222,21 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
             }
         )
     }
+
+    if (markupSelection.value.isNotEmpty()) {
+        SaveMarkupDialog(
+            articleToSave = article,
+            selection = markupSelection.value,
+            onSaveAction = { markup ->
+                markupsModel.save(markup)
+                markupSelection.value = ""
+            },
+            onExitAction = {
+                markupSelection.value = ""
+            }
+        )
+    }
+
     if (showDeleteFavoriteDialog) {
         AlertDialog(
             onDismissRequest = { /*TODO*/ },
@@ -244,6 +274,15 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
         )
     }
 
+    LaunchedEffect(Unit) {
+        // Set clipboard primary clip change listener
+        clipboardManager.addPrimaryClipChangedListener {
+            val text: String = clipboardManager.primaryClip?.getItemAt(0)?.text.toString().trim()
+//            val activity = context.findActivity()
+//            val text = activity?.intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
+            markupSelection.value = text
+        }
+    }
 
 }
 
