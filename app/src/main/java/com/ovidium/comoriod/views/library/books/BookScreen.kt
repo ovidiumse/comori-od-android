@@ -1,21 +1,26 @@
 package com.ovidium.comoriod.views.library.books
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.ovidium.comoriod.components.BookTopBar
+import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.*
@@ -32,7 +37,7 @@ fun BookScreen(
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel
 ) {
-
+    val isDark = isSystemInDarkTheme()
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
     val bookModel: BookModel = viewModel()
     val articleModel: ArticleModel = viewModel()
@@ -45,25 +50,20 @@ fun BookScreen(
 
     Scaffold(
         topBar = {
-            BookTopBar(
-                title = { Text(text = "Comori OD") },
+            AppBar(
+                showTitle = true,
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
-                onTOCClicked = { showTOCPopup = true }
+                actions = @Composable {
+                    Icon(
+                        imageVector = Icons.Default.List,
+                        contentDescription = "Cuprins",
+                        modifier = Modifier.clickable(onClick = { showTOCPopup = true }),
+                        tint = getNamedColor("Text", isDark = isDark)
+                    )
+                }
             )
         }
     ) {
-        if (titles.isNullOrEmpty()) {
-            Text(text = "Loading...")
-        } else {
-            HorizontalPager(
-                count = titles.count(),
-                state = pagerState,
-                contentPadding = PaddingValues(end = 16.dp),
-                verticalAlignment = Alignment.Top,
-            ) { pageIdx ->
-                ArticleView(articleID = titles.map { it._id }[pageIdx], favoritesModel)
-            }
-        }
         if (showTOCPopup && titles != null) {
             TOCPopup(
                 titles = titles,
@@ -78,6 +78,20 @@ fun BookScreen(
                 onExitAction = { showTOCPopup = false },
             )
         }
+
+        if (titles.isNullOrEmpty()) {
+            Text(text = "Loading...")
+        } else {
+            HorizontalPager(
+                count = titles.count(),
+                state = pagerState,
+                contentPadding = PaddingValues(end = 16.dp),
+                verticalAlignment = Alignment.Top,
+            ) { pageIdx ->
+                ArticleView(articleID = titles.map { it._id }[pageIdx], favoritesModel)
+            }
+        }
+
     }
 
     LaunchedEffect(pagerState) {

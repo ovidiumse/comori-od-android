@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -40,17 +41,19 @@ fun SearchResultsCell(
     hit: Hit,
     index: Int,
     navController: NavController,
-    searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?
+    searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?,
+    isDark: Boolean
 ) {
-
     val searchModel: SearchModel = viewModel()
     val searchData by remember { searchModel.searchData }
+
+    val backgroundColor = getNamedColor("PrimarySurface", isDark)
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(16.dp))
-            .background(getNamedColor("Container", isDark = isSystemInDarkTheme())!!)
+            .background(backgroundColor)
             .clickable {
                 navController.navigate(
                     Screens.Article.withArgs(
@@ -64,7 +67,7 @@ fun SearchResultsCell(
                 }
             }
     ) {
-        SearchResultsTitleView(hit, index)
+        SearchResultsTitleView(hit, index, isDark)
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
@@ -72,11 +75,11 @@ fun SearchResultsCell(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                SearchResultsBookView(hit)
-                SearchResultsAuthorView(hit)
+                SearchResultsBookView(hit, isDark)
+                SearchResultsAuthorView(hit, isDark)
             }
 
-            SearchResultsTypeView(hit)
+            SearchResultsTypeView(hit, isDark)
         }
 
         Text(
@@ -124,7 +127,7 @@ fun SearchResultsCell(
 
 
 @Composable
-fun SearchResultsTitleView(hit: Hit, index: Int) {
+fun SearchResultsTitleView(hit: Hit, index: Int, isDark: Boolean) {
     fun getTitle(hit: Hit): String {
         return if (!hit.highlight.title.isNullOrEmpty()) {
             hit.highlight.title[0]
@@ -134,33 +137,30 @@ fun SearchResultsTitleView(hit: Hit, index: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentWidth(align = Alignment.Start),
+            .wrapContentWidth(align = Alignment.Start)
+            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "${index + 1}.",
+            text = buildAnnotatedString {
+                append("${index + 1}.  ")
+                append(highlightText(getTitle(hit), isDark))
+            },
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Left,
-            modifier = Modifier
-                .padding(start = 16.dp)
-        )
-        Text(
-            text = highlightText(getTitle(hit), isDark = isSystemInDarkTheme()),
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Left,
             maxLines = 2,
-            modifier = Modifier
-                .padding(vertical = 10.dp)
-                .padding(horizontal = 16.dp)
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Left
         )
     }
 }
 
 
 @Composable
-fun SearchResultsBookView(hit: Hit) {
+fun SearchResultsBookView(hit: Hit, isDark: Boolean) {
+    val tintColor = getNamedColor("OnBackground", isDark)
+    val mutedTextColor = getNamedColor("MutedText", isDark)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -168,13 +168,13 @@ fun SearchResultsBookView(hit: Hit) {
             modifier = Modifier.size(14.dp),
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
             contentDescription = "Some icon",
-            tint = Color.Red
+            tint = tintColor
         )
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = hit._source.book,
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = mutedTextColor,
             modifier = Modifier
         )
     }
@@ -182,7 +182,10 @@ fun SearchResultsBookView(hit: Hit) {
 
 
 @Composable
-fun SearchResultsAuthorView(hit: Hit) {
+fun SearchResultsAuthorView(hit: Hit, isDark: Boolean) {
+    val tintColor = getNamedColor("OnBackground", isDark)
+    val mutedTextColor = getNamedColor("MutedText", isDark)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -190,13 +193,13 @@ fun SearchResultsAuthorView(hit: Hit) {
             modifier = Modifier.size(14.dp),
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_author),
             contentDescription = "Some icon",
-            tint = Color.Red
+            tint = tintColor
         )
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = hit._source.author,
             fontSize = 12.sp,
-            color = Color.Gray,
+            color = mutedTextColor,
             modifier = Modifier
         )
     }
@@ -204,7 +207,9 @@ fun SearchResultsAuthorView(hit: Hit) {
 
 
 @Composable
-fun SearchResultsTypeView(hit: Hit) {
+fun SearchResultsTypeView(hit: Hit, isDark: Boolean) {
+    val bubbleColor = getNamedColor("Bubble", isDark)
+
     Column(
         horizontalAlignment = Alignment.End,
         modifier = Modifier
@@ -214,7 +219,7 @@ fun SearchResultsTypeView(hit: Hit) {
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(10.dp))
-                .background(Color.LightGray.copy(alpha = 0.6f))
+                .background(bubbleColor)
         ) {
             Text(
                 text = hit._source.type,

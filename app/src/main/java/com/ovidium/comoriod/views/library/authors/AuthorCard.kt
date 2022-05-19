@@ -1,4 +1,4 @@
-package com.ovidium.comoriod.views.library
+package com.ovidium.comoriod.views.library.authors
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +24,7 @@ import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
@@ -33,18 +34,22 @@ fun AuthorCard(
     colors: List<Color>,
     itemSize: Int,
     marginSize: Int,
+    isDark: Boolean,
     showAuthorAction: (Bucket?) -> Unit
 ) {
     val imageAreaSize = itemSize * 0.80
     val authorImageSize = imageAreaSize * 0.80
 
-    Card(Modifier.clip(RoundedCornerShape(8))) {
+    val secondaryBackground = getNamedColor("SecondaryBackground", isDark)
+    val secondarySurface = getNamedColor("SecondarySurface", isDark)
+
+    Card(shape = RoundedCornerShape(12)) {
         var boxModifier = Modifier
             .size(width = itemSize.dp, height = itemSize.dp)
             .placeholder(
                 isLoading,
-                color = Color.DarkGray,
-                highlight = PlaceholderHighlight.fade(highlightColor = Color.LightGray)
+                color = secondaryBackground,
+                highlight = PlaceholderHighlight.fade(highlightColor = secondarySurface)
             )
             .clickable { showAuthorAction(authorInfo) }
         if (!isLoading)

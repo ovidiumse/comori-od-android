@@ -40,6 +40,7 @@ fun VolumesRow(
         name = "Volume",
         items,
         estimatedSize = 7,
-        isLoading
+        isLoading,
+        isLast = true
     )
 }

@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.search
 
 import SuggestionsView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.views.search.filter.FilterCategory
 import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
 import com.ovidium.comoriod.views.search.filter.SearchSource
@@ -47,39 +49,15 @@ fun SearchScreen(
     val searchParams = remember { mutableStateMapOf<FilterCategory, MutableList<String>>() }
     val focusRequester = remember { FocusRequester() }
 
+    val isDark = isSystemInDarkTheme()
+    val backgroundColor = getNamedColor("Background", isDark)
+
     Scaffold(
         topBar = {
-            val isDark = isSystemInDarkTheme()
-            SearchTopBar(
+            /*SearchTopBar(
                 title = {
                     if (searchData.data?.hits?.hits.isNullOrEmpty()) {
-                        SearchBar(
-                            searchText = query,
-                            focusRequester = focusRequester,
-                            onSearchTextChanged = {
-                                    query = it
-                                    isSearchPending = false
-                                    currentAutocompleteJob?.cancel()
-                                    currentAutocompleteJob = coroutineScope.async {
-                                        delay(300L)
-                                        searchModel.autocomplete()
-                                    }
-                            },
-                            onSearchClick = {
-                                if (query.isNotEmpty()) {
-                                    isSearchPending = true
-                                    keyboardController?.hide()
-                                    searchModel.search()
-                                }
-                            },
-                            onClearClick = {
-                                isSearchPending = false
-                                query = ""
-                                currentAutocompleteJob?.cancel()
-                                searchModel.autocompleteData.value =
-                                    Resource(Status.SUCCESS, null, null)
-                                keyboardController?.show()
-                            })
+
                     } else {
                         Text(
                             text = "${searchData.data?.hits?.hits?.count()} / ${searchData.data?.hits?.total?.value} rezultate",
@@ -94,10 +72,42 @@ fun SearchScreen(
                 onFilterClicked = {
                     showFilterPopup = true
                 }
-            )
+            )*/
+            AppBar(
+                showTitle = false,
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
+                actions = @Composable {
+                    SearchBar(
+                        searchText = query,
+                        focusRequester = focusRequester,
+                        onSearchTextChanged = {
+                            query = it
+                            isSearchPending = false
+                            currentAutocompleteJob?.cancel()
+                            currentAutocompleteJob = coroutineScope.async {
+                                delay(300L)
+                                searchModel.autocomplete()
+                            }
+                        },
+                        onSearchClick = {
+                            if (query.isNotEmpty()) {
+                                isSearchPending = true
+                                keyboardController?.hide()
+                                searchModel.search()
+                            }
+                        },
+                        onClearClick = {
+                            isSearchPending = false
+                            query = ""
+                            currentAutocompleteJob?.cancel()
+                            searchModel.autocompleteData.value =
+                                Resource(Status.SUCCESS, null, null)
+                            keyboardController?.show()
+                        })
+                })
         }
     ) {
-        Column {
+        Column(modifier = Modifier.background(backgroundColor)) {
             if (query.isNotEmpty()) {
                 if (!isSearchPending) {
                     when (autocompleteData.status) {
@@ -131,6 +141,7 @@ fun SearchScreen(
                                         navController = navController,
                                         listState = listState,
                                         searchParams = searchParams,
+                                        isDark
                                     )
                                 }
                             }

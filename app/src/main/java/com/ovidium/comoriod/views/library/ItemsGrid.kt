@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.library
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,6 +44,7 @@ fun ItemsGrid(
         (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
 
     val backgroundColor = getNamedColor("Background", isDark)
+    val borderColor = getNamedColor("Border", isDark)
     val textColor = getNamedColor("OnBackground", isDark)
 
     LazyColumn(
@@ -110,12 +113,15 @@ fun ItemsGrid(
 
                     grouped.forEach { (group, items) ->
                         stickyHeader {
+                            val shape = RoundedCornerShape(30)
                             Card(
                                 backgroundColor = backgroundColor,
+                                elevation = 0.dp,
+                                shape = shape,
                                 modifier = Modifier
                                     .offset(x = 1.dp, y = 1.dp)
                                     .wrapContentWidth()
-                                    .clip(RoundedCornerShape(30))
+                                    .border(1.dp, borderColor, shape)
                             ) {
                                 Text(
                                     group.toString() + " - " + articulate(

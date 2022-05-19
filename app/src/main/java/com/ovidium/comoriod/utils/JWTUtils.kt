@@ -14,7 +14,7 @@ class JWTUtils {
         val now = ZonedDateTime.now(ZoneOffset.UTC)
 
         val jwt = JWT().setIssuer(issuer).setIssuedAt(now).setSubject(userId)
-            .setExpiration(now.plusSeconds(45))
+            .setExpiration(now.plusSeconds(90))
 
         return JWT.getEncoder().encode(jwt, signer)
     }

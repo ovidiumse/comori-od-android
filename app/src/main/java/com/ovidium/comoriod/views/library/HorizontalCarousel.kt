@@ -28,7 +28,8 @@ fun HorizontalCarousel(
     name: String,
     dataItems: List<DataItem>?,
     estimatedSize: Int,
-    isLoading: Boolean
+    isLoading: Boolean,
+    isLast: Boolean = false,
 ) {
     val isDark = isSystemInDarkTheme()
 
@@ -52,7 +53,12 @@ fun HorizontalCarousel(
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
         modifier = Modifier
             .fillMaxHeight()
-            .padding(marginSize.dp)
+            .padding(
+                start = marginSize.dp,
+                top = marginSize.dp,
+                end = marginSize.dp,
+                bottom = if (isLast) marginSize.dp else 0.dp
+            )
     ) {
         Text(
             name,

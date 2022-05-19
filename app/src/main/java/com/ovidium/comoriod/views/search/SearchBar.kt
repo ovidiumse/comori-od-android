@@ -5,7 +5,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -32,17 +35,18 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 fun SearchBar(
     searchText: String,
     focusRequester: FocusRequester,
-    placeholderText: String = if (searchText.isEmpty()) "Caută..." else searchText,
+    placeholderText: String = searchText.ifEmpty { "Caută..." },
     onSearchTextChanged: (String) -> Unit = {},
     onClearClick: () -> Unit = {},
     onSearchClick: () -> Unit = {}
 ) {
-    var showClearButton: MutableState<Boolean> = remember { mutableStateOf(false) }
+    val isDark = isSystemInDarkTheme()
+    val showClearButton: MutableState<Boolean> = remember { mutableStateOf(false) }
 
     OutlinedTextField(
         modifier = Modifier
-            .fillMaxWidth(1f)
-            .padding(vertical = 5.dp, horizontal = 5.dp)
+            .fillMaxWidth()
+            .padding(vertical = 3.dp, horizontal = 3.dp)
             .onFocusChanged { focusState ->
                 showClearButton.value = (focusState.isFocused)
             }
@@ -50,12 +54,13 @@ fun SearchBar(
         value = searchText,
         onValueChange = onSearchTextChanged,
         placeholder = {
-            Text(text = placeholderText, fontSize = 12.5.sp)
+            Text(text = placeholderText)
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = getNamedColor("InvertedText", isDark = isSystemInDarkTheme())!!,
-            cursorColor = getNamedColor("Link", isDark = isSystemInDarkTheme())!!,
-            focusedBorderColor = Color.Transparent,
+            backgroundColor = getNamedColor("Background", isDark),
+            textColor= getNamedColor("MutedText", isDark),
+            cursorColor = getNamedColor("MutedText", isDark),
+            focusedBorderColor = getNamedColor("Border", isDark),
         ),
         trailingIcon = {
             AnimatedVisibility(
@@ -72,15 +77,12 @@ fun SearchBar(
 
             }
         },
-        textStyle = TextStyle(fontSize = 12.5.sp),
         maxLines = 1,
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSearchClick() }),
-        shape = Shapes.medium
+        shape = RoundedCornerShape(15.dp)
     )
-
-
 
     LaunchedEffect(Unit) {
         if (searchText.isEmpty()) {

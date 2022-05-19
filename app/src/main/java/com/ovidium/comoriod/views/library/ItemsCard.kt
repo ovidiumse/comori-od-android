@@ -1,9 +1,6 @@
 package com.ovidium.comoriod.views.library
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -66,15 +63,15 @@ fun ItemCard(
 
     val darkBarColor = getNamedColor("DarkBar", isDark)
     val secondaryBackground = getNamedColor("SecondaryBackground", isDark)
-    val lighterSurface = getNamedColor("LighterSurface", isDark)
+    val secondarySurfaceColor = getNamedColor("SecondarySurface", isDark)
 
-    Card(Modifier.clip(RoundedCornerShape(8))) {
+    Card(shape = RoundedCornerShape(12)) {
         var boxModifier = Modifier
             .size(width = itemSize.dp, height = itemSize.dp)
             .placeholder(
                 isLoading,
                 color = secondaryBackground,
-                highlight = PlaceholderHighlight.fade(highlightColor = lighterSurface)
+                highlight = PlaceholderHighlight.fade(highlightColor = secondarySurfaceColor)
             )
             .clickable {
                 when (itemType) {

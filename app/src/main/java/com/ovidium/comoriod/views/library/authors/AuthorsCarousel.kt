@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
-import com.ovidium.comoriod.views.DataItem
+import com.ovidium.comoriod.views.library.authors.AuthorCard
 
 @Composable
 fun AuthorsCarousel(
@@ -49,7 +49,7 @@ fun AuthorsCarousel(
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
         modifier = Modifier
             .fillMaxHeight()
-            .padding(marginSize.dp)
+            .padding(start = marginSize.dp, top = marginSize.dp, end = marginSize.dp)
     ) {
         Text(
             title,
@@ -68,6 +68,7 @@ fun AuthorsCarousel(
                             colors = emptyList(),
                             itemSize = itemSize,
                             marginSize = marginSize,
+                            isDark = isDark,
                             showAuthorAction = showAuthorAction
                         )
                     }
@@ -81,10 +82,10 @@ fun AuthorsCarousel(
                             getVolumeCoverGradient("", isSystemInDarkTheme()),
                             itemSize,
                             marginSize,
+                            isDark,
                             showAuthorAction
                         )
                     }
-
                 }
             }
         }

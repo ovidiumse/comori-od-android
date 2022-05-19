@@ -4,8 +4,13 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,6 +23,7 @@ import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.Drawer
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.ComoriODTheme
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.FavoritesScreen
 import com.ovidium.comoriod.views.LibraryScreen
@@ -47,6 +53,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ComoriOdApp(context: Context) {
+    val isDark = isSystemInDarkTheme()
+
+
     val signInModel: GoogleSignInModel = viewModel(factory = GoogleSignInModelFactory(context))
     val jwtUtils = JWTUtils()
 
@@ -58,7 +67,8 @@ fun ComoriOdApp(context: Context) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         Scaffold(
             topBar = {
-                when (navBackStackEntry?.destination?.route?.replaceAfter("/", "")?.replace("/", "")) {
+                when (navBackStackEntry?.destination?.route?.replaceAfter("/", "")
+                    ?.replace("/", "")) {
                     Screens.Book.route -> {}
                     Screens.Search.route -> {}
                     Screens.ArticlesForAuthor.route -> {}
@@ -67,11 +77,19 @@ fun ComoriOdApp(context: Context) {
                     Screens.Markups.route -> {}
                     else -> {
                         AppBar(
+                            showTitle = true,
                             onMenuClicked = {
                                 launchMenu(coroutineScope, scaffoldState)
                             },
-                            onSearchClicked = {
-                                navController.navigate(Screens.Search.route)
+                            actions = @Composable {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search",
+                                    modifier = Modifier.clickable(onClick = {
+                                        navController.navigate(Screens.Search.route)
+                                    }),
+                                    tint = getNamedColor("HeaderText", isDark = isDark)
+                                )
                             })
                     }
                 }
@@ -154,7 +172,13 @@ fun BottomBarMain(
                     entry.arguments!!.getString("book", "")
             }
 
-            BookScreen(book = getBook(), scaffoldState = scaffoldState, jwtUtils = jwtUtils, signInModel = signInModel, favoritesModel = favoritesModel)
+            BookScreen(
+                book = getBook(),
+                scaffoldState = scaffoldState,
+                jwtUtils = jwtUtils,
+                signInModel = signInModel,
+                favoritesModel = favoritesModel
+            )
         }
 
         composable(

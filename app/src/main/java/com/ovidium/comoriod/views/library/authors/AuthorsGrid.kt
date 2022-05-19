@@ -14,12 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.authors.Bucket
-import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
-import com.ovidium.comoriod.views.DataItem
-import com.ovidium.comoriod.views.ItemCategory
+import com.ovidium.comoriod.views.library.authors.AuthorCard
 import kotlin.math.ceil
 
 @Composable
@@ -56,6 +53,7 @@ fun AuthorsGrid(
                                 itemSize = itemSize,
                                 colors = emptyList(),
                                 marginSize = marginSize,
+                                isDark = isDark,
                                 showAuthorAction = showAuthorAction
                             )
                         }
@@ -74,6 +72,7 @@ fun AuthorsGrid(
                                 getVolumeCoverGradient("", isDark = isDark),
                                 itemSize,
                                 marginSize,
+                                isDark,
                                 showAuthorAction = showAuthorAction
                             )
                         }
