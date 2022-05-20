@@ -32,6 +32,8 @@ import com.ovidium.comoriod.utils.parseVerses
 fun SaveMarkupDialog(
     articleToSave: ArticleResponse,
     selection: String,
+    startPos: Int,
+    endPos: Int,
     onSaveAction: (Markup) -> Unit,
     onExitAction: () -> Unit
 ) {
@@ -192,9 +194,9 @@ fun SaveMarkupDialog(
                             title = articleToSave.title,
                             book = articleToSave.book,
                             articleID = articleToSave._id,
-                            selection = parseVerses(articleToSave.verses, isDark).take(300).toString(),
-                            index = 0,
-                            length = 300,
+                            selection = selection,
+                            index = startPos,
+                            length = endPos - startPos,
                             bgColor = selectedColor
                         )
                         if (tags.isNotEmpty()) {

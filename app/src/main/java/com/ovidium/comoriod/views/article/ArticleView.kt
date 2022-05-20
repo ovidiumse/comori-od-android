@@ -80,6 +80,8 @@ fun ArticleViewContent(
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
     var markupSelection = remember { mutableStateOf("") }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
+    var startPos by remember { mutableStateOf(0) }
+    var endPos by remember { mutableStateOf(0) }
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
@@ -145,12 +147,11 @@ fun ArticleViewContent(
                 item {
                     val parsedText = parseVerses(article.verses, isDark = isDark)
                     var selection = remember { mutableStateOf("") }
-
                     CompositionLocalProvider(
                         LocalTextToolbar provides CustomTextToolbar(
                             LocalView.current,
                             onHighlight = {
-
+                                markupSelection.value = selection.value
                             })
                     ) {
                         SelectionContainer(
@@ -158,14 +159,10 @@ fun ArticleViewContent(
                                 if (start != null && end != null) {
                                     selection.value =
                                         parsedText.text.subSequence(start, end).toString()
+                                    startPos = start
+                                    endPos = end
                                 }
                             }) {
-                            Column() {
-                                if (selection.value.isNotEmpty()) {
-                                    Text("Selected: ${selection.value}", color = Color.Red)
-                                    Spacer(modifier = Modifier.height(30.dp))
-                                }
-
                                 ClickableText(
                                     text = parsedText,
                                     style = TextStyle(
@@ -185,7 +182,6 @@ fun ArticleViewContent(
                                             bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
                                     }
                                 )
-                            }
                         }
                     }
                 }
@@ -253,12 +249,19 @@ fun ArticleViewContent(
         SaveMarkupDialog(
             articleToSave = article,
             selection = markupSelection.value,
+            startPos = startPos,
+            endPos = endPos,
             onSaveAction = { markup ->
                 markupsModel.save(markup)
+                println("MARKUP saved: ${markup}")
                 markupSelection.value = ""
+                startPos = 0
+                endPos = 0
             },
             onExitAction = {
                 markupSelection.value = ""
+                startPos = 0
+                endPos = 0
             }
         )
     }
