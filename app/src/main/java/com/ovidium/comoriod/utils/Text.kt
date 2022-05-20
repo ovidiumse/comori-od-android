@@ -6,6 +6,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
+import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.text.Normalizer
@@ -50,7 +51,7 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
     return highlightText(verses.joinToString(separator = "\n"), isDark = isDark)
 }
 
-fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : AnnotatedString {
+fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>, isDark: Boolean) : AnnotatedString {
     fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
             var style = SpanStyle(letterSpacing = 0.3.sp)
@@ -60,7 +61,6 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
                     "bold" -> style = style.merge(SpanStyle(fontWeight = FontWeight.Bold))
                 }
             }
-
             return style
         }
 
@@ -94,6 +94,16 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
     return buildAnnotatedString {
         for (verse in verses)
             append(buildVerse(verse))
+        for (markup in markups) {
+            addStyle(
+                SpanStyle(
+                    color = getNamedColor("InvertedText", isDark),
+                    background = getNamedColor(markup.bgColor, isDark)
+                ),
+                start = markup.index,
+                end = markup.index + markup.length
+            )
+        }
     }
 }
 

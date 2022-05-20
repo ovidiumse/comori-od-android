@@ -18,6 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.CustomTextToolbar
@@ -145,7 +148,9 @@ fun ArticleViewContent(
                     }
                 }
                 item {
-                    val parsedText = parseVerses(article.verses, isDark = isDark)
+                    val markups = markupsModel.markups.value.data?.filter { it.articleID == article._id } ?: emptyList()
+                    val parsedText = parseVerses(article.verses, markups, isDark = isDark)
+
                     var selection = remember { mutableStateOf("") }
                     CompositionLocalProvider(
                         LocalTextToolbar provides CustomTextToolbar(
@@ -253,7 +258,6 @@ fun ArticleViewContent(
             endPos = endPos,
             onSaveAction = { markup ->
                 markupsModel.save(markup)
-                println("MARKUP saved: ${markup}")
                 markupSelection.value = ""
                 startPos = 0
                 endPos = 0
