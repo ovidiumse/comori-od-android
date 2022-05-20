@@ -5,7 +5,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +16,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalTextToolbar
+import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.components.CustomTextToolbar
+import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.model.ArticleModel
@@ -57,7 +60,6 @@ fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
         articleModel.getArticle(articleID)
     }
 }
-
 
 @Composable
 fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel) {
@@ -130,28 +132,49 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                     }
                 }
                 item {
-                    SelectionContainer {
-                        val isDark = isSystemInDarkTheme()
-                        val parsedText = parseVerses(article.verses, isDark = isDark)
-                        ClickableText(
-                            text = parsedText,
-                            style = TextStyle(
-                                color = textColor,
-                                fontSize = 18.sp,
-                                lineHeight = 25.sp
-                            ),
-                            onClick = { offset ->
-                                val annotation = parsedText.getStringAnnotations(
-                                    tag = "URL",
-                                    start = offset,
-                                    end = offset
-                                ).firstOrNull()
+                    val parsedText = parseVerses(article.verses, isDark = isDark)
+                    var selection = remember { mutableStateOf("")}
 
-                                bibleRefs.clear()
-                                if (annotation != null)
-                                    bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
+                    CompositionLocalProvider(
+                        LocalTextToolbar provides CustomTextToolbar(
+                            LocalView.current,
+                            onHighlight = {
+
+                            })
+                    ) {
+                        SelectionContainer(
+                            onSelectionChange = { start, end ->
+                            if (start != null && end != null) {
+                                selection.value = parsedText.text.subSequence(start, end).toString()
                             }
-                        )
+                        }) {
+                            Column() {
+                                if (selection.value.isNotEmpty()) {
+                                    Text("Selected: ${selection.value}", color = Color.Red)
+                                    Spacer(modifier = Modifier.height(30.dp))
+                                }
+
+                                ClickableText(
+                                    text = parsedText,
+                                    style = TextStyle(
+                                        color = textColor,
+                                        fontSize = 18.sp,
+                                        lineHeight = 25.sp
+                                    ),
+                                    onClick = { offset ->
+                                        val annotation = parsedText.getStringAnnotations(
+                                            tag = "URL",
+                                            start = offset,
+                                            end = offset
+                                        ).firstOrNull()
+
+                                        bibleRefs.clear()
+                                        if (annotation != null)
+                                            bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
             }

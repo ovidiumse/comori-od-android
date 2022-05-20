@@ -3,11 +3,14 @@ package com.ovidium.comoriod.views.search
 import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -97,7 +100,7 @@ fun SearchResultsCell(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .padding(vertical = 10.dp)
+                    .padding(top = 10.dp, bottom = 16.dp)
             )
         }
         else
@@ -191,7 +194,7 @@ fun SearchResultsBookView(hit: Hit, isDark: Boolean) {
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = hit._source.book,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.caption,
             color = mutedTextColor,
             modifier = Modifier
         )
@@ -215,7 +218,7 @@ fun SearchResultsAuthorView(hit: Hit, isDark: Boolean) {
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = hit._source.author,
-            fontSize = 12.sp,
+            style = MaterialTheme.typography.caption,
             color = mutedTextColor,
             modifier = Modifier
         )
@@ -240,7 +243,7 @@ fun SearchResultsTypeView(hit: Hit, isDark: Boolean) {
         ) {
             Text(
                 text = hit._source.type,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.caption,
                 modifier = Modifier
                     .padding(vertical = 3.dp)
                     .padding(horizontal = 5.dp)
