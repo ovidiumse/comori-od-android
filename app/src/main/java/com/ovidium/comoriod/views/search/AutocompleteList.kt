@@ -18,7 +18,7 @@ import com.ovidium.comoriod.views.search.AutocompleteCell
 
 
 @Composable
-fun AutocompleteList(hits: List<Hit>, navController: NavController) {
+fun AutocompleteList(hits: List<Hit>, navController: NavController, isDark: Boolean) {
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
@@ -28,7 +28,7 @@ fun AutocompleteList(hits: List<Hit>, navController: NavController) {
             if (index == 0)
                 Spacer(modifier = Modifier.height(16.dp))
 
-            AutocompleteCell(hit, navController)
+            AutocompleteCell(hit, navController, isDark)
         }
     }
 }

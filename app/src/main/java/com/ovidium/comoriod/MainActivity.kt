@@ -1,6 +1,8 @@
 package com.ovidium.comoriod
 
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -55,7 +57,6 @@ class MainActivity : ComponentActivity() {
 fun ComoriOdApp(context: Context) {
     val isDark = isSystemInDarkTheme()
 
-
     val signInModel: GoogleSignInModel = viewModel(factory = GoogleSignInModelFactory(context))
     val jwtUtils = JWTUtils()
 
@@ -98,6 +99,7 @@ fun ComoriOdApp(context: Context) {
             scaffoldState = scaffoldState,
         ) {
             BottomBarMain(
+                context = context,
                 navController = navController,
                 scaffoldState = scaffoldState,
                 jwtUtils = jwtUtils,
@@ -113,6 +115,7 @@ fun ComoriOdApp(context: Context) {
 
 @Composable
 fun BottomBarMain(
+    context: Context,
     navController: NavHostController,
     scaffoldState: ScaffoldState,
     jwtUtils: JWTUtils,
@@ -154,7 +157,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("articleID", "")
             }
 
-            ArticleView(articleID = getArticleID(), favoritesModel)
+            ArticleView(articleID = getArticleID(), favoritesModel, markupsModel)
         }
 
         composable(
@@ -177,7 +180,8 @@ fun BottomBarMain(
                 scaffoldState = scaffoldState,
                 jwtUtils = jwtUtils,
                 signInModel = signInModel,
-                favoritesModel = favoritesModel
+                favoritesModel = favoritesModel,
+                markupsModel = markupsModel
             )
         }
 

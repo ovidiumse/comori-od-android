@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.library.books
 
 import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -35,7 +36,8 @@ fun BookScreen(
     jwtUtils: JWTUtils,
     scaffoldState: ScaffoldState,
     signInModel: GoogleSignInModel,
-    favoritesModel: FavoritesModel
+    favoritesModel: FavoritesModel,
+    markupsModel: MarkupsModel,
 ) {
     val isDark = isSystemInDarkTheme()
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
@@ -64,6 +66,22 @@ fun BookScreen(
             )
         }
     ) {
+        if (titles.isNullOrEmpty()) {
+            Text(text = "Loading...")
+        } else {
+            HorizontalPager(
+                count = titles.count(),
+                state = pagerState,
+                contentPadding = PaddingValues(end = 16.dp),
+                verticalAlignment = Alignment.Top,
+            ) { pageIdx ->
+                ArticleView(
+                    articleID = titles.map { it._id }[pageIdx],
+                    favoritesModel,
+                    markupsModel
+                )
+            }
+        }
         if (showTOCPopup && titles != null) {
             TOCPopup(
                 titles = titles,
@@ -88,7 +106,11 @@ fun BookScreen(
                 contentPadding = PaddingValues(end = 16.dp),
                 verticalAlignment = Alignment.Top,
             ) { pageIdx ->
-                ArticleView(articleID = titles.map { it._id }[pageIdx], favoritesModel)
+                ArticleView(
+                    articleID = titles.map { it._id }[pageIdx],
+                    favoritesModel,
+                    markupsModel
+                )
             }
         }
 

@@ -122,7 +122,7 @@ fun SearchScreen(
                                 }
                             } else {
                                 autocompleteData.data?.hits?.hits?.let { hits ->
-                                    AutocompleteList(hits, navController)
+                                    AutocompleteList(hits, navController, isDark)
                                 }
                             }
                         }

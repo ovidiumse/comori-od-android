@@ -27,14 +27,20 @@ import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.model.ArticleModel
 import com.ovidium.comoriod.model.BookModel
 import com.ovidium.comoriod.model.FavoritesModel
+import com.ovidium.comoriod.model.MarkupsModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.parseVerses
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
+import com.ovidium.comoriod.views.markups.SaveMarkupDialog
 
 @Composable
-fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
+fun ArticleView(
+    articleID: String,
+    favoritesModel: FavoritesModel,
+    markupsModel: MarkupsModel
+) {
 
     val articleModel: BookModel = viewModel()
     val bookData = remember { articleModel.bookData }
@@ -49,7 +55,7 @@ fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
         when (articleData.status) {
             Status.SUCCESS -> {
                 articleData.data?.let { article ->
-                    ArticleViewContent(article, favoritesModel)
+                    ArticleViewContent(article, favoritesModel, markupsModel)
                 }
             }
             Status.LOADING -> {}
@@ -62,12 +68,17 @@ fun ArticleView(articleID: String, favoritesModel: FavoritesModel) {
 }
 
 @Composable
-fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel) {
+fun ArticleViewContent(
+    article: ArticleResponse,
+    favoritesModel: FavoritesModel,
+    markupsModel: MarkupsModel
+) {
     val isDark = isSystemInDarkTheme()
 
     val articleModel: ArticleModel = viewModel()
     val bibleRefs = articleModel.getBibleRefs(article._id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
+    var markupSelection = remember { mutableStateOf("") }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
@@ -133,7 +144,7 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                 }
                 item {
                     val parsedText = parseVerses(article.verses, isDark = isDark)
-                    var selection = remember { mutableStateOf("")}
+                    var selection = remember { mutableStateOf("") }
 
                     CompositionLocalProvider(
                         LocalTextToolbar provides CustomTextToolbar(
@@ -144,10 +155,11 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
                     ) {
                         SelectionContainer(
                             onSelectionChange = { start, end ->
-                            if (start != null && end != null) {
-                                selection.value = parsedText.text.subSequence(start, end).toString()
-                            }
-                        }) {
+                                if (start != null && end != null) {
+                                    selection.value =
+                                        parsedText.text.subSequence(start, end).toString()
+                                }
+                            }) {
                             Column() {
                                 if (selection.value.isNotEmpty()) {
                                     Text("Selected: ${selection.value}", color = Color.Red)
@@ -236,6 +248,21 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
             }
         )
     }
+
+    if (markupSelection.value.isNotEmpty()) {
+        SaveMarkupDialog(
+            articleToSave = article,
+            selection = markupSelection.value,
+            onSaveAction = { markup ->
+                markupsModel.save(markup)
+                markupSelection.value = ""
+            },
+            onExitAction = {
+                markupSelection.value = ""
+            }
+        )
+    }
+
     if (showDeleteFavoriteDialog) {
         AlertDialog(
             onDismissRequest = { /*TODO*/ },
@@ -273,6 +300,15 @@ fun ArticleViewContent(article: ArticleResponse, favoritesModel: FavoritesModel)
         )
     }
 
-
+    LaunchedEffect(Unit) {
+        // Set clipboard primary clip change listener
+        //clipboardManager.addPrimaryClipChangedListener {
+//            val text: String =
+  //              clipboardManager.primaryClip?.getItemAt(0)?.text.toString().trim()
+//            val activity = context.findActivity()
+//            val text = activity?.intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
+            // markupSelection.value = text
+        // }
+    }
 }
 
