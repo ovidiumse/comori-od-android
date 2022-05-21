@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -34,10 +35,14 @@ import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.parseVerses
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun ArticleView(
     articleID: String,
+    scrollOffset: Int,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -56,7 +61,7 @@ fun ArticleView(
         when (articleData.status) {
             Status.SUCCESS -> {
                 articleData.data?.let { article ->
-                    ArticleViewContent(article, signInModel, favoritesModel, markupsModel)
+                    ArticleViewContent(article, scrollOffset, signInModel, favoritesModel, markupsModel)
                 }
             }
             Status.LOADING -> {}
@@ -71,6 +76,7 @@ fun ArticleView(
 @Composable
 fun ArticleViewContent(
     article: ArticleResponse,
+    scrollOffset: Int,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -78,6 +84,7 @@ fun ArticleViewContent(
     val isDark = isSystemInDarkTheme()
 
     val articleModel: ArticleModel = viewModel()
+    val listState = rememberLazyListState()
     val bibleRefs = articleModel.getBibleRefs(article._id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
     var markupSelection = remember { mutableStateOf("") }
@@ -94,7 +101,8 @@ fun ArticleViewContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                state = listState
             ) {
                 item {
                     Text(
@@ -146,7 +154,9 @@ fun ArticleViewContent(
                     }
                 }
                 item {
-                    val markups = markupsModel.markups.value.data?.filter { it.articleID == article._id } ?: emptyList()
+                    val markups =
+                        markupsModel.markups.value.data?.filter { it.articleID == article._id }
+                            ?: emptyList()
                     val parsedText = parseVerses(article.verses, markups, isDark = isDark)
 
                     var selection = remember { mutableStateOf("") }
@@ -166,25 +176,25 @@ fun ArticleViewContent(
                                     endPos = end
                                 }
                             }) {
-                                ClickableText(
-                                    text = parsedText,
-                                    style = TextStyle(
-                                        color = textColor,
-                                        fontSize = 18.sp,
-                                        lineHeight = 25.sp
-                                    ),
-                                    onClick = { offset ->
-                                        val annotation = parsedText.getStringAnnotations(
-                                            tag = "URL",
-                                            start = offset,
-                                            end = offset
-                                        ).firstOrNull()
+                            ClickableText(
+                                text = parsedText,
+                                style = TextStyle(
+                                    color = textColor,
+                                    fontSize = 18.sp,
+                                    lineHeight = 25.sp
+                                ),
+                                onClick = { offset ->
+                                    val annotation = parsedText.getStringAnnotations(
+                                        tag = "URL",
+                                        start = offset,
+                                        end = offset
+                                    ).firstOrNull()
 
-                                        bibleRefs.clear()
-                                        if (annotation != null)
-                                            bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
-                                    }
-                                )
+                                    bibleRefs.clear()
+                                    if (annotation != null)
+                                        bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
+                                }
+                            )
                         }
                     }
                 }
@@ -202,32 +212,32 @@ fun ArticleViewContent(
             val userResourceState = signInModel.userResource
             val userResource = userResourceState.value
             if (userResource.state == UserState.LoggedIn)
-            FloatingActionButton(
-                onClick = {
+                FloatingActionButton(
+                    onClick = {
+                        if (favoritesModel.isFavorite(article._id)) {
+                            showDeleteFavoriteDialog = true
+                        } else {
+                            showSaveFavoriteDialog = true
+                        }
+                    },
+                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+                    backgroundColor = if (favoritesModel.isFavorite(article._id)
+                    ) Color.Red else getNamedColor("Link", isDark)
+                ) {
                     if (favoritesModel.isFavorite(article._id)) {
-                        showDeleteFavoriteDialog = true
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
+                            contentDescription = "Delete",
+                            tint = getNamedColor("Container", isDark),
+                        )
                     } else {
-                        showSaveFavoriteDialog = true
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
+                            contentDescription = "Favorite",
+                            tint = getNamedColor("Container", isDark),
+                        )
                     }
-                },
-                modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                backgroundColor = if (favoritesModel.isFavorite(article._id)
-                ) Color.Red else getNamedColor("Link", isDark)
-            ) {
-                if (favoritesModel.isFavorite(article._id)) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
-                        contentDescription = "Delete",
-                        tint = getNamedColor("Container", isDark),
-                    )
-                } else {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
-                        contentDescription = "Favorite",
-                        tint = getNamedColor("Container", isDark),
-                    )
                 }
-            }
         }
     }
     if (showSaveFavoriteDialog) {
@@ -257,6 +267,7 @@ fun ArticleViewContent(
             selection = markupSelection.value,
             startPos = startPos,
             endPos = endPos,
+            scrollOffset = listState.firstVisibleItemScrollOffset,
             onSaveAction = { markup ->
                 markupsModel.save(markup)
                 markupSelection.value = ""
@@ -308,15 +319,9 @@ fun ArticleViewContent(
         )
     }
 
-    LaunchedEffect(Unit) {
-        // Set clipboard primary clip change listener
-        //clipboardManager.addPrimaryClipChangedListener {
-//            val text: String =
-  //              clipboardManager.primaryClip?.getItemAt(0)?.text.toString().trim()
-//            val activity = context.findActivity()
-//            val text = activity?.intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
-            // markupSelection.value = text
-        // }
+    LaunchedEffect(listState) {
+        if (scrollOffset != 0)
+            listState.scrollToItem(2, scrollOffset)
     }
 }
 

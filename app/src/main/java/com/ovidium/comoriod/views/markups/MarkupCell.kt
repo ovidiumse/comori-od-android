@@ -44,7 +44,7 @@ fun MarkupCell(
     ) {
         Column(
             modifier = Modifier
-                .clickable { navController.navigate(Screens.Article.withArgs(markup.articleID)) }
+                .clickable { navController.navigate(Screens.Article.withArgs("${markup.articleID}?scrollOffset=${markup.scrollOffset}")) }
         ) {
             Text(
                 text = markup.title,

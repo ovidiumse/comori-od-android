@@ -34,6 +34,7 @@ fun SaveMarkupDialog(
     selection: String,
     startPos: Int,
     endPos: Int,
+    scrollOffset: Int,
     onSaveAction: (Markup) -> Unit,
     onExitAction: () -> Unit
 ) {
@@ -197,6 +198,7 @@ fun SaveMarkupDialog(
                             selection = selection,
                             index = startPos,
                             length = endPos - startPos,
+                            scrollOffset = scrollOffset,
                             bgColor = selectedColor
                         )
                         if (tags.isNotEmpty()) {
