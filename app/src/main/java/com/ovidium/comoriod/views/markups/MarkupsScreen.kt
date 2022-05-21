@@ -1,6 +1,8 @@
 package com.ovidium.comoriod.views.markups
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,8 +11,11 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.ovidium.comoriod.components.NoContentPlaceholder
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.launchMenu
@@ -61,20 +66,23 @@ fun MarkupsScreen(
             when (markupsData.value.status) {
                 Status.SUCCESS -> {
                     val markups = getMarkups()
-
-                    TagsRow(
-                        tags,
-                        selectedTag,
-                        onTagsChanged = { tag -> selectedTag = tag })
-
-                    LazyColumn() {
-                        markups?.forEach { markup ->
-                            item() {
-                                MarkupCell(navController, markup) { idToDelete ->
-                                    markupToDelete.value = idToDelete
+                    if (!markups.isNullOrEmpty()) {
+                        TagsRow(
+                            tags,
+                            selectedTag,
+                            onTagsChanged = { tag -> selectedTag = tag }
+                        )
+                        LazyColumn() {
+                            markups.forEach { markup ->
+                                item() {
+                                    MarkupCell(navController, markup) { idToDelete ->
+                                        markupToDelete.value = idToDelete
+                                    }
                                 }
                             }
                         }
+                    } else {
+                        NoContentPlaceholder("Nu ai nici un pasaj favorit")
                     }
                 }
                 else -> {}

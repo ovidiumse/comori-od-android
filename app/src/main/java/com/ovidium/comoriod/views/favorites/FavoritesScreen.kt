@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ovidium.comoriod.components.NoContentPlaceholder
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.launchMenu
@@ -72,20 +73,23 @@ fun FavoritesScreen(
             when (favoritesData.value.status) {
                 Status.SUCCESS -> {
                     val favorites = getArticles()
-
+                    if (!favorites.isNullOrEmpty()) {
                     TagsRow(
                         tags,
                         selectedTag,
                         onTagsChanged = { tag -> selectedTag = tag })
 
                     LazyColumn() {
-                        favorites?.forEach { article ->
+                        favorites.forEach { article ->
                             item() {
                                 FavoriteArticleCell(navController, article) { idToDelete ->
                                     articleToDelete.value = idToDelete
                                 }
                             }
                         }
+                    }
+                } else {
+                    NoContentPlaceholder("Nu ai nici un articol favorit")
                     }
                 }
                 else -> {}

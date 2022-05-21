@@ -27,10 +27,7 @@ import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
-import com.ovidium.comoriod.model.ArticleModel
-import com.ovidium.comoriod.model.BookModel
-import com.ovidium.comoriod.model.FavoritesModel
-import com.ovidium.comoriod.model.MarkupsModel
+import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
@@ -41,6 +38,7 @@ import com.ovidium.comoriod.views.markups.SaveMarkupDialog
 @Composable
 fun ArticleView(
     articleID: String,
+    signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
 ) {
@@ -58,7 +56,7 @@ fun ArticleView(
         when (articleData.status) {
             Status.SUCCESS -> {
                 articleData.data?.let { article ->
-                    ArticleViewContent(article, favoritesModel, markupsModel)
+                    ArticleViewContent(article, signInModel, favoritesModel, markupsModel)
                 }
             }
             Status.LOADING -> {}
@@ -73,6 +71,7 @@ fun ArticleView(
 @Composable
 fun ArticleViewContent(
     article: ArticleResponse,
+    signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
 ) {
@@ -88,7 +87,6 @@ fun ArticleViewContent(
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
-
     Box(modifier = Modifier.background(getNamedColor("Background", isDark))) {
         Column(
         ) {
@@ -201,6 +199,9 @@ fun ArticleViewContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            val userResourceState = signInModel.userResource
+            val userResource = userResourceState.value
+            if (userResource.state == UserState.LoggedIn)
             FloatingActionButton(
                 onClick = {
                     if (favoritesModel.isFavorite(article._id)) {
@@ -211,19 +212,19 @@ fun ArticleViewContent(
                 },
                 modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
                 backgroundColor = if (favoritesModel.isFavorite(article._id)
-                ) Color.Red else getNamedColor("Link", isSystemInDarkTheme())!!
+                ) Color.Red else getNamedColor("Link", isDark)
             ) {
                 if (favoritesModel.isFavorite(article._id)) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
                         contentDescription = "Delete",
-                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
+                        tint = getNamedColor("Container", isDark),
                     )
                 } else {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
                         contentDescription = "Favorite",
-                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
+                        tint = getNamedColor("Container", isDark),
                     )
                 }
             }
@@ -295,7 +296,7 @@ fun ArticleViewContent(
             dismissButton = {
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = getNamedColor("Link", isSystemInDarkTheme())!!,
+                        backgroundColor = getNamedColor("Link", isDark),
                         contentColor = Color.White
                     ),
                     onClick = {

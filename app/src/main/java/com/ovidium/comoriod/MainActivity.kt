@@ -157,7 +157,7 @@ fun BottomBarMain(
                     entry.arguments!!.getString("articleID", "")
             }
 
-            ArticleView(articleID = getArticleID(), favoritesModel, markupsModel)
+            ArticleView(articleID = getArticleID(), signInModel, favoritesModel, markupsModel)
         }
 
         composable(
