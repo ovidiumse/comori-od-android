@@ -62,7 +62,7 @@ fun TOCPopup(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    getNamedColor("Container", isDark = isDark)!!,
+                    getNamedColor("Container", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
         ) {
@@ -95,7 +95,7 @@ fun TOCPopup(
                                 color = if (currentIndex == index) getNamedColor(
                                     "Link",
                                     isDark = isDark
-                                )!! else getNamedColor("PopupContainer", isDark = isDark)!!,
+                                )!! else getNamedColor("PopupContainer", isDark = isDark),
                                 modifier = Modifier
                                     .padding(end = 16.dp)
                             )
@@ -106,7 +106,7 @@ fun TOCPopup(
                                 color = if (currentIndex == index) getNamedColor(
                                     "Link",
                                     isDark = isDark
-                                )!! else getNamedColor("PopupContainer", isDark = isDark)!!,
+                                )!! else getNamedColor("PopupContainer", isDark = isDark),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(0.7f)
@@ -157,7 +157,7 @@ fun TOCTopBar(
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = "Search",
-            tint = getNamedColor("Link", isDark = isDark)!!,
+            tint = getNamedColor("Link", isDark = isDark),
             modifier = Modifier
                 .clickable(onClick = { showSearchBar = true })
         )
@@ -185,7 +185,7 @@ fun TOCTopBar(
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Menu",
-            tint = getNamedColor("Link", isDark = isDark)!!,
+            tint = getNamedColor("Link", isDark = isDark),
             modifier = Modifier
                 .clickable(onClick = onExitAction)
         )

@@ -152,7 +152,7 @@ fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (S
         text = text,
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.caption,
-        color = if (isSelected) Color.White else getNamedColor("Text", isDark = isDark)!!,
+        color = if (isSelected) Color.White else getNamedColor("Text", isDark = isDark),
         modifier = Modifier
             .padding(end = 8.dp)
             .background(

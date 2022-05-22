@@ -48,7 +48,7 @@ fun FilterCategoryView(category: FilterCategory, buckets: List<Bucket>, onCheck:
         Column(
             modifier = Modifier
                 .background(
-                    getNamedColor("InvertedText", isDark = isDark)!!,
+                    getNamedColor("InvertedText", isDark = isDark),
                     shape = Shapes.small
                 )
                 .padding(bottom = 16.dp)

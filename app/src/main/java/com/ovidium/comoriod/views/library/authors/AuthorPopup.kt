@@ -65,7 +65,7 @@ fun AuthorPopup(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    getNamedColor("Alice", isDark = isDark)!!,
+                    getNamedColor("Alice", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
                 .padding(horizontal = 16.dp)
@@ -79,7 +79,7 @@ fun AuthorPopup(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Exit",
-                        tint = getNamedColor("Link", isDark = isDark)!!,
+                        tint = getNamedColor("Link", isDark = isDark),
                         modifier = Modifier
                             .padding(top = 16.dp, end = 16.dp)
                             .clickable { onExitAction() }
@@ -132,7 +132,7 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)
@@ -152,7 +152,7 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)
@@ -172,7 +172,7 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)
@@ -196,7 +196,7 @@ fun AuthorPopup(
                             maxLines = 1,
                             modifier = Modifier
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)

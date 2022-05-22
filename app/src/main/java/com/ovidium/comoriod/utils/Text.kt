@@ -73,7 +73,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
-                        withStyle(style = SpanStyle(color = getNamedColor("Link", isDark)!!)) {
+                        withStyle(style = SpanStyle(color = getNamedColor("Link", isDark))) {
                             append(chunk.text)
                         }
                     }
@@ -112,7 +112,7 @@ fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
     return buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                color = getNamedColor("BibleRefBlue", isDark = isDark)!!,
+                color = getNamedColor("BibleRefBlue", isDark = isDark),
                 fontWeight = FontWeight.Bold
             ),
         ) {

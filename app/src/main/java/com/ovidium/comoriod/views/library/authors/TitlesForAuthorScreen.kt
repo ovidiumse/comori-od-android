@@ -36,7 +36,7 @@ fun TitlesForAuthorScreen(
                     if (!libraryModel.titlesForAuthorData.value.data?.hits?.hits.isNullOrEmpty()) {
                         Text(
                             text = "${libraryModel.titlesForAuthorData.value.data?.hits?.hits?.count()} / ${libraryModel.titlesForAuthorData.value.data?.hits?.total?.value} rezultate",
-                            color = getNamedColor("Link", isDark = isDark)!!
+                            color = getNamedColor("Link", isDark = isDark)
                         )
                     }
                 },
