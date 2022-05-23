@@ -52,6 +52,9 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
 }
 
 fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>, isDark: Boolean) : AnnotatedString {
+    val linkColor = getNamedColor("Link", isDark)
+    val markupTextColor = getNamedColor("Text", false)
+
     fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
             var style = SpanStyle(letterSpacing = 0.3.sp)
@@ -73,7 +76,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
-                        withStyle(style = SpanStyle(color = getNamedColor("Link", isDark)!!)) {
+                        withStyle(style = SpanStyle(color = linkColor)) {
                             append(chunk.text)
                         }
                     }
@@ -94,10 +97,11 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
     return buildAnnotatedString {
         for (verse in verses)
             append(buildVerse(verse))
+
         for (markup in markups) {
             addStyle(
                 SpanStyle(
-                    color = getNamedColor("InvertedText", isDark),
+                    color = markupTextColor,
                     background = getNamedColor(markup.bgColor, isDark)
                 ),
                 start = markup.index,

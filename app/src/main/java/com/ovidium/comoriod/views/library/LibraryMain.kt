@@ -2,6 +2,7 @@ package com.ovidium.comoriod.views.library
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,7 +26,7 @@ fun LibraryMain(
 
     LazyColumn(
         modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxSize()
             .background(color = getNamedColor("Background", isDark))
     ) {
         if (signInModel.userResource.value.state == UserState.LoggedIn) {
