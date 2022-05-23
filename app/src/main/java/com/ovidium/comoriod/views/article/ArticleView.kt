@@ -157,6 +157,9 @@ fun ArticleViewContent(
 
                     val textToolbar = CustomTextToolbar(
                         LocalView.current,
+                        onCopy = {
+                            clearSelection = true
+                        },
                         onHighlight = {
                             markupSelection = selection
                             clearSelection = true
@@ -179,6 +182,7 @@ fun ArticleViewContent(
                                     fontSize = 18.sp,
                                     lineHeight = 25.sp
                                 ),
+                                modifier = Modifier.fillMaxSize(),
                                 onClick = { offset ->
                                     val annotation = parsedText.getStringAnnotations(
                                         tag = "URL",
@@ -189,9 +193,14 @@ fun ArticleViewContent(
                                     bibleRefs.clear()
                                     if (annotation != null)
                                         bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
+
+                                    clearSelection = true
+                                    textToolbar.hide()
                                 }
                             )
                         }
+
+                        clearSelection = false
                     }
                 }
             }

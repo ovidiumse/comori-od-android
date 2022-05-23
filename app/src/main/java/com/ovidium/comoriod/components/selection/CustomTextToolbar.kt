@@ -13,7 +13,11 @@ import com.ovidium.comoriod.components.selection.TextActionModeCallback
 
 typealias ActionCallback = () -> Unit
 
-class CustomTextToolbar(private val view: View, private val onHighlight: ActionCallback?) :
+class CustomTextToolbar(
+    private val view: View,
+    private val onCopy: ActionCallback? = null,
+    private val onHighlight: ActionCallback? = null
+) :
     TextToolbar {
 
     private var actionMode: ActionMode? = null
@@ -29,7 +33,10 @@ class CustomTextToolbar(private val view: View, private val onHighlight: ActionC
         onSelectAllRequested: ActionCallback?
     ) {
         textActionModeCallback.rect = rect
-        textActionModeCallback.onCopyRequested = onCopyRequested
+        textActionModeCallback.onCopyRequested = {
+            onCopyRequested?.invoke()
+            onCopy?.invoke()
+        }
         textActionModeCallback.onCutRequested = onCutRequested
         textActionModeCallback.onPasteRequested = onPasteRequested
         textActionModeCallback.onSelectAllRequested = onSelectAllRequested
