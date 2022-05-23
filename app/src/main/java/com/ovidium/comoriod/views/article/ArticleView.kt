@@ -81,7 +81,7 @@ fun ArticleViewContent(
     val articleModel: ArticleModel = viewModel()
     val bibleRefs = articleModel.getBibleRefs(article._id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
-    var markupSelection = remember { mutableStateOf("") }
+    var markupSelection by remember { mutableStateOf("") }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
     var startPos by remember { mutableStateOf(0) }
     var endPos by remember { mutableStateOf(0) }
@@ -148,45 +148,49 @@ fun ArticleViewContent(
                     }
                 }
                 item {
-                    val markups = markupsModel.markups.value.data?.filter { it.articleID == article._id } ?: emptyList()
+                    val markups =
+                        markupsModel.markups.value.data?.filter { it.articleID == article._id }
+                            ?: emptyList()
                     val parsedText = parseVerses(article.verses, markups, isDark = isDark)
+                    var selection by remember { mutableStateOf("") }
+                    var clearSelection by remember { mutableStateOf(false) }
 
-                    var selection = remember { mutableStateOf("") }
+                    val textToolbar = CustomTextToolbar(
+                        LocalView.current,
+                        onHighlight = {
+                            markupSelection = selection
+                            clearSelection = true
+                        })
+
                     CompositionLocalProvider(
-                        LocalTextToolbar provides CustomTextToolbar(
-                            LocalView.current,
-                            onHighlight = {
-                                markupSelection.value = selection.value
-                            })
+                        LocalTextToolbar provides textToolbar
                     ) {
                         SelectionContainer(
+                            clearSelection = clearSelection,
                             onSelectionChange = { start, end ->
-                                if (start != null && end != null) {
-                                    selection.value =
-                                        parsedText.text.subSequence(start, end).toString()
-                                    startPos = start
-                                    endPos = end
-                                }
+                                selection = parsedText.text.subSequence(start, end).toString()
+                                startPos = start
+                                endPos = end
                             }) {
-                                ClickableText(
-                                    text = parsedText,
-                                    style = TextStyle(
-                                        color = textColor,
-                                        fontSize = 18.sp,
-                                        lineHeight = 25.sp
-                                    ),
-                                    onClick = { offset ->
-                                        val annotation = parsedText.getStringAnnotations(
-                                            tag = "URL",
-                                            start = offset,
-                                            end = offset
-                                        ).firstOrNull()
+                            ClickableText(
+                                text = parsedText,
+                                style = TextStyle(
+                                    color = textColor,
+                                    fontSize = 18.sp,
+                                    lineHeight = 25.sp
+                                ),
+                                onClick = { offset ->
+                                    val annotation = parsedText.getStringAnnotations(
+                                        tag = "URL",
+                                        start = offset,
+                                        end = offset
+                                    ).firstOrNull()
 
-                                        bibleRefs.clear()
-                                        if (annotation != null)
-                                            bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
-                                    }
-                                )
+                                    bibleRefs.clear()
+                                    if (annotation != null)
+                                        bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
+                                }
+                            )
                         }
                     }
                 }
@@ -250,20 +254,20 @@ fun ArticleViewContent(
         )
     }
 
-    if (markupSelection.value.isNotEmpty()) {
+    if (markupSelection.isNotEmpty()) {
         SaveMarkupDialog(
             articleToSave = article,
-            selection = markupSelection.value,
+            selection = markupSelection,
             startPos = startPos,
             endPos = endPos,
             onSaveAction = { markup ->
                 markupsModel.save(markup)
-                markupSelection.value = ""
+                markupSelection = ""
                 startPos = 0
                 endPos = 0
             },
             onExitAction = {
-                markupSelection.value = ""
+                markupSelection = ""
                 startPos = 0
                 endPos = 0
             }
@@ -311,10 +315,10 @@ fun ArticleViewContent(
         // Set clipboard primary clip change listener
         //clipboardManager.addPrimaryClipChangedListener {
 //            val text: String =
-  //              clipboardManager.primaryClip?.getItemAt(0)?.text.toString().trim()
+        //              clipboardManager.primaryClip?.getItemAt(0)?.text.toString().trim()
 //            val activity = context.findActivity()
 //            val text = activity?.intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
-            // markupSelection.value = text
+        // markupSelection.value = text
         // }
     }
 }
