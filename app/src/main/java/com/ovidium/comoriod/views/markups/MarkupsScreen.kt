@@ -26,9 +26,10 @@ fun MarkupsScreen(
     scaffoldState: ScaffoldState
 ) {
     val markupsData = markupsModel.markups
-    val tags = markupsData.value.data?.map { markup -> markup.tags }?.flatten()?.distinct()
-        ?.filter { tag -> tag.isNotEmpty() }
-        ?: emptyList()
+    val tags =
+        markupsData.value.data?.reversed()?.map { markup -> markup.tags }?.flatten()?.distinct()
+            ?.filter { tag -> tag.isNotEmpty() }
+            ?: emptyList()
 
     val markupToDelete = remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
@@ -39,9 +40,9 @@ fun MarkupsScreen(
             selectedTag = ""
 
         return if (selectedTag.isEmpty())
-            markupsData.value.data
+            markupsData.value.data?.reversed()
         else
-            markupsData.value.data?.filter { mark -> mark.tags.contains(selectedTag) }
+            markupsData.value.data?.reversed()?.filter { mark -> mark.tags.contains(selectedTag) }
     }
 
     Scaffold(
