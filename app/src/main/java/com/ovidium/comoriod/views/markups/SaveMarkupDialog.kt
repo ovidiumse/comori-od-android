@@ -26,7 +26,6 @@ import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.parseVerses
 
 @Composable
 fun SaveMarkupDialog(
@@ -34,7 +33,7 @@ fun SaveMarkupDialog(
     selection: String,
     startPos: Int,
     endPos: Int,
-    scrollOffset: Int,
+    scrollOffset: Double,
     onSaveAction: (Markup) -> Unit,
     onExitAction: () -> Unit
 ) {

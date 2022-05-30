@@ -163,11 +163,11 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("articleID", "")
             }
-            fun getScrollOffset(): Int {
+            fun getScrollOffset(): Double {
                 return if (entry.arguments == null)
-                    0
+                    0.0
                 else
-                    entry.arguments!!.getInt("scrollOffset", 0)
+                    entry.arguments!!.getDouble("scrollOffset", 0.0)
             }
 
             ArticleView(articleID = getArticleID(), getScrollOffset(), signInModel, favoritesModel, markupsModel)

@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.map
 @Composable
 fun ArticleView(
     articleID: String,
-    scrollOffset: Int,
+    scrollOffset: Double,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -76,7 +76,7 @@ fun ArticleView(
 @Composable
 fun ArticleViewContent(
     article: ArticleResponse,
-    scrollOffset: Int,
+    scrollOffset: Double,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -267,7 +267,7 @@ fun ArticleViewContent(
             selection = markupSelection.value,
             startPos = startPos,
             endPos = endPos,
-            scrollOffset = listState.firstVisibleItemScrollOffset,
+            scrollOffset = listState.firstVisibleItemScrollOffset.toDouble(),
             onSaveAction = { markup ->
                 markupsModel.save(markup)
                 markupSelection.value = ""
@@ -320,8 +320,8 @@ fun ArticleViewContent(
     }
 
     LaunchedEffect(listState) {
-        if (scrollOffset != 0)
-            listState.scrollToItem(2, scrollOffset)
+        if (scrollOffset != 0.0)
+            listState.scrollToItem(2, scrollOffset.toInt())
     }
 }
 
