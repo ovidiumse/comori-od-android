@@ -77,6 +77,8 @@ fun BookScreen(
             ) { pageIdx ->
                 ArticleView(
                     articleID = titles.map { it._id }[pageIdx],
+                    scrollOffset = 0.0,
+                    signInModel,
                     favoritesModel,
                     markupsModel
                 )
@@ -108,6 +110,8 @@ fun BookScreen(
             ) { pageIdx ->
                 ArticleView(
                     articleID = titles.map { it._id }[pageIdx],
+                    scrollOffset = 0.0,
+                    signInModel,
                     favoritesModel,
                     markupsModel
                 )

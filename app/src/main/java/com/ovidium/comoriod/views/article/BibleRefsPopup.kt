@@ -34,7 +34,7 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .background(
-                    getNamedColor("PopupContainer", isDark = isDark)!!,
+                    getNamedColor("PopupContainer", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
         ) {
@@ -45,7 +45,7 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
                     Text(
                         text = formatBibleRefs(item, isDark = isDark),
                         style = TextStyle(
-                            color = getNamedColor("InvertedText", isDark = isDark)!!,
+                            color = getNamedColor("InvertedText", isDark = isDark),
                             fontSize = 18.sp,
                             lineHeight = 22.sp,
                             fontWeight = FontWeight.Light

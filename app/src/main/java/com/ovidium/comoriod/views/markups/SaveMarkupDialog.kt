@@ -26,7 +26,6 @@ import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.parseVerses
 
 @Composable
 fun SaveMarkupDialog(
@@ -34,6 +33,7 @@ fun SaveMarkupDialog(
     selection: String,
     startPos: Int,
     endPos: Int,
+    scrollOffset: Double,
     onSaveAction: (Markup) -> Unit,
     onExitAction: () -> Unit
 ) {
@@ -56,7 +56,7 @@ fun SaveMarkupDialog(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    getNamedColor("Container", isDark = isDark)!!,
+                    getNamedColor("Container", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
         ) {
@@ -100,8 +100,8 @@ fun SaveMarkupDialog(
                         maxLines = 1,
                         singleLine = true,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            backgroundColor = getNamedColor("InvertedText", isDark = isDark)!!,
-                            cursorColor = getNamedColor("Link", isDark = isDark)!!,
+                            backgroundColor = getNamedColor("InvertedText", isDark = isDark),
+                            cursorColor = getNamedColor("Link", isDark = isDark),
                             focusedBorderColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
@@ -123,7 +123,7 @@ fun SaveMarkupDialog(
                             currentTag = ""
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = getNamedColor("Link", isDark)!!,
+                            backgroundColor = getNamedColor("Link", isDark),
                             contentColor = Color.White),
                         enabled = currentTag.isNotEmpty()
                     ) {
@@ -131,7 +131,7 @@ fun SaveMarkupDialog(
                     }
                 }
                 Card(
-                    backgroundColor = getNamedColor(selectedColor, isDark)!!,
+                    backgroundColor = getNamedColor(selectedColor, isDark),
                     modifier = Modifier
                         .wrapContentHeight()
                 ) {
@@ -174,7 +174,7 @@ fun SaveMarkupDialog(
                                     modifier = Modifier
                                         .border(BorderStroke( 2.dp,if (selectedColor == availableColors[index]) Color.White else Color.Transparent), CircleShape)
                                         .background(
-                                            getNamedColor(availableColors[index], isDark)!!,
+                                            getNamedColor(availableColors[index], isDark),
                                             shape = CircleShape
                                         )
                                         .padding(8.dp)
@@ -197,18 +197,19 @@ fun SaveMarkupDialog(
                             selection = selection,
                             index = startPos,
                             length = endPos - startPos,
+                            scrollOffset = scrollOffset,
                             bgColor = selectedColor
                         )
                         if (tags.isNotEmpty()) {
                             tempMarkup.tags = tags
                             onSaveAction(tempMarkup)
                         } else {
-                            tempMarkup.tags = listOf(currentTag)
+                            tempMarkup.tags = emptyList()
                             onSaveAction(tempMarkup)
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = getNamedColor("Link", isDark)!!,
+                        backgroundColor = getNamedColor("Link", isDark),
                         contentColor = Color.White),
                     modifier = Modifier
                         .defaultMinSize(minWidth = 200.dp, minHeight = 50.dp)
@@ -247,7 +248,7 @@ fun SaveMarkupTopBar(
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Close",
-            tint = getNamedColor("Link", isDark = isDark)!!,
+            tint = getNamedColor("Link", isDark = isDark),
             modifier = Modifier
                 .clickable(onClick = onExitAction)
         )

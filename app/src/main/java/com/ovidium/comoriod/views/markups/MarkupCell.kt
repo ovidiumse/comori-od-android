@@ -34,7 +34,7 @@ fun MarkupCell(
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        backgroundColor = getNamedColor(markup.bgColor, isSystemInDarkTheme())!!,
+        backgroundColor = getNamedColor(markup.bgColor, isSystemInDarkTheme()),
         elevation = 1.dp,
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -44,7 +44,7 @@ fun MarkupCell(
     ) {
         Column(
             modifier = Modifier
-                .clickable { navController.navigate(Screens.Article.withArgs(markup.articleID)) }
+                .clickable { navController.navigate(Screens.Article.withArgs("${markup.articleID}?scrollOffset=${markup.scrollOffset}")) }
         ) {
             Text(
                 text = markup.title,
@@ -113,6 +113,7 @@ fun MarkupCellInfo(markup: Markup, deleteAction: (String) -> Unit) {
             Column(horizontalAlignment = Alignment.Start) {
 
                 if (markup.tags.isNotEmpty()) {
+                    println("TAGS: ${markup.tags}, isEmpty: ${markup.tags.isEmpty()}, count: ${markup.tags.count()}")
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier

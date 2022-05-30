@@ -42,7 +42,7 @@ fun NoSearchResultsPlaceholder(query: String, isAutocomplete: Boolean, searchInT
         if (isAutocomplete) {
             Text(
                 text = "Caută și în text",
-                color = getNamedColor("Link", isSystemInDarkTheme())!!,
+                color = getNamedColor("Link", isSystemInDarkTheme()),
                 modifier = Modifier
                     .clickable { searchInTextAction() }
             )

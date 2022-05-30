@@ -33,7 +33,7 @@ fun FavoriteArticleCell(
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
+        backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme()),
         elevation = 1.dp,
         modifier = Modifier
             .padding(horizontal = 16.dp)

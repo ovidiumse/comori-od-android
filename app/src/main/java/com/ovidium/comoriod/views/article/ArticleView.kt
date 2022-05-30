@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -27,20 +28,22 @@ import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
-import com.ovidium.comoriod.model.ArticleModel
-import com.ovidium.comoriod.model.BookModel
-import com.ovidium.comoriod.model.FavoritesModel
-import com.ovidium.comoriod.model.MarkupsModel
+import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.parseVerses
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun ArticleView(
     articleID: String,
+    scrollOffset: Double,
+    signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
 ) {
@@ -58,7 +61,7 @@ fun ArticleView(
         when (articleData.status) {
             Status.SUCCESS -> {
                 articleData.data?.let { article ->
-                    ArticleViewContent(article, favoritesModel, markupsModel)
+                    ArticleViewContent(article, scrollOffset, signInModel, favoritesModel, markupsModel)
                 }
             }
             Status.LOADING -> {}
@@ -73,12 +76,15 @@ fun ArticleView(
 @Composable
 fun ArticleViewContent(
     article: ArticleResponse,
+    scrollOffset: Double,
+    signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
 ) {
     val isDark = isSystemInDarkTheme()
 
     val articleModel: ArticleModel = viewModel()
+    val listState = rememberLazyListState()
     val bibleRefs = articleModel.getBibleRefs(article._id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
     var markupSelection by remember { mutableStateOf("") }
@@ -88,7 +94,6 @@ fun ArticleViewContent(
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
-
     Box(modifier = Modifier.background(getNamedColor("Background", isDark))) {
         Column(
         ) {
@@ -96,7 +101,8 @@ fun ArticleViewContent(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
-                    .fillMaxHeight()
+                    .fillMaxHeight(),
+                state = listState
             ) {
                 item {
                     Text(
@@ -214,32 +220,35 @@ fun ArticleViewContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            FloatingActionButton(
-                onClick = {
+            val userResourceState = signInModel.userResource
+            val userResource = userResourceState.value
+            if (userResource.state == UserState.LoggedIn)
+                FloatingActionButton(
+                    onClick = {
+                        if (favoritesModel.isFavorite(article._id)) {
+                            showDeleteFavoriteDialog = true
+                        } else {
+                            showSaveFavoriteDialog = true
+                        }
+                    },
+                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
+                    backgroundColor = if (favoritesModel.isFavorite(article._id)
+                    ) Color.Red else getNamedColor("Link", isDark)
+                ) {
                     if (favoritesModel.isFavorite(article._id)) {
-                        showDeleteFavoriteDialog = true
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
+                            contentDescription = "Delete",
+                            tint = getNamedColor("Container", isDark),
+                        )
                     } else {
-                        showSaveFavoriteDialog = true
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
+                            contentDescription = "Favorite",
+                            tint = getNamedColor("Container", isDark),
+                        )
                     }
-                },
-                modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                backgroundColor = if (favoritesModel.isFavorite(article._id)
-                ) Color.Red else getNamedColor("Link", isSystemInDarkTheme())!!
-            ) {
-                if (favoritesModel.isFavorite(article._id)) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
-                        contentDescription = "Delete",
-                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
-                    )
-                } else {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
-                        contentDescription = "Favorite",
-                        tint = getNamedColor("Container", isSystemInDarkTheme())!!,
-                    )
                 }
-            }
         }
     }
     if (showSaveFavoriteDialog) {
@@ -269,6 +278,7 @@ fun ArticleViewContent(
             selection = markupSelection,
             startPos = startPos,
             endPos = endPos,
+            scrollOffset = listState.firstVisibleItemScrollOffset.toDouble(),
             onSaveAction = { markup ->
                 markupsModel.save(markup)
                 markupSelection = ""
@@ -308,7 +318,7 @@ fun ArticleViewContent(
             dismissButton = {
                 Button(
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = getNamedColor("Link", isSystemInDarkTheme())!!,
+                        backgroundColor = getNamedColor("Link", isDark),
                         contentColor = Color.White
                     ),
                     onClick = {
@@ -320,15 +330,9 @@ fun ArticleViewContent(
         )
     }
 
-    LaunchedEffect(Unit) {
-        // Set clipboard primary clip change listener
-        //clipboardManager.addPrimaryClipChangedListener {
-//            val text: String =
-        //              clipboardManager.primaryClip?.getItemAt(0)?.text.toString().trim()
-//            val activity = context.findActivity()
-//            val text = activity?.intent?.getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT)
-        // markupSelection.value = text
-        // }
+    LaunchedEffect(listState) {
+        if (scrollOffset != 0.0)
+            listState.scrollToItem(2, scrollOffset.toInt())
     }
 }
 

@@ -24,7 +24,7 @@ fun FilterViewTopBar(onSaveAction: () -> Unit, onExitAction: () -> Unit) {
     ) {
         Text(
             text = "Close",
-            color = getNamedColor("Link", isDark = isDark)!!,
+            color = getNamedColor("Link", isDark = isDark),
             textAlign = TextAlign.Start,
             modifier = Modifier
                 .clickable { onExitAction() }
@@ -43,7 +43,7 @@ fun FilterViewTopBar(onSaveAction: () -> Unit, onExitAction: () -> Unit) {
         )
         Text(
             text = "Save",
-            color = getNamedColor("Link", isDark = isDark)!!,
+            color = getNamedColor("Link", isDark = isDark),
             textAlign = TextAlign.End,
             modifier = Modifier
                 .clickable { onSaveAction() }

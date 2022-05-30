@@ -38,7 +38,7 @@ fun SearchFilterPopup(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    getNamedColor("Container", isDark = isDark)!!,
+                    getNamedColor("Container", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
         ) {

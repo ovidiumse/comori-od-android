@@ -143,12 +143,19 @@ fun BottomBarMain(
         }
 
         composable(
-            route = Screens.Article.route + "/{articleID}",
-            arguments = listOf(navArgument("articleID") {
-                type = NavType.StringType
-                defaultValue = ""
-                nullable = true
-            })
+            route = Screens.Article.route + "/{articleID}?scrollOffset={scrollOffset}",
+            arguments = listOf(
+                navArgument("articleID") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                    nullable = true
+                },
+                        navArgument("scrollOffset") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                    nullable = false
+                }
+            )
         ) { entry ->
             fun getArticleID(): String {
                 return if (entry.arguments == null)
@@ -156,8 +163,14 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("articleID", "")
             }
+            fun getScrollOffset(): Double {
+                return if (entry.arguments == null)
+                    0.0
+                else
+                    entry.arguments!!.getDouble("scrollOffset", 0.0)
+            }
 
-            ArticleView(articleID = getArticleID(), favoritesModel, markupsModel)
+            ArticleView(articleID = getArticleID(), getScrollOffset(), signInModel, favoritesModel, markupsModel)
         }
 
         composable(

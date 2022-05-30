@@ -46,7 +46,7 @@ fun TitlesForAuthorCell(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(16.dp))
-            .background(getNamedColor("Container", isDark = isSystemInDarkTheme())!!)
+            .background(getNamedColor("Container", isDark = isSystemInDarkTheme()))
             .clickable {
                 navController.navigate(
                     Screens.Article.withArgs(
