@@ -12,6 +12,8 @@ data class Markup(
     val index: Int,
     val length: Int,
     val scrollOffset: Double = 0.0,
+    val author: String = "",
+    val type: String = "",
     val bgColor: String = "",
     val timestamp: String = "",
     var tags: List<String> = emptyList()

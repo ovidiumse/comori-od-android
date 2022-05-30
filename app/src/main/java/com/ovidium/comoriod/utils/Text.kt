@@ -11,6 +11,8 @@ import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.text.Normalizer
 
+val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
+
 fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false) : String {
     return "$cnt " + when {
         cnt == 0 -> many
@@ -26,7 +28,7 @@ fun highlightText(text: String, isDark: Boolean): AnnotatedString {
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
 
-        withStyle(style=SpanStyle(letterSpacing = 0.3.sp)) {
+        withStyle(style=ParagraphStyle) {
             var highlighted = false
             for (part in parts) {
                 if (highlighted) {

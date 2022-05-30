@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
@@ -14,13 +15,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.components.NoContentPlaceholder
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.MarkupsModel
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.TagsRow
 import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
 
@@ -30,6 +34,9 @@ fun MarkupsScreen(
     markupsModel: MarkupsModel,
     scaffoldState: ScaffoldState
 ) {
+    val isDark = isSystemInDarkTheme()
+    val bgColor = getNamedColor("Background", isDark)
+
     val markupsData = markupsModel.markups
     val tags =
         markupsData.value.data?.reversed()?.map { markup -> markup.tags }?.flatten()?.distinct()
@@ -62,42 +69,51 @@ fun MarkupsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
+                .background(bgColor)
         ) {
             when (markupsData.value.status) {
                 Status.SUCCESS -> {
                     val markups = getMarkups()
-                    if (!markups.isNullOrEmpty()) {
+
+                    if (markups == null || markups.isEmpty())
+                        NoContentPlaceholder("Nu ai nici un pasaj favorit")
+                    else {
                         TagsRow(
                             tags,
                             selectedTag,
-                            onTagsChanged = { tag -> selectedTag = tag }
-                        )
-                        LazyColumn() {
+                            onTagsChanged = { tag -> selectedTag = tag })
+
+                        LazyColumn(
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
                             markups.forEach { markup ->
                                 item() {
-                                    MarkupCell(navController, markup) { idToDelete ->
-                                        markupToDelete.value = idToDelete
+                                    MarkupCell(
+                                        markup,
+                                        isDark = isDark,
+                                        deleteAction = {
+                                            markupToDelete.value = markup.id
+                                        }) {
+                                        navController.navigate(Screens.Article.withArgs(markup.articleID))
                                     }
                                 }
                             }
                         }
-                    } else {
-                        NoContentPlaceholder("Nu ai nici un pasaj favorit")
                     }
                 }
                 else -> {}
             }
-        }
 
-        if (markupToDelete.value.isNotEmpty()) {
-            DeleteFavoriteConfirmationDialog(
-                deleteAction = {
-                    markupsModel.deleteMarkup(markupToDelete.value)
-                    markupToDelete.value = ""
-                },
-                dismissAction = { markupToDelete.value = "" }
-            )
+            if (markupToDelete.value.isNotEmpty()) {
+                DeleteFavoriteConfirmationDialog(
+                    deleteAction = {
+                        markupsModel.deleteMarkup(markupToDelete.value)
+                        markupToDelete.value = ""
+                    },
+                    dismissAction = { markupToDelete.value = "" }
+                )
+            }
         }
     }
 }

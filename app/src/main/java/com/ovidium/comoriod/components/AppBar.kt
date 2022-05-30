@@ -21,6 +21,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 fun AppBar(showTitle: Boolean, onMenuClicked: () -> Unit, actions: @Composable () -> Unit) {
     val isDark = isSystemInDarkTheme()
     val background = getNamedColor("HeaderBar", isDark = isDark)
+    val headerText = getNamedColor("HeaderText", isDark = isDark)
 
     TopAppBar(
         title = {
@@ -28,7 +29,7 @@ fun AppBar(showTitle: Boolean, onMenuClicked: () -> Unit, actions: @Composable (
                 Text(
                     text = stringResource(id = R.string.app_title),
                     fontWeight = FontWeight.Bold,
-                    color = getNamedColor("HeaderText", isDark = isDark)
+                    color = headerText
                 )
         },
         navigationIcon = {
@@ -37,7 +38,7 @@ fun AppBar(showTitle: Boolean, onMenuClicked: () -> Unit, actions: @Composable (
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
                 modifier = Modifier.clickable(onClick = onMenuClicked),
-                tint = getNamedColor("HeaderText", isDark = isDark)
+                tint = headerText
             )
         },
         elevation = 8.dp,
