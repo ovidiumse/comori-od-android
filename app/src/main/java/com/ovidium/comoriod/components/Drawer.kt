@@ -29,6 +29,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.google.GoogleApiContract
@@ -80,7 +81,7 @@ fun Drawer(applicationContext: Context, navController: NavController) {
                     .padding(horizontal = 16.dp, vertical = 20.dp)
             ) {
                 val painter = when (userResource.state) {
-                    UserState.LoggedIn -> rememberImagePainter(userResource.user?.photoUrl)
+                    UserState.LoggedIn -> rememberAsyncImagePainter(userResource.user?.photoUrl)
                     else -> painterResource(id = R.drawable.ic_unknown_person)
                 }
 
@@ -127,33 +128,39 @@ fun Drawer(applicationContext: Context, navController: NavController) {
                 }
             }
         }
+
         LazyColumn(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.fillMaxSize()
         ) {
             if (userResource.state == UserState.LoggedIn) {
                 item() {
-
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .padding(bottom = 16.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                            .padding(top = 12.dp)
+                            .clickable { navController.navigate(Screens.Favorites.route) }
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
                             contentDescription = "Favorites",
-                            modifier = Modifier
-                                .padding(end = 8.dp)
+                            modifier = Modifier.padding(end = 8.dp)
                         )
                         Text(
                             text = "Favorite",
                             style = MaterialTheme.typography.h6,
-                            modifier = Modifier
-                                .clickable { navController.navigate(Screens.Favorites.route) }
                         )
                     }
+                }
 
+                item {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp)
+                            .clickable { navController.navigate(Screens.Markups.route) }
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_article_24),
@@ -164,8 +171,6 @@ fun Drawer(applicationContext: Context, navController: NavController) {
                         Text(
                             text = "Pasaje",
                             style = MaterialTheme.typography.h6,
-                            modifier = Modifier
-                                .clickable { navController.navigate(Screens.Markups.route) }
                         )
                     }
 
