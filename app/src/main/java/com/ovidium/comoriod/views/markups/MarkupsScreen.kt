@@ -1,5 +1,7 @@
 package com.ovidium.comoriod.views.markups
 
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -7,10 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,31 +85,37 @@ fun MarkupsScreen(
                             onTagsChanged = { tag -> selectedTag = tag })
 
                         LazyColumn(
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                            contentPadding = PaddingValues(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             markups.forEach { markup ->
                                 item(key = markup.id) {
-                                    SwipeableMarkupCell(
-                                        markup,
-                                        surfaceColor = surfaceColor,
-                                        bubbleColor = bubbleColor,
-                                        isDark = isDark,
-                                        deleteAction = {
-                                            markupsModel.deleteMarkup(markup.id)
-                                        },
-                                        onItemClick = {
-                                            navController.navigate(
-                                                Screens.Article.withArgs(
-                                                    "${
-                                                        URLEncoder.encode(
-                                                            markup.articleID,
-                                                            "utf-8"
-                                                        )
-                                                    }?markupId=${markup.id}"
+                                    Column(
+                                        modifier = Modifier.animateItemPlacement(
+                                            animationSpec = tween(durationMillis = 300)
+                                        )
+                                    ) {
+                                        SwipeableMarkupCell(
+                                            markup = markup,
+                                            surfaceColor = surfaceColor,
+                                            bubbleColor = bubbleColor,
+                                            isDark = isDark,
+                                            deleteAction = {
+                                                markupsModel.deleteMarkup(markup.id)
+                                            },
+                                            onItemClick = {
+                                                navController.navigate(
+                                                    Screens.Article.withArgs(
+                                                        "${
+                                                            URLEncoder.encode(
+                                                                markup.articleID,
+                                                                "utf-8"
+                                                            )
+                                                        }?markupId=${markup.id}"
+                                                    )
                                                 )
-                                            )
-                                        })
+                                            })
+                                    }
                                 }
                             }
                         }
