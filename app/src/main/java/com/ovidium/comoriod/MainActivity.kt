@@ -66,6 +66,7 @@ fun ComoriOdApp(context: Context) {
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
         val coroutineScope = rememberCoroutineScope()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
+
         Scaffold(
             topBar = {
                 when (navBackStackEntry?.destination?.route?.replaceAfter("/", "")
@@ -95,7 +96,7 @@ fun ComoriOdApp(context: Context) {
                     }
                 }
             },
-            drawerContent = { Drawer(context, navController) },
+            drawerContent = { Drawer(context, scaffoldState.drawerState, navController) },
             scaffoldState = scaffoldState,
         ) {
             BottomBarMain(

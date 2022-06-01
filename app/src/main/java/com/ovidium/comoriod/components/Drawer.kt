@@ -11,11 +11,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,9 +35,15 @@ import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun Drawer(applicationContext: Context, navController: NavController) {
+fun Drawer(
+    applicationContext: Context,
+    drawerState: DrawerState,
+    navController: NavController
+) {
     val isDark = isSystemInDarkTheme()
     val lineColor = if (isDark) Color.DarkGray else Color.LightGray
 
@@ -57,6 +61,8 @@ fun Drawer(applicationContext: Context, navController: NavController) {
 
     if (userResource.state == UserState.Unknown)
         signInModel.silentSignIn(applicationContext)
+
+    val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -140,7 +146,12 @@ fun Drawer(applicationContext: Context, navController: NavController) {
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp)
                             .padding(top = 12.dp)
-                            .clickable { navController.navigate(Screens.Favorites.route) }
+                            .clickable {
+                                navController.navigate(Screens.Favorites.route)
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                }
+                            }
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
@@ -160,7 +171,12 @@ fun Drawer(applicationContext: Context, navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(12.dp)
-                            .clickable { navController.navigate(Screens.Markups.route) }
+                            .clickable {
+                                navController.navigate(Screens.Markups.route)
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                }
+                            }
                     ) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_article_24),
