@@ -10,8 +10,16 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -22,6 +30,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.CustomTextToolbar
@@ -38,11 +47,13 @@ import com.ovidium.comoriod.views.markups.SaveMarkupDialog
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
+import java.lang.Math.min
+import kotlin.math.max
 
 @Composable
 fun ArticleView(
     articleID: String,
-    scrollOffset: Double,
+    markupId: String? = null,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -61,7 +72,13 @@ fun ArticleView(
         when (articleData.status) {
             Status.SUCCESS -> {
                 articleData.data?.let { article ->
-                    ArticleViewContent(article, scrollOffset, signInModel, favoritesModel, markupsModel)
+                    ArticleViewContent(
+                        article,
+                        markupId,
+                        signInModel,
+                        favoritesModel,
+                        markupsModel
+                    )
                 }
             }
             Status.LOADING -> {}
@@ -76,7 +93,7 @@ fun ArticleView(
 @Composable
 fun ArticleViewContent(
     article: ArticleResponse,
-    scrollOffset: Double,
+    markupId: String?,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -91,10 +108,13 @@ fun ArticleViewContent(
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
     var startPos by remember { mutableStateOf(0) }
     var endPos by remember { mutableStateOf(0) }
+    var scrollOffset by remember { mutableStateOf(0) }
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
-    Box(modifier = Modifier.background(getNamedColor("Background", isDark))) {
+    val bgColor = getNamedColor("Background", isDark)
+
+    Box(modifier = Modifier.background(bgColor)) {
         Column(
         ) {
             LazyColumn(
@@ -155,11 +175,18 @@ fun ArticleViewContent(
                 }
                 item {
                     val markups =
-                        markupsModel.markups.value.data?.filter { it.articleID == article._id }
+                        markupsModel.markups.value.data?.filter { markup -> markup.articleID == article._id }
                             ?: emptyList()
                     val parsedText = parseVerses(article.verses, markups, isDark = isDark)
+
                     var selection by remember { mutableStateOf("") }
                     var clearSelection by remember { mutableStateOf(false) }
+                    var scrollTopOffset = 0
+
+                    with(LocalDensity.current) {
+                        scrollTopOffset =
+                            (LocalConfiguration.current.screenHeightDp / 3).dp.toPx().toInt()
+                    }
 
                     val textToolbar = CustomTextToolbar(
                         LocalView.current,
@@ -189,6 +216,16 @@ fun ArticleViewContent(
                                     lineHeight = 25.sp
                                 ),
                                 modifier = Modifier.fillMaxSize(),
+                                onTextLayout = { textLayout ->
+                                    val markup =
+                                        markups.firstOrNull { markup -> markup.id == markupId }
+                                    markup?.let { markup ->
+                                        val rectStart = textLayout.getBoundingBox(markup.index)
+                                        scrollOffset =
+                                            (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
+                                                .toInt()
+                                    }
+                                },
                                 onClick = { offset ->
                                     val annotation = parsedText.getStringAnnotations(
                                         tag = "URL",
@@ -278,7 +315,6 @@ fun ArticleViewContent(
             selection = markupSelection,
             startPos = startPos,
             endPos = endPos,
-            scrollOffset = listState.firstVisibleItemScrollOffset.toDouble(),
             onSaveAction = { markup ->
                 markupsModel.save(markup)
                 markupSelection = ""
@@ -331,8 +367,8 @@ fun ArticleViewContent(
     }
 
     LaunchedEffect(listState) {
-        if (scrollOffset != 0.0)
-            listState.scrollToItem(2, scrollOffset.toInt())
+        if (scrollOffset != 0)
+            listState.scrollToItem(2, scrollOffset)
     }
 }
 

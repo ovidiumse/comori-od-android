@@ -20,7 +20,9 @@ class MarkupsModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewMod
         mutableStateOf<Resource<List<Markup>?>>(Resource.loading(null))
 
     init {
-        updateMarkups()
+        viewModelScope.launch {
+            updateMarkups()
+        }
     }
 
     fun deleteMarkup(id: String) {
@@ -37,11 +39,9 @@ class MarkupsModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewMod
         }
     }
 
-    private fun updateMarkups() {
-        viewModelScope.launch {
-            dataSource.getMarkups().collectLatest { state ->
-                markups.value = state
-            }
+    private suspend fun updateMarkups() {
+        dataSource.getMarkups().collectLatest { state ->
+            markups.value = state
         }
     }
 }

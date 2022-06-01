@@ -33,7 +33,6 @@ fun SaveMarkupDialog(
     selection: String,
     startPos: Int,
     endPos: Int,
-    scrollOffset: Double,
     onSaveAction: (Markup) -> Unit,
     onExitAction: () -> Unit
 ) {
@@ -189,7 +188,7 @@ fun SaveMarkupDialog(
                 }
                 Button(
                     onClick = {
-                        val tempMarkup = Markup(
+                        onSaveAction(Markup(
                             id = "",
                             title = articleToSave.title,
                             book = articleToSave.book,
@@ -197,16 +196,11 @@ fun SaveMarkupDialog(
                             selection = selection,
                             index = startPos,
                             length = endPos - startPos,
-                            scrollOffset = scrollOffset,
-                            bgColor = selectedColor
-                        )
-                        if (tags.isNotEmpty()) {
-                            tempMarkup.tags = tags
-                            onSaveAction(tempMarkup)
-                        } else {
-                            tempMarkup.tags = emptyList()
-                            onSaveAction(tempMarkup)
-                        }
+                            author = articleToSave.author,
+                            type = articleToSave.type,
+                            bgColor = selectedColor,
+                            tags = tags
+                        ))
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = getNamedColor("Link", isDark),

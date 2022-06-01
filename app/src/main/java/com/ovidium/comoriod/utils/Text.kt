@@ -10,6 +10,7 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.text.Normalizer
+import java.time.Duration
 
 val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
 
@@ -20,6 +21,22 @@ fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false)
         cnt > 20 -> if (isShort) many else "de $many"
         else -> many
     }
+}
+
+fun fmtDuration(duration: Duration): String {
+    val durations = listOf(
+        Pair(duration.toDays(), Pair("zile", "zi")),
+        Pair(duration.toHours(), Pair("ore", "oră")),
+        Pair(duration.toMinutes(), Pair("minute", "minut"))
+    )
+
+    for ((cnt, units) in durations) {
+        val (multiple, single) = units
+        if (cnt > 0)
+            return "acum ${articulate(cnt.toInt(), multiple, single)}"
+    }
+
+    return "acum"
 }
 
 fun highlightText(text: String, isDark: Boolean): AnnotatedString {

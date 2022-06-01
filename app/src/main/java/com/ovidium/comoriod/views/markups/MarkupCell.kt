@@ -1,17 +1,23 @@
 package com.ovidium.comoriod.views.markups
 
+import android.util.Log
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,10 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.MeasurePolicy
+import androidx.compose.ui.layout.*
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,6 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -43,6 +53,7 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.ParagraphStyle
 import com.ovidium.comoriod.utils.articulate
+import com.ovidium.comoriod.utils.fmtDuration
 import com.ovidium.comoriod.views.Screens
 import java.time.Duration
 import java.time.Instant
@@ -53,9 +64,9 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MarkupCell(
+    modifier: Modifier = Modifier,
     markup: Markup,
     isDark: Boolean,
-    deleteAction: (String) -> Unit,
     onItemClick: () -> Unit
 ) {
     val initialMaxLines = 4
@@ -71,17 +82,18 @@ fun MarkupCell(
     val rotationDegreeState by animateFloatAsState(targetValue = if (expandedState) 180f else 0f)
 
     Card(
-        modifier = Modifier.animateContentSize(
-            animationSpec = tween(
-                durationMillis = 300,
-                easing = LinearOutSlowInEasing
-            )
-        ),
+        modifier = modifier
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            ),
         shape = RoundedCornerShape(12.dp),
         backgroundColor = getNamedColor(markup.bgColor, isDark),
         onClick = onItemClick
     ) {
-        Column() {
+        Column {
             Row(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
@@ -123,6 +135,7 @@ fun MarkupCell(
                             modifier = Modifier.rotate(rotationDegreeState),
                             imageVector = Icons.Rounded.ArrowDropDown,
                             contentDescription = "Expand Arrow",
+                            tint = Color.Black,
                         )
                     }
                 }
@@ -131,37 +144,16 @@ fun MarkupCell(
                 val date = ZonedDateTime.parse(markup.timestamp, DateTimeFormatter.ISO_DATE_TIME)
                 val duration = Duration.between(date.toInstant(), Instant.now())
 
-                fun fmtDuration(duration: Duration): String {
-                    val durations = listOf(
-                        Pair(duration.toDays(), Pair("zile", "zi")),
-                        Pair(duration.toHours(), Pair("ore", "oră")),
-                        Pair(duration.toMinutes(), Pair("minute", "minut"))
-                    )
-
-                    var threshold = 0
-                    for ((cnt, units) in durations) {
-                        val (multiple, single) = units
-                        if (cnt > threshold)
-                            return "acum ${articulate(cnt.toInt(), multiple, single)}"
-                        else
-                            threshold = 1
-                    }
-
-                    return "acum"
-                }
-
-                LazyRow(
+                Row(
                     modifier = Modifier.weight(7f),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     markup.tags.forEach { tag ->
-                        item() {
-                            TagBubble(
-                                tag = tag,
-                                textColor = Color.Black.copy(alpha = .8f),
-                                bubbleColor = Color.White.copy(alpha = .5f)
-                            )
-                        }
+                        TagBubble(
+                            tag = tag,
+                            textColor = Color.Black.copy(alpha = .8f),
+                            bubbleColor = Color.White.copy(alpha = .5f)
+                        )
                     }
                 }
 
@@ -179,12 +171,15 @@ fun MarkupCell(
                 Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)) {
                     Text(
                         text = "${markup.author} - ${markup.title}",
-                        color = Color.White.copy(alpha = .9f),
+                        color = Color.White,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.caption
                     )
                     Text(
                         text = markup.book,
                         color = Color.White.copy(alpha = .9f),
+                        fontSize = 14.sp,
                         style = MaterialTheme.typography.caption
                     )
                 }
@@ -193,115 +188,86 @@ fun MarkupCell(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MarkupCell3(
+fun SwipeableMarkupCell(
     markup: Markup,
-    textColor: Color,
-    bottomBarColor: Color,
-    detailTextColor: Color,
-    mutedTextColor: Color,
-    typeBubbleColor: Color,
+    surfaceColor: Color,
+    bubbleColor: Color,
     isDark: Boolean,
-    deleteAction: (String) -> Unit,
-    onClickItem: () -> Unit,
+    deleteAction: () -> Unit,
+    onItemClick: () -> Unit
 ) {
-    Card(shape = RoundedCornerShape(10.dp)) {
-        Column() {
-            Row {
-                Text(text = markup.title)
-                Button(onClick = { /*TODO*/ }) {
-                    Icon(
-                        imageVector = Icons.Rounded.ArrowDropDown,
-                        contentDescription = "Expand Arrow"
-                    )
+    val swipeSize = (LocalConfiguration.current.screenWidthDp / 3).dp
+    val swipePx = with(LocalDensity.current) { swipeSize.toPx() }
+    val swipeableState = rememberSwipeableState(initialValue = 0)
+    val swipeAnchors = mapOf(0f to 0, -swipePx to 1)
+    var boxHeight by remember { mutableStateOf(0) }
+
+    Column {
+        Box(
+            modifier = Modifier.swipeable(
+                swipeableState,
+                anchors = swipeAnchors,
+                thresholds = { _, _ ->
+                    FractionalThreshold(0.3f)
+                },
+                orientation = Orientation.Horizontal
+            )
+        ) {
+            with(LocalDensity.current) {
+                Card(
+                    modifier = Modifier
+                        .height(boxHeight.toDp())
+                        .fillMaxWidth()
+                        .alpha(-1 * swipeableState.offset.value / swipePx),
+                    shape = RoundedCornerShape(12.dp),
+                    backgroundColor = surfaceColor,
+                ) {
+                    Row {
+                        Spacer(modifier = Modifier.fillMaxWidth(0.65f))
+
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            IconButton(
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .clip(CircleShape)
+                                    .background(bubbleColor),
+                                onClick = { deleteAction() }) {
+                                Icon(
+                                    modifier = Modifier.size(50.dp),
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Șterge marcaj",
+                                    tint = Color.Red
+                                )
+                            }
+                        }
+                    }
                 }
             }
-            Row(
+
+            Box(
                 modifier = Modifier
-                    .background(getNamedColor(markup.bgColor, isDark))
-                    .fillMaxWidth()
+                    .offset { IntOffset(swipeableState.offset.value.toInt(), 0) }
             ) {
-                Text(
-                    modifier = Modifier.padding(12.dp),
-                    text = "„" + markup.selection.trim() + "”",
-                    color = textColor,
-                    maxLines = 4,
-                    overflow = TextOverflow.Ellipsis
+                MarkupCell(
+                    modifier = Modifier
+                        .onGloballyPositioned { layoutCoordinates ->
+                            boxHeight = layoutCoordinates.size.height
+                        },
+                    markup = markup,
+                    isDark = isDark,
+                    onItemClick = onItemClick
                 )
-            }
-            Row(
-                modifier = Modifier
-                    .background(bottomBarColor)
-                    .fillMaxWidth()
-            ) {
-                Column(modifier = Modifier.padding(vertical = 5.dp, horizontal = 12.dp)) {
-                    Row {
-                        Icon(
-                            modifier = Modifier.size(14.dp),
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_author),
-                            contentDescription = "Author icon",
-                            tint = detailTextColor
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(
-                            text = markup.author + ", " + markup.title,
-                            color = detailTextColor,
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
-                    Row {
-                        Icon(
-                            modifier = Modifier.size(14.dp),
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
-                            contentDescription = "Book icon",
-                            tint = mutedTextColor
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(
-                            text = markup.book,
-                            color = mutedTextColor,
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
-                }
             }
         }
     }
 }
 
-@Composable
-fun MarkupCell2(
-    navController: NavController,
-    markup: Markup,
-    deleteAction: (String) -> Unit
-) {
-    Card(
-        shape = RoundedCornerShape(10.dp),
-        backgroundColor = getNamedColor(markup.bgColor, isSystemInDarkTheme()),
-        elevation = 1.dp,
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 8.dp)
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        Column(
-            modifier = Modifier
-                .clickable { navController.navigate(Screens.Article.withArgs("${markup.articleID}?scrollOffset=${markup.scrollOffset}")) }
-        ) {
-            Text(
-                text = markup.title,
-                style = MaterialTheme.typography.h6,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            MarkupCellTitle(markup)
-            MarkupCellInfo(markup, deleteAction)
-        }
-    }
-}
 
 @Composable
 @Preview
@@ -322,130 +288,12 @@ fun MarkupCellPreview() {
         tags = listOf("dimineata", "test", "suferinta")
     )
 
-    MarkupCell(
+    SwipeableMarkupCell(
         markup = markup,
         isDark = isDark,
+        surfaceColor = getNamedColor("PrimarySurface", isDark),
+        bubbleColor = getNamedColor("Bubble", isDark),
         deleteAction = { }) {
     }
 }
 
-
-@Composable
-fun MarkupCellTitle(markup: Markup) {
-    Column(
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
-                contentDescription = "Menu",
-                tint = Color.Black,
-                modifier = Modifier
-                    .size(16.dp)
-            )
-            Text(
-                text = markup.book,
-                style = MaterialTheme.typography.caption,
-                color = Color.Black,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-            )
-        }
-        Text(
-            text = markup.selection,
-            style = MaterialTheme.typography.body1,
-            color = Color.Black,
-            modifier = Modifier
-                .padding(start = 8.dp)
-        )
-    }
-}
-
-
-@Composable
-fun MarkupCellInfo(markup: Markup, deleteAction: (String) -> Unit) {
-    Column(
-        modifier = Modifier
-            .background(Color.DarkGray)
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(horizontalAlignment = Alignment.Start) {
-
-                if (markup.tags.isNotEmpty()) {
-                    println("TAGS: ${markup.tags}, isEmpty: ${markup.tags.isEmpty()}, count: ${markup.tags.count()}")
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(bottom = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_tag_24),
-                            contentDescription = "Tag",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .padding(end = 5.dp)
-                        )
-
-                        markup.tags.forEach { tag ->
-                            if (tag.isNotEmpty())
-                                Text(
-                                    text = tag,
-                                    style = MaterialTheme.typography.caption,
-                                    color = Color.White,
-                                    modifier = Modifier
-                                        .padding(end = 8.dp)
-                                        .background(Color.Red, RoundedCornerShape(50))
-                                        .padding(5.dp)
-                                )
-                        }
-                    }
-                }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_access_time_24),
-                        contentDescription = "Menu",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .padding(end = 5.dp)
-                    )
-                    var inFormatter = DateTimeFormatter.ISO_DATE_TIME
-                    val rawDate = LocalDate.parse(markup.timestamp, inFormatter)
-                    val formattedDate = "${rawDate.dayOfMonth} ${rawDate.month} - ${rawDate.year}"
-                    Text(
-                        text = formattedDate,
-                        style = MaterialTheme.typography.caption,
-                        color = Color.White
-                    )
-                }
-
-            }
-            Column(
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp)
-            ) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
-                    contentDescription = "Menu",
-                    tint = Color.Red,
-                    modifier = Modifier
-                        .size(25.dp)
-                        .clickable { deleteAction(markup.id) }
-                )
-            }
-        }
-    }
-}

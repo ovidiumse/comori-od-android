@@ -27,6 +27,7 @@ import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.TagsRow
 import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
+import java.net.URLEncoder
 
 @Composable
 fun MarkupsScreen(
@@ -36,6 +37,8 @@ fun MarkupsScreen(
 ) {
     val isDark = isSystemInDarkTheme()
     val bgColor = getNamedColor("Background", isDark)
+    val surfaceColor = getNamedColor("PrimarySurface", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
 
     val markupsData = markupsModel.markups
     val tags =
@@ -43,7 +46,6 @@ fun MarkupsScreen(
             ?.filter { tag -> tag.isNotEmpty() }
             ?: emptyList()
 
-    val markupToDelete = remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
     var selectedTag by remember { mutableStateOf("") }
 
@@ -88,31 +90,33 @@ fun MarkupsScreen(
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             markups.forEach { markup ->
-                                item() {
-                                    MarkupCell(
+                                item(key = markup.id) {
+                                    SwipeableMarkupCell(
                                         markup,
+                                        surfaceColor = surfaceColor,
+                                        bubbleColor = bubbleColor,
                                         isDark = isDark,
                                         deleteAction = {
-                                            markupToDelete.value = markup.id
-                                        }) {
-                                        navController.navigate(Screens.Article.withArgs(markup.articleID))
-                                    }
+                                            markupsModel.deleteMarkup(markup.id)
+                                        },
+                                        onItemClick = {
+                                            navController.navigate(
+                                                Screens.Article.withArgs(
+                                                    "${
+                                                        URLEncoder.encode(
+                                                            markup.articleID,
+                                                            "utf-8"
+                                                        )
+                                                    }?markupId=${markup.id}"
+                                                )
+                                            )
+                                        })
                                 }
                             }
                         }
                     }
                 }
                 else -> {}
-            }
-
-            if (markupToDelete.value.isNotEmpty()) {
-                DeleteFavoriteConfirmationDialog(
-                    deleteAction = {
-                        markupsModel.deleteMarkup(markupToDelete.value)
-                        markupToDelete.value = ""
-                    },
-                    dismissAction = { markupToDelete.value = "" }
-                )
             }
         }
     }
