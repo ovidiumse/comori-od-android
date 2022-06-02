@@ -1,7 +1,6 @@
 package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
-import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
@@ -9,6 +8,8 @@ import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import okhttp3.ResponseBody
 
 class MarkupsDataSource(
     private val jwtUtils: JWTUtils,
@@ -41,15 +42,17 @@ class MarkupsDataSource(
         }
     }
 
-    fun deleteMarkup(id: String) {
-        buildFlow(externalScope) {
+    fun deleteMarkup(id: String): StateFlow<Resource<ResponseBody?>> {
+        return buildFlow(externalScope) {
             buildToken()?.let { token -> apiService.deleteMarkup(token, id) }
         }
     }
 
-    fun saveMarkup(markup: Markup) {
-        buildFlow(externalScope) {
-            buildToken()?.let { token -> apiService.saveMarkup(token, markup) }
+    fun saveMarkup(markup: Markup): StateFlow<Resource<Markup?>> {
+        return buildFlow(externalScope) {
+            buildToken()?.let { token ->
+                apiService.saveMarkup(token, markup)
+            }
         }
     }
 

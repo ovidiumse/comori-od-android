@@ -93,7 +93,7 @@ fun MarkupCell(
         backgroundColor = getNamedColor(markup.bgColor, isDark),
         onClick = onItemClick
     ) {
-        Column() {
+        Column {
             Row(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)

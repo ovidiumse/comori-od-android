@@ -12,6 +12,7 @@ import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.data.trending.TrendingResponse
 import com.ovidium.comoriod.data.volumes.VolumesResponse
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 interface ApiService {
@@ -85,13 +86,13 @@ interface ApiService {
     suspend fun deleteFavoriteArticle(
         @Header("Authorization") token: String,
         @Path("id") id: String
-    )
+    ): ResponseBody
 
     @POST("favorites")
     suspend fun saveFavorite(
         @Header("Authorization") token: String,
         @Body favoriteArticle: FavoriteArticle
-    ): List<FavoriteArticle>
+    ): FavoriteArticle
 
     @GET("markups")
     suspend fun getMarkups(
@@ -102,12 +103,12 @@ interface ApiService {
     suspend fun deleteMarkup(
         @Header("Authorization") token: String,
         @Path("id") id: String
-    )
+    ) : ResponseBody
 
     @POST("markups")
     suspend fun saveMarkup(
         @Header("Authorization") token: String,
         @Body markup: Markup
-    ): List<Markup>
+    ) : Markup
 
 }

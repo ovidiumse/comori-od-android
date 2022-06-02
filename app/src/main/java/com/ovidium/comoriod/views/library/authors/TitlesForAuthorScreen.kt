@@ -46,7 +46,7 @@ fun TitlesForAuthorScreen(
             )
         }
     ) {
-        Column() {
+        Column {
             TitlesForAuthorList(
                 libraryModel = libraryModel,
                 navController = navController,

@@ -8,6 +8,8 @@ import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import okhttp3.ResponseBody
 
 class FavoritesDataSource(
     private val jwtUtils: JWTUtils,
@@ -39,14 +41,14 @@ class FavoritesDataSource(
         }
     }
 
-    fun deleteFavoriteArticle(id: String) {
-        buildFlow(externalScope) {
+    fun deleteFavoriteArticle(id: String): StateFlow<Resource<ResponseBody?>> {
+        return buildFlow(externalScope) {
             buildToken()?.let { token -> apiService.deleteFavoriteArticle(token, id) }
         }
     }
 
-    fun saveFavorite(article: FavoriteArticle) {
-        buildFlow(externalScope) {
+    fun saveFavorite(article: FavoriteArticle): StateFlow<Resource<FavoriteArticle?>> {
+        return buildFlow(externalScope) {
             buildToken()?.let { token -> apiService.saveFavorite(token, article) }
         }
     }

@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.google.GoogleApiContract
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -139,7 +138,7 @@ fun Drawer(
             modifier = Modifier.fillMaxSize()
         ) {
             if (userResource.state == UserState.LoggedIn) {
-                item() {
+                item {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier

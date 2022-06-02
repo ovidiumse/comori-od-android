@@ -64,8 +64,7 @@ class DataItem(
     val imageId: Int? = null,
     val gradient: List<Color>,
     val type: ItemCategory = ItemCategory.None
-) {
-}
+)
 
 @Composable
 fun LibraryScreen(

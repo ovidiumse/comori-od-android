@@ -69,7 +69,7 @@ fun HorizontalCarousel(
         ) {
             if (isLoading)
                 repeat(estimatedSize) { index ->
-                    item() {
+                    item {
                         if (index == 0)
                             Spacer(modifier = Modifier.width(marginSize.dp))
 

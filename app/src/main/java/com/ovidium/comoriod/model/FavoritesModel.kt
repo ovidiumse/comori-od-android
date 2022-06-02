@@ -1,7 +1,8 @@
 package com.ovidium.comoriod.model
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.ovidium.comoriod.data.FavoritesDataSource
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
+import com.ovidium.comoriod.utils.Status
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -17,35 +19,46 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewM
     private val dataSource =
         FavoritesDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 
-    val articles =
-        mutableStateOf<Resource<List<FavoriteArticle>?>>(Resource.loading(null))
-
-    init {
-        updateFavorites()
+    val favorites by lazy {
+        viewModelScope.launch {
+            loadFavorites()
+        }
+        mutableStateOf<Resource<SnapshotStateList<FavoriteArticle>>>(Resource.loading(null))
     }
 
     fun isFavorite(id: String): Boolean {
-        return articles.value.data?.map { fav-> fav.id }?.contains(id) ?: false
+        return favorites.value.data?.map { fav-> fav.id }?.contains(id) ?: false
     }
 
     fun deleteFavoriteArticle(id: String) {
         viewModelScope.launch {
-            dataSource.deleteFavoriteArticle(id)
-            updateFavorites()
+            dataSource.deleteFavoriteArticle(id).collectLatest { response ->
+                if (response.status == Status.SUCCESS)
+                    favorites.value.data?.removeIf { favorite -> favorite.id == id}
+            }
         }
     }
 
     fun saveFavorite(article: FavoriteArticle) {
         viewModelScope.launch {
-            dataSource.saveFavorite(article)
-            updateFavorites()
+            dataSource.saveFavorite(article).collectLatest { response ->
+                if (response.status == Status.SUCCESS && response.data != null)
+                    favorites.value.data?.add(response.data)
+            }
         }
     }
 
-    private fun updateFavorites() {
-        viewModelScope.launch {
-            dataSource.getFavoriteArticles().collectLatest { state ->
-                articles.value = state
+    private suspend fun loadFavorites() {
+        dataSource.getFavoriteArticles().collectLatest { response ->
+            when(response.status) {
+                Status.SUCCESS -> {
+                    favorites.value = Resource.success(mutableStateListOf())
+                    response.data?.forEach { favorite ->
+                        favorites.value.data?.add(favorite)
+                    }
+                }
+                Status.LOADING -> favorites.value = Resource.loading(null)
+                Status.ERROR -> favorites.value = Resource.error(null, response.message)
             }
         }
     }

@@ -70,7 +70,7 @@ fun AuthorPopup(
                 )
                 .padding(horizontal = 16.dp)
         ) {
-            Column() {
+            Column {
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier
@@ -114,7 +114,7 @@ fun AuthorPopup(
                         )
                     }
                 }
-                Column() {
+                Column {
                     Text(
                         text = authorInfo.shortAbout,
                         color = colors.colorSecondaryText,
@@ -123,7 +123,7 @@ fun AuthorPopup(
                         modifier = Modifier
                             .padding(bottom = 24.dp)
                     )
-                    Row() {
+                    Row {
                         Text(
                             text = getBooksNumber(authorInfo),
                             color = colors.colorSecondaryText,

@@ -61,7 +61,7 @@ fun AuthorsCarousel(
         LazyRow(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
             if (isLoading)
                 repeat(estimatedSize) {
-                    item() {
+                    item {
                         AuthorCard(
                             null,
                             isLoading = isLoading,

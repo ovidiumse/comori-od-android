@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.article
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -10,27 +11,17 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.onPlaced
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalTextToolbar
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalTextToolbar
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.IntOffset
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.CustomTextToolbar
@@ -44,11 +35,6 @@ import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.parseVerses
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import java.lang.Math.min
-import kotlin.math.max
 
 @Composable
 fun ArticleView(
@@ -58,7 +44,6 @@ fun ArticleView(
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
 ) {
-
     val articleModel: BookModel = viewModel()
     val bookData = remember { articleModel.bookData }
 
@@ -115,8 +100,7 @@ fun ArticleViewContent(
     val bgColor = getNamedColor("Background", isDark)
 
     Box(modifier = Modifier.background(bgColor)) {
-        Column(
-        ) {
+        Column {
             LazyColumn(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -219,8 +203,8 @@ fun ArticleViewContent(
                                 onTextLayout = { textLayout ->
                                     val markup =
                                         markups.firstOrNull { markup -> markup.id == markupId }
-                                    markup?.let { markup ->
-                                        val rectStart = textLayout.getBoundingBox(markup.index)
+                                    markup?.let { m ->
+                                        val rectStart = textLayout.getBoundingBox(m.index)
                                         scrollOffset =
                                             (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
                                                 .toInt()

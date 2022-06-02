@@ -44,7 +44,7 @@ fun AuthorsGrid(
     ) {
         if (isLoading) {
             repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) {
-                item() {
+                item {
                     Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
                         repeat(itemsByRow) {
                             AuthorCard(

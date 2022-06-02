@@ -77,7 +77,7 @@ fun TitlesForAuthorCell(
     }
 
     LaunchedEffect(Unit) {
-        val params = libraryModel.searchParams.let { it } ?: return@LaunchedEffect
+        val params = libraryModel.searchParams.let { it }
         val types =
             if (params[FilterCategory.TYPES].isNullOrEmpty()) "" else params[FilterCategory.TYPES]!!.joinToString(
                 ","

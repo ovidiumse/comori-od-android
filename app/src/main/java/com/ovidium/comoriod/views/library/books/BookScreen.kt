@@ -119,7 +119,7 @@ fun BookScreen(
     }
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect() { page ->
+        snapshotFlow { pagerState.currentPage }.collect { page ->
             articleModel.clearBibleRefs()
         }
     }

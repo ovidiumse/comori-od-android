@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class BookModel: ViewModel() {
     private val dataSource = SearchDataSource(RetrofitBuilder.apiService, viewModelScope)
 
-    var bookData = mutableStateMapOf<String, Resource<ArticleResponse>>();
+    var bookData = mutableStateMapOf<String, Resource<ArticleResponse>>()
 
     fun clear() {
         bookData.clear()

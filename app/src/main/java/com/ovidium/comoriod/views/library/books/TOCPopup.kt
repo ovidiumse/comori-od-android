@@ -66,7 +66,7 @@ fun TOCPopup(
                     RoundedCornerShape(16.dp)
                 )
         ) {
-            Column() {
+            Column {
                 TOCTopBar(
                     searchText = searchText,
                     focusRequester = focusRequester,
@@ -95,7 +95,7 @@ fun TOCPopup(
                                 color = if (currentIndex == index) getNamedColor(
                                     "Link",
                                     isDark = isDark
-                                )!! else getNamedColor("PopupContainer", isDark = isDark),
+                                ) else getNamedColor("PopupContainer", isDark = isDark),
                                 modifier = Modifier
                                     .padding(end = 16.dp)
                             )
@@ -106,7 +106,7 @@ fun TOCPopup(
                                 color = if (currentIndex == index) getNamedColor(
                                     "Link",
                                     isDark = isDark
-                                )!! else getNamedColor("PopupContainer", isDark = isDark),
+                                ) else getNamedColor("PopupContainer", isDark = isDark),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(0.7f)
@@ -117,7 +117,7 @@ fun TOCPopup(
                                 tint = if (currentIndex == index) getNamedColor(
                                     "Link",
                                     isDark = isDark
-                                )!! else Color.Transparent,
+                                ) else Color.Transparent,
                                 modifier = Modifier
                                     .size(35.dp)
                                     .fillMaxWidth()

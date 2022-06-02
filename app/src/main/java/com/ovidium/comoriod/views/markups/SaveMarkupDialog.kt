@@ -134,7 +134,7 @@ fun SaveMarkupDialog(
                     modifier = Modifier
                         .wrapContentHeight()
                 ) {
-                    Column() {
+                    Column {
                     Column(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp)

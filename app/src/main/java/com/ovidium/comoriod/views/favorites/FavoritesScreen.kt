@@ -36,7 +36,7 @@ fun FavoritesScreen(
     favoritesModel: FavoritesModel,
     scaffoldState: ScaffoldState
 ) {
-    val favoritesData = favoritesModel.articles
+    val favoritesData = favoritesModel.favorites
     val tags = favoritesData.value.data?.map { article -> article.tags }?.flatten()?.distinct()
         ?.filter { tag -> tag.isNotEmpty() }
         ?: emptyList()
@@ -79,9 +79,9 @@ fun FavoritesScreen(
                         selectedTag,
                         onTagsChanged = { tag -> selectedTag = tag })
 
-                    LazyColumn() {
+                    LazyColumn {
                         favorites.forEach { article ->
-                            item() {
+                            item {
                                 FavoriteArticleCell(navController, article) { idToDelete ->
                                     articleToDelete.value = idToDelete
                                 }
@@ -156,10 +156,10 @@ fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (S
         modifier = Modifier
             .padding(end = 8.dp)
             .background(
-                if (isSelected) getNamedColor("Link", isDark)!! else getNamedColor(
+                if (isSelected) getNamedColor("Link", isDark) else getNamedColor(
                     "PopupContainer",
                     isDark
-                )!!.copy(alpha = 0.3f),
+                ).copy(alpha = 0.3f),
                 RoundedCornerShape(50)
             )
             .padding(12.dp)

@@ -42,7 +42,7 @@ fun SearchFilterPopup(
                     RoundedCornerShape(16.dp)
                 )
         ) {
-            Column() {
+            Column {
                 FilterViewTopBar(onSaveAction = onSaveAction, onExitAction = onExitAction)
                 LazyColumn(
                     modifier = Modifier.padding(16.dp)

@@ -56,7 +56,7 @@ fun ItemsGrid(
     ) {
         if (isLoading) {
             repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) { mainIndex ->
-                item() {
+                item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
                         modifier = Modifier.fillMaxWidth()

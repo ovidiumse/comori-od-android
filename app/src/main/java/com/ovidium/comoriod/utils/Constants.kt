@@ -1,6 +1,6 @@
 package com.ovidium.comoriod.utils
 
-public final class Constants {
+class Constants {
     companion object {
     val suggestionsList = listOf<String>(
         "Dumnezeu",
