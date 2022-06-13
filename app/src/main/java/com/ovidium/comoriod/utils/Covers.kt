@@ -17,5 +17,5 @@ fun getVolumeCoverGradient(name: String, isDark: Boolean): List<Color> {
     return when (val colorList = gradientMapping[name]) {
         null -> listOf("Lavender", "Snow")
         else -> colorList
-    }.map { colorName -> getNamedColor(colorName, isDark)!! }
+    }.map { colorName -> getNamedColor(colorName, isDark) }
 }

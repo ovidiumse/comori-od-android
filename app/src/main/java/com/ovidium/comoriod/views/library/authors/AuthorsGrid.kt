@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,11 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.authors.Bucket
-import com.ovidium.comoriod.mappings.getDrawableByAuthor
-import com.ovidium.comoriod.utils.articulate
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
-import com.ovidium.comoriod.views.DataItem
-import com.ovidium.comoriod.views.ItemCategory
+import com.ovidium.comoriod.views.library.authors.AuthorCard
 import kotlin.math.ceil
 
 @Composable
@@ -41,10 +40,11 @@ fun AuthorsGrid(
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
         modifier = Modifier
             .fillMaxHeight()
+            .background(color = getNamedColor("Background", isDark))
     ) {
         if (isLoading) {
             repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) {
-                item() {
+                item {
                     Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
                         repeat(itemsByRow) {
                             AuthorCard(
@@ -53,6 +53,7 @@ fun AuthorsGrid(
                                 itemSize = itemSize,
                                 colors = emptyList(),
                                 marginSize = marginSize,
+                                isDark = isDark,
                                 showAuthorAction = showAuthorAction
                             )
                         }
@@ -71,6 +72,7 @@ fun AuthorsGrid(
                                 getVolumeCoverGradient("", isDark = isDark),
                                 itemSize,
                                 marginSize,
+                                isDark,
                                 showAuthorAction = showAuthorAction
                             )
                         }

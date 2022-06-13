@@ -8,6 +8,4 @@ data class GoogleUserModel(
     val email: String?,
     val photoUrl: Uri?,
     val issuer: String
-) {
-
-}
+)

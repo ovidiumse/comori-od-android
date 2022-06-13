@@ -37,7 +37,7 @@ fun DeleteFavoriteConfirmationDialog(
         dismissButton = {
             Button(
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = getNamedColor("Link", isSystemInDarkTheme())!!,
+                    backgroundColor = getNamedColor("Link", isSystemInDarkTheme()),
                     contentColor = Color.White
                 ),
                 onClick = {

@@ -1,26 +1,33 @@
 package com.ovidium.comoriod.views.library.books
 
+import androidx.compose.foundation.clickable
+
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.ovidium.comoriod.components.BookTopBar
+import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.article.ArticleView
 import kotlinx.coroutines.launch
 
@@ -30,40 +37,58 @@ fun BookScreen(
     jwtUtils: JWTUtils,
     scaffoldState: ScaffoldState,
     signInModel: GoogleSignInModel,
-    favoritesModel: FavoritesModel
+    favoritesModel: FavoritesModel,
+    markupsModel: MarkupsModel,
 ) {
-
+    val isDark = isSystemInDarkTheme()
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
     val bookModel: BookModel = viewModel()
     val articleModel: ArticleModel = viewModel()
-    val titlesData by remember { libraryModel.titlesData }
+    val titlesData by libraryModel.titlesData
+    val titles = titlesData.data?.titles
     val pagerState = rememberPagerState()
-    val titles = titlesData.data?.hits?.hits?.map { it }
     val coroutineScope = rememberCoroutineScope()
     var showTOCPopup by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     Scaffold(
         topBar = {
-            BookTopBar(
-                title = { Text(text = "Comori OD") },
+            AppBar(
+                showTitle = true,
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
-                onTOCClicked = { showTOCPopup = true }
+                actions = @Composable {
+                    Icon(
+                        imageVector = Icons.Default.List,
+                        contentDescription = "Cuprins",
+                        modifier = Modifier.clickable(onClick = { showTOCPopup = true }),
+                        tint = getNamedColor("Text", isDark = isDark)
+                    )
+                }
             )
         }
     ) {
-        if (titles.isNullOrEmpty()) {
-            Text(text = "Loading...")
-        } else {
-            HorizontalPager(
-                count = titles.count(),
-                state = pagerState,
-                contentPadding = PaddingValues(end = 16.dp),
-                verticalAlignment = Alignment.Top,
-            ) { pageIdx ->
-                ArticleView(articleID = titles.map { it._id }[pageIdx], favoritesModel)
+        when(titlesData.status) {
+            Status.SUCCESS -> {
+                if (!titles.isNullOrEmpty()) {
+                    HorizontalPager(
+                        count = titles.count(),
+                        state = pagerState,
+                        contentPadding = PaddingValues(end = 16.dp),
+                        verticalAlignment = Alignment.Top,
+                    ) { pageIdx ->
+                        ArticleView(
+                            articleID = titles.map { it._id }[pageIdx],
+                            signInModel = signInModel,
+                            favoritesModel = favoritesModel,
+                            markupsModel = markupsModel
+                        )
+                    }
+                }
             }
+            Status.ERROR -> TODO()
+            Status.LOADING -> Text(text = "Loading...")
         }
+
         if (showTOCPopup && titles != null) {
             TOCPopup(
                 titles = titles,
@@ -78,10 +103,29 @@ fun BookScreen(
                 onExitAction = { showTOCPopup = false },
             )
         }
+
+        if (titles.isNullOrEmpty()) {
+            Text(text = "Loading...")
+        } else {
+            HorizontalPager(
+                count = titles.count(),
+                state = pagerState,
+                contentPadding = PaddingValues(end = 16.dp),
+                verticalAlignment = Alignment.Top,
+            ) { pageIdx ->
+                ArticleView(
+                    articleID = titles.map { it._id }[pageIdx],
+                    signInModel = signInModel,
+                    favoritesModel = favoritesModel,
+                    markupsModel = markupsModel
+                )
+            }
+        }
+
     }
 
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect() { page ->
+        snapshotFlow { pagerState.currentPage }.collect { page ->
             articleModel.clearBibleRefs()
         }
     }

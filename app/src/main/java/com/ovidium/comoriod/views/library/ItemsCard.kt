@@ -1,9 +1,6 @@
 package com.ovidium.comoriod.views.library
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -36,6 +33,7 @@ import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.ItemCategory
 import com.ovidium.comoriod.views.Screens
@@ -55,20 +53,25 @@ fun ItemCard(
     imageId: Int? = null,
     colors: List<Color>,
     itemSize: Int,
-    marginSize: Int
+    marginSize: Int,
+    isDark: Boolean
 ) {
     val titleAreaSize = itemSize * 0.60
     val authorBarSize = itemSize * 0.18
     val authorImageSize = authorBarSize * 1.60
     val authorImageLeftOffset = authorBarSize * 0.3
 
-    Card(Modifier.clip(RoundedCornerShape(8))) {
+    val darkBarColor = getNamedColor("DarkBar", isDark)
+    val secondaryBackground = getNamedColor("SecondaryBackground", isDark)
+    val secondarySurfaceColor = getNamedColor("SecondarySurface", isDark)
+
+    Card(shape = RoundedCornerShape(12)) {
         var boxModifier = Modifier
             .size(width = itemSize.dp, height = itemSize.dp)
             .placeholder(
                 isLoading,
-                color = Color.DarkGray,
-                highlight = PlaceholderHighlight.fade(highlightColor = Color.LightGray)
+                color = secondaryBackground,
+                highlight = PlaceholderHighlight.fade(highlightColor = secondarySurfaceColor)
             )
             .clickable {
                 when (itemType) {
@@ -109,7 +112,7 @@ fun ItemCard(
                 }
                 Box(
                     modifier = Modifier
-                        .background(Color.DarkGray)
+                        .background(darkBarColor)
                         .height(authorBarSize.dp)
                         .fillMaxWidth()
                 ) {
@@ -156,7 +159,7 @@ fun ItemCard(
                                 .fillMaxWidth()
                                 .padding(horizontal = 8.dp)
                                 .align(Alignment.CenterVertically),
-                            color = Color.DarkGray
+                            color = darkBarColor
                         )
                     }
                 }

@@ -2,9 +2,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -13,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,59 +25,48 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun SuggestionsView(coroutineScope: CoroutineScope, keyboardController: SoftwareKeyboardController?, searchModel: SearchModel = viewModel()) {
+fun SuggestionsView(onItemClick : (String) -> Unit) {
+    val isDark = isSystemInDarkTheme()
 
-    var query by remember { searchModel.query }
-    var isSearch by remember { searchModel.isSearch }
+    val backgroundColor = getNamedColor("Background", isDark)
+    val mutedTextColor = getNamedColor("MutedText", isDark)
 
-    Column {
+    val surfaceColor = getNamedColor("Bubble", isDark)
+    val textColor = getNamedColor("Text", isDark)
+
+    Column(
+        modifier = Modifier
+            .background(backgroundColor)
+            .fillMaxSize()
+    ) {
         Text(
             text = "Sugestii:",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Gray,
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(vertical = 8.dp)
+            color = mutedTextColor,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
-        LazyColumn {
-            items(Constants.suggestionsList.shuffled().take(12).chunked(4)) { items ->
-                LazyRow(
-                    contentPadding = PaddingValues(vertical = 10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
-                    items(items) { item ->
-                        Text(
-                            text = item,
-                            fontSize = 12.sp,
-                            color = getNamedColor("Link", isDark = isSystemInDarkTheme())!!,
-                            maxLines = 1,
-                            overflow = TextOverflow.Visible,
-                            modifier = Modifier
-                                .padding(3.dp)
-                                .background(
-                                    getNamedColor("Container", isDark = isSystemInDarkTheme())!!,
-                                    shape = Shapes.medium
-                                )
-                                .padding(10.dp)
-                                .clickable {
-                                    query = item
-                                    if (query.isNotEmpty()) {
-                                        isSearch = true
-                                        coroutineScope.launch {
-                                            keyboardController?.hide()
-                                            searchModel.search()
-                                        }
-                                    }
-                                }
-                        )
-                    }
+
+        LazyVerticalGrid(
+            cells = GridCells.Adaptive(90.dp),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(Constants.suggestionsList.shuffled().take(16)) { item ->
+                Card(backgroundColor = surfaceColor, modifier = Modifier.wrapContentWidth()) {
+                    Text(
+                        text = item,
+                        fontSize = 12.sp,
+                        color = textColor,
+                        maxLines = 1,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clickable { onItemClick(item) }
+                    )
                 }
             }
         }
     }
 }
+

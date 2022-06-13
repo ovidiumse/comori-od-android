@@ -40,7 +40,6 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.search.filter.FilterCategory
 import com.ovidium.comoriod.views.search.filter.FilterCategoryView
 import com.ovidium.comoriod.views.search.filter.FilterViewTopBar
 import kotlinx.coroutines.launch
@@ -65,12 +64,12 @@ fun AuthorPopup(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    getNamedColor("Alice", isDark = isDark)!!,
+                    getNamedColor("Alice", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
                 .padding(horizontal = 16.dp)
         ) {
-            Column() {
+            Column {
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier
@@ -79,7 +78,7 @@ fun AuthorPopup(
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Exit",
-                        tint = getNamedColor("Link", isDark = isDark)!!,
+                        tint = getNamedColor("Link", isDark = isDark),
                         modifier = Modifier
                             .padding(top = 16.dp, end = 16.dp)
                             .clickable { onExitAction() }
@@ -114,7 +113,7 @@ fun AuthorPopup(
                         )
                     }
                 }
-                Column() {
+                Column {
                     Text(
                         text = authorInfo.shortAbout,
                         color = colors.colorSecondaryText,
@@ -123,7 +122,7 @@ fun AuthorPopup(
                         modifier = Modifier
                             .padding(bottom = 24.dp)
                     )
-                    Row() {
+                    Row {
                         Text(
                             text = getBooksNumber(authorInfo),
                             color = colors.colorSecondaryText,
@@ -132,7 +131,7 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)
@@ -152,7 +151,7 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)
@@ -172,7 +171,7 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)
@@ -182,10 +181,11 @@ fun AuthorPopup(
                                             authorInfo.name
                                         )
                                     )
-                                    libraryModel.searchParams.clear()
-                                    libraryModel.getTitlesForAuthor(
-                                        authors = authorInfo.name,
-                                        types = "poezie"
+                                    libraryModel.getTitles(
+                                        params = mapOf(
+                                            "authors" to authorInfo.name,
+                                            "types" to "poezie"
+                                        )
                                     )
                                 }
                         )
@@ -196,7 +196,7 @@ fun AuthorPopup(
                             maxLines = 1,
                             modifier = Modifier
                                 .background(
-                                    getNamedColor("CardButton", isDark = isDark)!!,
+                                    getNamedColor("CardButton", isDark = isDark),
                                     RoundedCornerShape(50)
                                 )
                                 .padding(8.dp)
@@ -206,10 +206,11 @@ fun AuthorPopup(
                                             authorInfo.name
                                         )
                                     )
-                                    libraryModel.searchParams.clear()
-                                    libraryModel.getTitlesForAuthor(
-                                        authors = authorInfo.name,
-                                        types = "articol"
+                                    libraryModel.getTitles(
+                                        params = mapOf(
+                                            "authors" to authorInfo.name,
+                                            "types" to "articol"
+                                        )
                                     )
                                 }
                         )
@@ -229,11 +230,13 @@ fun getVolumesNumber(authorBucket: Bucket): String {
 }
 
 fun getPoemsNumber(authorBucket: Bucket): String {
-    val poems = authorBucket.types.buckets.filter({ type -> type.key == "poezie" }).first().doc_count
+    val poems =
+        authorBucket.types.buckets.filter({ type -> type.key == "poezie" }).first().doc_count
     return articulate(poems, "poezii", "poezie", isShort = true)
 }
 
 fun getArticlesNumber(authorBucket: Bucket): String {
-    val articles = authorBucket.types.buckets.filter({ type -> type.key == "articol" }).first().doc_count
+    val articles =
+        authorBucket.types.buckets.filter({ type -> type.key == "articol" }).first().doc_count
     return articulate(articles, "articole", "articol", isShort = true)
 }

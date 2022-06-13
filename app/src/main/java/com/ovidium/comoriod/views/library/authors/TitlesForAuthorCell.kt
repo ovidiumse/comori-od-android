@@ -31,7 +31,6 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.search.filter.FilterCategory
 import java.net.URLEncoder
 
 @Composable
@@ -46,7 +45,7 @@ fun TitlesForAuthorCell(
         modifier = Modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(16.dp))
-            .background(getNamedColor("Container", isDark = isSystemInDarkTheme())!!)
+            .background(getNamedColor("Container", isDark = isSystemInDarkTheme()))
             .clickable {
                 navController.navigate(
                     Screens.Article.withArgs(
@@ -77,7 +76,7 @@ fun TitlesForAuthorCell(
     }
 
     LaunchedEffect(Unit) {
-        val params = libraryModel.searchParams.let { it } ?: return@LaunchedEffect
+        /*val params = libraryModel.searchParams.let { it }
         val types =
             if (params[FilterCategory.TYPES].isNullOrEmpty()) "" else params[FilterCategory.TYPES]!!.joinToString(
                 ","
@@ -105,7 +104,7 @@ fun TitlesForAuthorCell(
                 limit = 20,
                 offset = hitsCount
             )
-        }
+        }*/
     }
 
 }

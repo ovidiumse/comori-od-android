@@ -1,14 +1,17 @@
 package com.ovidium.comoriod.views
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.lerp
@@ -24,6 +27,7 @@ import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.*
 import com.ovidium.comoriod.views.library.AuthorsGrid
 import com.ovidium.comoriod.views.library.BooksGrid
@@ -60,8 +64,7 @@ class DataItem(
     val imageId: Int? = null,
     val gradient: List<Color>,
     val type: ItemCategory = ItemCategory.None
-) {
-}
+)
 
 @Composable
 fun LibraryScreen(
@@ -72,6 +75,7 @@ fun LibraryScreen(
     val tabsHeight = 40
     val dropShadowSize = 3
     val isDark = isSystemInDarkTheme()
+    val backgroundColor = getNamedColor("Background", isDark)
 
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -91,8 +95,8 @@ fun LibraryScreen(
             modifier = Modifier
                 .height(tabsHeight.dp)
                 .shadow(dropShadowSize.dp),
-            backgroundColor = MaterialTheme.colors.background,
-            contentColor = MaterialTheme.colors.onBackground
+            backgroundColor = getNamedColor("Background", isDark),
+            contentColor = getNamedColor("OnBackground", isDark)
         ) {
             TabCategory.values().forEachIndexed { index, tab ->
                 Tab(
@@ -103,23 +107,25 @@ fun LibraryScreen(
         }
 
         HorizontalPager(count = TabCategory.values().size, state = pagerState) { tab ->
-            Card(modifier = Modifier.graphicsLayer {
-                val pageOffset = calculateCurrentOffsetForPage(tab).absoluteValue
-                lerp(
-                    start = ScaleFactor(0.85f, 0.85f),
-                    stop = ScaleFactor(1f, 1f),
-                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                ).also { scale ->
-                    scaleX = scale.scaleX
-                    scaleY = scale.scaleY
-                }
+            Surface(modifier = Modifier
+                .background(backgroundColor)
+                .graphicsLayer {
+                    val pageOffset = calculateCurrentOffsetForPage(tab).absoluteValue
+                    lerp(
+                        start = ScaleFactor(0.85f, 0.85f),
+                        stop = ScaleFactor(1f, 1f),
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                    ).also { scale ->
+                        scaleX = scale.scaleX
+                        scaleY = scale.scaleY
+                    }
 
-                alpha = lerp(
-                    start = ScaleFactor(0.5f, 0.5f),
-                    stop = ScaleFactor(1f, 1f),
-                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                ).scaleX
-            }) {
+                    alpha = lerp(
+                        start = ScaleFactor(0.5f, 0.5f),
+                        stop = ScaleFactor(1f, 1f),
+                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                    ).scaleX
+                }) {
                 when (TabCategory.values()[tab]) {
                     TabCategory.Toate -> LibraryMain(
                         navController,

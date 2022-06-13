@@ -49,7 +49,7 @@ fun SaveFavoriteDialog(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    getNamedColor("Container", isDark = isDark)!!,
+                    getNamedColor("Container", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
         ) {
@@ -93,8 +93,8 @@ fun SaveFavoriteDialog(
                         maxLines = 1,
                         singleLine = true,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            backgroundColor = getNamedColor("InvertedText", isDark = isDark)!!,
-                            cursorColor = getNamedColor("Link", isDark = isDark)!!,
+                            backgroundColor = getNamedColor("InvertedText", isDark = isDark),
+                            cursorColor = getNamedColor("Link", isDark = isDark),
                             focusedBorderColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
@@ -116,7 +116,7 @@ fun SaveFavoriteDialog(
                             currentTag = ""
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = getNamedColor("Link", isDark)!!,
+                            backgroundColor = getNamedColor("Link", isDark),
                             contentColor = Color.White),
                         enabled = currentTag.isNotEmpty()
                     ) {
@@ -128,11 +128,11 @@ fun SaveFavoriteDialog(
                         if (tags.isNotEmpty()) {
                             onSaveAction(tags)
                         } else {
-                            onSaveAction(listOf(currentTag))
+                            onSaveAction(emptyList())
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = getNamedColor("Link", isDark)!!,
+                        backgroundColor = getNamedColor("Link", isDark),
                         contentColor = Color.White),
                     modifier = Modifier
                         .defaultMinSize(minWidth = 200.dp, minHeight = 50.dp)
@@ -170,8 +170,8 @@ fun SaveFavoriteTopBar(
         )
         Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = "Menu",
-            tint = getNamedColor("Link", isDark = isDark)!!,
+            contentDescription = "Close",
+            tint = getNamedColor("Link", isDark = isDark),
             modifier = Modifier
                 .clickable(onClick = onExitAction)
         )

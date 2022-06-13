@@ -3,11 +3,16 @@ package com.ovidium.comoriod.utils
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.*
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
+import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.text.Normalizer
+import java.time.Duration
+
+val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
 
 fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false) : String {
     return "$cnt " + when {
@@ -18,24 +23,45 @@ fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false)
     }
 }
 
+fun fmtDuration(duration: Duration): String {
+    val durations = listOf(
+        Pair(duration.toDays(), Pair("zile", "zi")),
+        Pair(duration.toHours(), Pair("ore", "oră")),
+        Pair(duration.toMinutes(), Pair("minute", "minut"))
+    )
+
+    for ((cnt, units) in durations) {
+        val (multiple, single) = units
+        if (cnt > 0)
+            return "acum ${articulate(cnt.toInt(), multiple, single)}"
+    }
+
+    return "acum"
+}
+
 fun highlightText(text: String, isDark: Boolean): AnnotatedString {
+    val highlightColor = getNamedColor("Highlight", isDark)
+
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
 
-        var highlighted = false
-        for (part in parts) {
-            if (highlighted) {
-                withStyle(
-                    style = SpanStyle(
-                        color = colorSecondaryText,
-                        background = getNamedColor("Highlight", isDark = isDark)!!),
-                ) {
+        withStyle(style=ParagraphStyle) {
+            var highlighted = false
+            for (part in parts) {
+                if (highlighted) {
+                    withStyle(
+                        style = SpanStyle(
+                            color = colorSecondaryText,
+                            background = highlightColor
+                        ),
+                    ) {
+                        append(part)
+                    }
+                } else
                     append(part)
-                }
-            } else
-                append(part)
 
-            highlighted = !highlighted
+                highlighted = !highlighted
+            }
         }
     }
 }
@@ -44,17 +70,19 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
     return highlightText(verses.joinToString(separator = "\n"), isDark = isDark)
 }
 
-fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : AnnotatedString {
+fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>, isDark: Boolean) : AnnotatedString {
+    val linkColor = getNamedColor("Link", isDark)
+    val markupTextColor = getNamedColor("Text", false)
+
     fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
-            var style = SpanStyle()
+            var style = SpanStyle(letterSpacing = 0.3.sp)
             for (s in styles) {
                 when (s) {
                     "italic" -> style = style.merge(SpanStyle(fontStyle = FontStyle.Italic))
                     "bold" -> style = style.merge(SpanStyle(fontWeight = FontWeight.Bold))
                 }
             }
-
             return style
         }
 
@@ -67,7 +95,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
-                        withStyle(style = SpanStyle(color = getNamedColor("Link", isDark)!!)) {
+                        withStyle(style = SpanStyle(color = linkColor)) {
                             append(chunk.text)
                         }
                     }
@@ -88,6 +116,17 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, isDark: Boolean) : Ann
     return buildAnnotatedString {
         for (verse in verses)
             append(buildVerse(verse))
+
+        for (markup in markups) {
+            addStyle(
+                SpanStyle(
+                    color = markupTextColor,
+                    background = getNamedColor(markup.bgColor, isDark)
+                ),
+                start = markup.index,
+                end = markup.index + markup.length
+            )
+        }
     }
 }
 
@@ -96,7 +135,7 @@ fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
     return buildAnnotatedString {
         withStyle(
             style = SpanStyle(
-                color = getNamedColor("BibleRefBlue", isDark = isDark)!!,
+                color = getNamedColor("BibleRefBlue", isDark = isDark),
                 fontWeight = FontWeight.Bold
             ),
         ) {

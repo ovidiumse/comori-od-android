@@ -48,12 +48,13 @@ class LibraryDataSource(
         }
     }
 
-    fun getTitles(bookTitle: String): Flow<Resource<TitlesResponse>> {
-        return buildFlow(externalScope) { apiService.getTitles(bookTitle) }
+    fun getTitles(
+        limit: Int = 20,
+        offset: Int = 0,
+        params: Map<String, String> = emptyMap()
+    ): Flow<Resource<TitlesResponse>> {
+        return buildSharedFlow(externalScope) {
+            apiService.getTitles(limit, offset, params)
+        }
     }
-
-    fun getTitlesForAuthor(authors: String, types: String, volumes: String, books: String, offset: Int, limit: Int): Flow<Resource<TitlesResponse>> {
-        return buildFlow(externalScope) { apiService.getTitlesForAuthor(authors = authors, type = types, volumes = volumes, books = books, offset = offset, limit = limit) }
-    }
-
 }

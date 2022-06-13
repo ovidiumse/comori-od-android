@@ -15,8 +15,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
-import com.ovidium.comoriod.views.DataItem
+import com.ovidium.comoriod.views.library.authors.AuthorCard
 
 @Composable
 fun AuthorsCarousel(
@@ -26,6 +27,8 @@ fun AuthorsCarousel(
     isLoading: Boolean,
     showAuthorAction: (Bucket?) -> Unit
 ) {
+    val isDark = isSystemInDarkTheme()
+
     val itemMinWidth = 180
     val marginSize = 12
     var screenWidth = LocalConfiguration.current.screenWidthDp
@@ -46,24 +49,26 @@ fun AuthorsCarousel(
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
         modifier = Modifier
             .fillMaxHeight()
-            .padding(marginSize.dp)
+            .padding(start = marginSize.dp, top = marginSize.dp, end = marginSize.dp)
     ) {
         Text(
             title,
             style = MaterialTheme.typography.h5,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = getNamedColor("OnBackground", isDark)
         )
 
         LazyRow(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
             if (isLoading)
                 repeat(estimatedSize) {
-                    item() {
+                    item {
                         AuthorCard(
                             null,
                             isLoading = isLoading,
                             colors = emptyList(),
                             itemSize = itemSize,
                             marginSize = marginSize,
+                            isDark = isDark,
                             showAuthorAction = showAuthorAction
                         )
                     }
@@ -77,10 +82,10 @@ fun AuthorsCarousel(
                             getVolumeCoverGradient("", isSystemInDarkTheme()),
                             itemSize,
                             marginSize,
+                            isDark,
                             showAuthorAction
                         )
                     }
-
                 }
             }
         }

@@ -1,18 +1,17 @@
 package com.ovidium.comoriod.model
 
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
+import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
-import com.ovidium.comoriod.utils.concatenateTitles
-import com.ovidium.comoriod.views.search.filter.FilterCategory
+import com.ovidium.comoriod.utils.Status
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -29,43 +28,50 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val recentlyAddedBooksData by lazy { dataSource.recentlyAddedBooksData }
     val recommendedData by lazy { dataSource.recommendedData }
     val trendingData by lazy { dataSource.trendingData }
-    var titlesData = mutableStateOf<Resource<TitlesResponse>>(Resource.loading(null))
-    var titlesForAuthorData = mutableStateOf<Resource<TitlesResponse>>(Resource.loading(null))
-    val searchParams = mutableStateMapOf<FilterCategory, MutableList<String>>()
 
-    fun getTitles(bookTitle: String) {
-        viewModelScope.launch {
-            dataSource.getTitles(bookTitle).collectLatest { state ->
-                titlesData.value = state
+    class TitlesData {
+        var totalHitsCnt = mutableStateOf(0)
+        var titles = mutableStateListOf<TitleHit>()
+    }
+
+    var titlesData = mutableStateOf<Resource<TitlesData>>(Resource.loading(null))
+
+    private fun handleResponse(offset: Int, response: Resource<TitlesResponse>) {
+        when (response.status) {
+            Status.SUCCESS -> {
+                if (offset == 0) {
+                    titlesData.value = Resource.success(TitlesData())
+                    response.data?.hits?.total?.value?.let { hitCnt ->
+                        titlesData.value.data?.totalHitsCnt?.value = hitCnt
+                    }
+                }
+
+                response.data?.hits?.hits?.forEach { hit ->
+                    titlesData.value.data?.titles?.add(hit)
+                }
             }
+            Status.LOADING -> titlesData.value = Resource.loading(null)
+            Status.ERROR -> titlesData.value = Resource.error(null, response.message)
         }
     }
 
-    fun getTitlesForAuthor(
-        authors: String = "",
-        types: String = "",
-        volumes: String = "",
-        books: String = "",
-        limit: Int = 20,
-        offset: Int = 0,
+    fun getTitles(bookTitle: String) {
+        viewModelScope.launch {
+            dataSource.getTitles(limit = 10000, params = mapOf("books" to bookTitle))
+                .collectLatest { response ->
+                    handleResponse(0, response)
+                }
+        }
+    }
+
+    fun getTitles(
+        limit: Int = 20, offset: Int = 0, params: Map<String, String> = emptyMap()
     ) {
         viewModelScope.launch {
-            dataSource.getTitlesForAuthor(
-                authors = authors,
-                types = types,
-                volumes = volumes,
-                books = books,
-                offset = offset,
-                limit = limit
-            ).collectLatest { state ->
-                if (offset == 0) {
-                    titlesForAuthorData.value = state
-                } else {
-                    if (titlesForAuthorData.value.data != null && state.data != null) {
-                        concatenateTitles(titlesForAuthorData.value.data!!, state.data).also { titlesForAuthorData.value = it }
-                    }
+            dataSource.getTitles(offset = offset, limit = limit, params = params)
+                .collectLatest { response ->
+                    handleResponse(offset, response)
                 }
-            }
         }
     }
 
@@ -79,5 +85,4 @@ class LibraryModelFactory(
         return modelClass.getConstructor(JWTUtils::class.java, GoogleSignInModel::class.java)
             .newInstance(jwtUtils, signInModel)
     }
-
 }

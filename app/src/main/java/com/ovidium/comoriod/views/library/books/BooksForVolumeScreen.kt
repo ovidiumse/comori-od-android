@@ -22,7 +22,7 @@ fun BooksForVolumeScreen(
 
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
 
-    Column() {
+    Column {
         StateHandler(
             navController = navController,
             responseData = libraryModel.booksData

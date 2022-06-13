@@ -22,7 +22,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 @Composable
 fun SearchTopBar(title: @Composable () -> Unit, isSearch: Boolean, onMenuClicked: () -> Unit, onFilterClicked: () -> Unit) {
     val isDark = isSystemInDarkTheme()
-    val background = getNamedColor("Container", isDark = isDark)!!
+    val background = getNamedColor("Container", isDark = isDark)
 
     TopAppBar(
         title = {
@@ -34,7 +34,7 @@ fun SearchTopBar(title: @Composable () -> Unit, isSearch: Boolean, onMenuClicked
                 imageVector = Icons.Default.Menu,
                 contentDescription = "Menu",
                 modifier = Modifier.clickable(onClick = onMenuClicked),
-                tint = getNamedColor("Link", isDark = isDark)!!
+                tint = getNamedColor("Link", isDark = isDark)
             )
         },
         elevation = 8.dp,
@@ -45,7 +45,7 @@ fun SearchTopBar(title: @Composable () -> Unit, isSearch: Boolean, onMenuClicked
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
                 contentDescription = "Filter",
                 modifier = Modifier.clickable(onClick = onFilterClicked),
-                tint = getNamedColor("Link", isDark = isDark)!!
+                tint = getNamedColor("Link", isDark = isDark)
             )
             Spacer(modifier = Modifier.width(8.dp))
         }

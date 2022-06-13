@@ -16,15 +16,19 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.data.autocomplete.Hit
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
 import java.net.URLEncoder
 
 
 @Composable
-fun AutocompleteCell(hit: Hit, navController: NavController) {
+fun AutocompleteCell(hit: Hit, navController: NavController, isDark: Boolean) {
+    val textColor = getNamedColor("Text", isDark)
+
     Column {
         Text(
             text = hit._source.title,
+            color = textColor,
             fontSize = 16.sp,
             modifier = Modifier
                 .padding(vertical = 3.dp)

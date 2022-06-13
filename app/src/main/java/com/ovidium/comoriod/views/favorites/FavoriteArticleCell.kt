@@ -33,7 +33,7 @@ fun FavoriteArticleCell(
 ) {
     Card(
         shape = RoundedCornerShape(10.dp),
-        backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme())!!,
+        backgroundColor = getNamedColor("CornSilk", isSystemInDarkTheme()),
         elevation = 1.dp,
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -99,30 +99,32 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
         ) {
             Column(horizontalAlignment = Alignment.Start) {
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(bottom = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_tag_24),
-                        contentDescription = "Tag",
-                        tint = Color.White,
+                if (favoriteArticle.tags.isNotEmpty()) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
-                            .padding(end = 5.dp)
-                    )
+                            .padding(bottom = 8.dp)
+                    ) {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_tag_24),
+                            contentDescription = "Tag",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .padding(end = 5.dp)
+                        )
 
-                    favoriteArticle.tags.forEach { tag ->
-                        if (tag.isNotEmpty())
-                            Text(
-                                text = tag,
-                                style = MaterialTheme.typography.caption,
-                                color = Color.White,
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .background(Color.Red, RoundedCornerShape(50))
-                                    .padding(5.dp)
-                            )
+                        favoriteArticle.tags.forEach { tag ->
+                            if (tag.isNotEmpty())
+                                Text(
+                                    text = tag,
+                                    style = MaterialTheme.typography.caption,
+                                    color = Color.White,
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .background(Color.Red, RoundedCornerShape(50))
+                                        .padding(5.dp)
+                                )
+                        }
                     }
                 }
 

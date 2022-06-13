@@ -6,6 +6,7 @@ plugins {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
+                "-Xopt-in=kotlin.RequiresOptIn",
                 "-Xuse-experimental=androidx.compose.foundation.ExperimentalFoundationApi",
                 "-Xuse-experimental=com.google.accompanist.pager.ExperimentalPagerApi",
                 "-Xuse-experimental=coil.annotation.ExperimentalCoilApi",

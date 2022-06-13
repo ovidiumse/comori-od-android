@@ -7,3 +7,4 @@ data class AuthorsResponse(
     val timed_out: Boolean,
     val took: Int
 )
+

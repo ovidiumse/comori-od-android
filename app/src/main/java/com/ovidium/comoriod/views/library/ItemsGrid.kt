@@ -1,18 +1,27 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.DataItem
 import com.ovidium.comoriod.views.ItemCategory
@@ -26,22 +35,32 @@ fun ItemsGrid(
     estimatedSize: Int,
     isLoading: Boolean = false,
 ) {
+    val isDark = isSystemInDarkTheme()
+
     val itemMinWidth = 180
     val marginSize = 12
     val itemsByRow = LocalConfiguration.current.screenWidthDp / itemMinWidth
     val itemSize =
         (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
 
+    val backgroundColor = getNamedColor("Background", isDark)
+    val borderColor = getNamedColor("Border", isDark)
+    val textColor = getNamedColor("OnBackground", isDark)
+
     LazyColumn(
         contentPadding = PaddingValues(horizontal = marginSize.dp, vertical = marginSize.dp),
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
         modifier = Modifier
+            .background(backgroundColor)
             .fillMaxHeight()
     ) {
         if (isLoading) {
             repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) { mainIndex ->
-                item() {
-                    Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         repeat(itemsByRow) {
                             ItemCard(
                                 navController,
@@ -52,9 +71,9 @@ fun ItemsGrid(
                                 itemSize = itemSize,
                                 colors = emptyList(),
                                 marginSize = marginSize,
+                                isDark = isDark
                             )
                         }
-
                     }
                 }
             }
@@ -62,20 +81,24 @@ fun ItemsGrid(
             items?.let {
                 fun renderItems(items: List<DataItem>) {
                     items(items.chunked(itemsByRow)) { rowItems ->
-                        Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             for (item in rowItems) {
                                 ItemCard(
                                     navController,
                                     item.title,
                                     item.id,
                                     item.type,
-                                    isLoading = isLoading,
+                                    isLoading,
                                     item.secondary,
                                     item.detail,
                                     item.imageId,
                                     item.gradient,
                                     itemSize,
-                                    marginSize
+                                    marginSize,
+                                    isDark
                                 )
                             }
                         }
@@ -90,11 +113,15 @@ fun ItemsGrid(
 
                     grouped.forEach { (group, items) ->
                         stickyHeader {
+                            val shape = RoundedCornerShape(30)
                             Card(
+                                backgroundColor = backgroundColor,
+                                elevation = 0.dp,
+                                shape = shape,
                                 modifier = Modifier
                                     .offset(x = 1.dp, y = 1.dp)
                                     .wrapContentWidth()
-                                    .clip(RoundedCornerShape(30))
+                                    .border(1.dp, borderColor, shape)
                             ) {
                                 Text(
                                     group.toString() + " - " + articulate(
@@ -103,6 +130,7 @@ fun ItemsGrid(
                                         names.first
                                     ),
                                     style = MaterialTheme.typography.h6,
+                                    color = textColor,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
                                 )
                             }

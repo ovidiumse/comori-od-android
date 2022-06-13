@@ -28,14 +28,32 @@ private val LightNamedColors = mapOf(
     "Prpl" to Color(0xFFE8DFFF),
     "Skye" to Color(0xFFDDEFF9),
     "Snow" to Color(0xFFEDD4E0),
-    "Highlight" to Color(0xFFADE8F4),
+    "Highlight" to Color(0xFFFAF2AD),
     "Container" to Color(0xFFECECEC),
-    "Link" to Color(0xFF08569B),
+    "Link" to Color(0xFF0969da),
     "BibleRefBlue" to Color(0xFF90E0EF),
     "PopupContainer" to Color(0xFF393939),
     "InvertedText" to Color(0xFFF0EFF2),
     "Text" to Color(0xFF1B1B1B),
-    "CardButton" to Color(0xFFA6CBDD)
+    "MutedText" to Color(0xff57606a),
+    "CardButton" to Color(0xFFA6CBDD),
+    "HeaderBar" to Color(0xff24292f),
+    "HeaderText" to Color(0xfff0f6fc),
+    "Background" to Color(0xffffffff),
+    "Border" to Color(0xFFE9EBF1),
+    "OnBackground" to Color(0xff24292f),
+    "DarkBar" to Color(0xff232830),
+    "SecondaryBackground" to Color(0xff383F4D),
+    "PrimarySurface" to Color(0xFFE7E9F1),
+    "SecondarySurface" to Color(0xFF707D99),
+    "Bubble" to Color(0xFFD1D9EB),
+    //Markup colors
+    "markupChoc" to Color(0xFFF1DBCC),
+    "markupCrayola" to Color(0xFFFAE6B3),
+    "markupMorn" to Color(0xFF26F7BF),
+    "markupPers" to Color(0xFFDFC5FB),
+    "markupSkye" to Color(0xFF99DBFF),
+    "markupSlate" to Color(0xFFE0DFE2)
 )
 
 private val DarkNamedColors = mapOf(
@@ -53,19 +71,37 @@ private val DarkNamedColors = mapOf(
     "Prpl" to Color(0xFFE9E7FF),
     "Skye" to Color(0xFFE8F3FF),
     "Snow" to Color(0xFFF9F1F5),
-    "Highlight" to Color(0xFFCAF0F8),
+    "Highlight" to Color(0xFFEEDFA1),
     "Container" to Color(0xFF3A3A3A),
-    "Link" to Color(0xFF198CF3),
-    "BibleRefBlue" to Color(0xFF0077B6),
+    "Link" to Color(0xff58a6ff),
+    "BibleRefBlue" to Color(0xff58a6ff),
     "PopupContainer" to Color(0xFFDEDEDE),
     "InvertedText" to Color(0xFF313131),
-    "Text" to Color(0xFFF0EFF2),
-    "CardButton" to Color(0xFFA6CBDD)
+    "Text" to Color(0xffc9d1d9),
+    "MutedText" to Color(0xff8b949e),
+    "CardButton" to Color(0xFFA6CBDD),
+    "HeaderText" to Color(0xfff0f6fc),
+    "HeaderBar" to Color(0xff161b22),
+    "Background" to Color(0xff0d1117),
+    "Border" to Color(0xFF242F3F),
+    "OnBackground" to Color(0xffc9d1d9),
+    "DarkBar" to Color(0xff232830),
+    "SecondaryBackground" to Color(0xff383F4D),
+    "PrimarySurface" to Color(0xFF252B33),
+    "SecondarySurface" to Color(0xFF707D99),
+    "Bubble" to Color(0xff383F4D),
+    //Markup colors
+    "markupChoc" to Color(0xFFF1DBCC),
+    "markupCrayola" to Color(0xFFFAE6B3),
+    "markupMorn" to Color(0xFF26F7BF),
+    "markupPers" to Color(0xFFDFC5FB),
+    "markupSkye" to Color(0xFF99DBFF),
+    "markupSlate" to Color(0xFFE0DFE2)
 )
 
-fun getNamedColor(name: String, isDark: Boolean): Color? {
+fun getNamedColor(name: String, isDark: Boolean): Color {
     return when(isDark) {
         true -> DarkNamedColors
         false -> LightNamedColors
-    }[name]
+    }[name]!!
 }

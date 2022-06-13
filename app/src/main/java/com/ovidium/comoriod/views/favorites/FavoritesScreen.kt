@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ovidium.comoriod.components.NoContentPlaceholder
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.launchMenu
@@ -35,7 +36,7 @@ fun FavoritesScreen(
     favoritesModel: FavoritesModel,
     scaffoldState: ScaffoldState
 ) {
-    val favoritesData = favoritesModel.articles
+    val favoritesData = favoritesModel.favorites
     val tags = favoritesData.value.data?.map { article -> article.tags }?.flatten()?.distinct()
         ?.filter { tag -> tag.isNotEmpty() }
         ?: emptyList()
@@ -72,20 +73,23 @@ fun FavoritesScreen(
             when (favoritesData.value.status) {
                 Status.SUCCESS -> {
                     val favorites = getArticles()
-
+                    if (!favorites.isNullOrEmpty()) {
                     TagsRow(
                         tags,
                         selectedTag,
                         onTagsChanged = { tag -> selectedTag = tag })
 
-                    LazyColumn() {
-                        favorites?.forEach { article ->
-                            item() {
+                    LazyColumn {
+                        favorites.forEach { article ->
+                            item {
                                 FavoriteArticleCell(navController, article) { idToDelete ->
                                     articleToDelete.value = idToDelete
                                 }
                             }
                         }
+                    }
+                } else {
+                    NoContentPlaceholder("Nu ai nici un articol favorit")
                     }
                 }
                 else -> {}
@@ -148,14 +152,14 @@ fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (S
         text = text,
         textAlign = TextAlign.Center,
         style = MaterialTheme.typography.caption,
-        color = if (isSelected) Color.White else getNamedColor("Text", isDark = isDark)!!,
+        color = if (isSelected) Color.White else getNamedColor("Text", isDark = isDark),
         modifier = Modifier
             .padding(end = 8.dp)
             .background(
-                if (isSelected) getNamedColor("Link", isDark)!! else getNamedColor(
+                if (isSelected) getNamedColor("Link", isDark) else getNamedColor(
                     "PopupContainer",
                     isDark
-                )!!.copy(alpha = 0.3f),
+                ).copy(alpha = 0.3f),
                 RoundedCornerShape(50)
             )
             .padding(12.dp)
