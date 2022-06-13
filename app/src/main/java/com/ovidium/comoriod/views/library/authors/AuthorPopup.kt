@@ -40,7 +40,6 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.search.filter.FilterCategory
 import com.ovidium.comoriod.views.search.filter.FilterCategoryView
 import com.ovidium.comoriod.views.search.filter.FilterViewTopBar
 import kotlinx.coroutines.launch
@@ -182,10 +181,11 @@ fun AuthorPopup(
                                             authorInfo.name
                                         )
                                     )
-                                    libraryModel.searchParams.clear()
-                                    libraryModel.getTitlesForAuthor(
-                                        authors = authorInfo.name,
-                                        types = "poezie"
+                                    libraryModel.getTitles(
+                                        params = mapOf(
+                                            "authors" to authorInfo.name,
+                                            "types" to "poezie"
+                                        )
                                     )
                                 }
                         )
@@ -206,10 +206,11 @@ fun AuthorPopup(
                                             authorInfo.name
                                         )
                                     )
-                                    libraryModel.searchParams.clear()
-                                    libraryModel.getTitlesForAuthor(
-                                        authors = authorInfo.name,
-                                        types = "articol"
+                                    libraryModel.getTitles(
+                                        params = mapOf(
+                                            "authors" to authorInfo.name,
+                                            "types" to "articol"
+                                        )
                                     )
                                 }
                         )
@@ -229,11 +230,13 @@ fun getVolumesNumber(authorBucket: Bucket): String {
 }
 
 fun getPoemsNumber(authorBucket: Bucket): String {
-    val poems = authorBucket.types.buckets.filter({ type -> type.key == "poezie" }).first().doc_count
+    val poems =
+        authorBucket.types.buckets.filter({ type -> type.key == "poezie" }).first().doc_count
     return articulate(poems, "poezii", "poezie", isShort = true)
 }
 
 fun getArticlesNumber(authorBucket: Bucket): String {
-    val articles = authorBucket.types.buckets.filter({ type -> type.key == "articol" }).first().doc_count
+    val articles =
+        authorBucket.types.buckets.filter({ type -> type.key == "articol" }).first().doc_count
     return articulate(articles, "articole", "articol", isShort = true)
 }

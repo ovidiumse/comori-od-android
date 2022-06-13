@@ -55,8 +55,8 @@ fun TextCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentWidth(align = Alignment.Start)
-                .padding(horizontal = 16.dp)
-                .padding(top = 16.dp),
+                .padding(horizontal = 12.dp)
+                .padding(top = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

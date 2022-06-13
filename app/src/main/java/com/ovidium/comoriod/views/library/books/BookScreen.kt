@@ -27,6 +27,7 @@ import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.article.ArticleView
 import kotlinx.coroutines.launch
 
@@ -43,9 +44,9 @@ fun BookScreen(
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
     val bookModel: BookModel = viewModel()
     val articleModel: ArticleModel = viewModel()
-    val titlesData by remember { libraryModel.titlesData }
+    val titlesData by libraryModel.titlesData
+    val titles = titlesData.data?.titles
     val pagerState = rememberPagerState()
-    val titles = titlesData.data?.hits?.hits?.map { it }
     val coroutineScope = rememberCoroutineScope()
     var showTOCPopup by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -66,23 +67,28 @@ fun BookScreen(
             )
         }
     ) {
-        if (titles.isNullOrEmpty()) {
-            Text(text = "Loading...")
-        } else {
-            HorizontalPager(
-                count = titles.count(),
-                state = pagerState,
-                contentPadding = PaddingValues(end = 16.dp),
-                verticalAlignment = Alignment.Top,
-            ) { pageIdx ->
-                ArticleView(
-                    articleID = titles.map { it._id }[pageIdx],
-                    signInModel = signInModel,
-                    favoritesModel = favoritesModel,
-                    markupsModel = markupsModel
-                )
+        when(titlesData.status) {
+            Status.SUCCESS -> {
+                if (!titles.isNullOrEmpty()) {
+                    HorizontalPager(
+                        count = titles.count(),
+                        state = pagerState,
+                        contentPadding = PaddingValues(end = 16.dp),
+                        verticalAlignment = Alignment.Top,
+                    ) { pageIdx ->
+                        ArticleView(
+                            articleID = titles.map { it._id }[pageIdx],
+                            signInModel = signInModel,
+                            favoritesModel = favoritesModel,
+                            markupsModel = markupsModel
+                        )
+                    }
+                }
             }
+            Status.ERROR -> TODO()
+            Status.LOADING -> Text(text = "Loading...")
         }
+
         if (showTOCPopup && titles != null) {
             TOCPopup(
                 titles = titles,

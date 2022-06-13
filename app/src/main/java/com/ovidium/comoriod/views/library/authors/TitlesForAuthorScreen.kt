@@ -10,53 +10,32 @@ import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
-import com.ovidium.comoriod.views.search.filter.SearchSource
-import com.ovidium.comoriod.views.search.filter.FilterCategory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
 fun TitlesForAuthorScreen(
     navController: NavController,
     scaffoldState: ScaffoldState,
     libraryModel: LibraryModel,
+    params: Map<String, String>
 ) {
+    val titlesData by libraryModel.titlesData
 
     var showFilterPopup by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(
-        topBar = {
-            val isDark = isSystemInDarkTheme()
-            SearchTopBar(
-                title = {
-                    if (!libraryModel.titlesForAuthorData.value.data?.hits?.hits.isNullOrEmpty()) {
-                        Text(
-                            text = "${libraryModel.titlesForAuthorData.value.data?.hits?.hits?.count()} / ${libraryModel.titlesForAuthorData.value.data?.hits?.total?.value} rezultate",
-                            color = getNamedColor("Link", isDark = isDark)
-                        )
-                    }
-                },
-                isSearch = true,
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState = scaffoldState) },
-                onFilterClicked = { showFilterPopup = true }
-            )
-        }
-    ) {
-        Column {
-            TitlesForAuthorList(
-                libraryModel = libraryModel,
-                navController = navController,
-            )
-        }
+
+    Column {
+        TitlesForAuthorList(
+            libraryModel = libraryModel,
+            navController = navController,
+            params = params
+        )
     }
 
 
     if (showFilterPopup) {
-        libraryModel.titlesForAuthorData.value.data?.aggregations.let { aggregations ->
+        /*libraryModel.titlesForAuthorData.value.data?.aggregations.let { aggregations ->
             SearchFilterPopup(
                 aggregations = aggregations,
                 searchSource = SearchSource.AUTHOR,
@@ -103,7 +82,7 @@ fun TitlesForAuthorScreen(
                     }
                 },
                 onExitAction = { showFilterPopup = false })
-        }
+        }*/
     }
 
 }

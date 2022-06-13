@@ -25,15 +25,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun SuggestionsView(
-    coroutineScope: CoroutineScope,
-    keyboardController: SoftwareKeyboardController?,
-    searchModel: SearchModel = viewModel()
-) {
+fun SuggestionsView(onItemClick : (String) -> Unit) {
     val isDark = isSystemInDarkTheme()
-
-    var query by remember { searchModel.query }
-    var isSearch by remember { searchModel.isSearch }
 
     val backgroundColor = getNamedColor("Background", isDark)
     val mutedTextColor = getNamedColor("MutedText", isDark)
@@ -69,19 +62,11 @@ fun SuggestionsView(
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .padding(10.dp)
-                            .clickable {
-                                query = item
-                                if (query.isNotEmpty()) {
-                                    isSearch = true
-                                    coroutineScope.launch {
-                                        keyboardController?.hide()
-                                        searchModel.search()
-                                    }
-                                }
-                            }
+                            .clickable { onItemClick(item) }
                     )
                 }
             }
         }
     }
 }
+

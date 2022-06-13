@@ -38,7 +38,6 @@ import com.ovidium.comoriod.views.library.books.BookScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
 import com.ovidium.comoriod.views.markups.MarkupsScreen
 import com.ovidium.comoriod.views.search.SearchScreen
-import com.ovidium.comoriod.views.search.filter.FilterCategory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -73,8 +72,6 @@ fun ComoriOdApp(context: Context) {
                     ?.replace("/", "")) {
                     Screens.Book.route -> {}
                     Screens.Search.route -> {}
-                    Screens.ArticlesForAuthor.route -> {}
-                    Screens.PoemsForAuthor.route -> {}
                     Screens.Favorites.route -> {}
                     Screens.Markups.route -> {}
                     else -> {
@@ -286,12 +283,12 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("author", "")
             }
-            libraryModel.searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
-            libraryModel.searchParams[FilterCategory.TYPES] = mutableListOf("poezie")
+
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
                 scaffoldState = scaffoldState,
+                params = mapOf("authors" to getAuthor(), "types" to "poezie")
             )
         }
 
@@ -309,12 +306,11 @@ fun BottomBarMain(
                 else
                     entry.arguments!!.getString("author", "")
             }
-            libraryModel.searchParams[FilterCategory.AUTHORS] = mutableListOf(getAuthor())
-            libraryModel.searchParams[FilterCategory.TYPES] = mutableListOf("articol")
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
-                scaffoldState = scaffoldState
+                scaffoldState = scaffoldState,
+                params = mapOf("authors" to getAuthor(), "types" to "articol")
             )
         }
 

@@ -38,23 +38,19 @@ import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.fmtVerses
 import com.ovidium.comoriod.utils.highlightText
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.search.filter.FilterCategory
 import java.net.URLEncoder
 
 @Composable
 fun SearchResultsCell(
-    hit: Hit,
     index: Int,
+    hit: Hit,
     navController: NavController,
-    searchParams: SnapshotStateMap<FilterCategory, MutableList<String>>?,
     isDark: Boolean
 ) {
-    val searchModel: SearchModel = viewModel()
-    val searchData by remember { searchModel.searchData }
-
     val bgColor = getNamedColor("PrimarySurface", isDark)
     val mutedText = getNamedColor("MutedText", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
@@ -66,6 +62,7 @@ fun SearchResultsCell(
     }
 
     TextCard(
+        index = index,
         title = highlightText(getTitle(hit), isDark),
         book = hit._source.book,
         author = hit._source.author,
@@ -84,39 +81,6 @@ fun SearchResultsCell(
             )
         ) {
             launchSingleTop = true
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        val searchParams = searchParams.let { it } ?: return@LaunchedEffect
-        val types =
-            if (searchParams[FilterCategory.TYPES].isNullOrEmpty()) "" else searchParams[FilterCategory.TYPES]!!.joinToString(
-                ","
-            )
-        val authors =
-            if (searchParams[FilterCategory.AUTHORS].isNullOrEmpty()) "" else searchParams[FilterCategory.AUTHORS]!!.joinToString(
-                ","
-            )
-        val volumes =
-            if (searchParams[FilterCategory.VOLUMES].isNullOrEmpty()) "" else searchParams[FilterCategory.VOLUMES]!!.joinToString(
-                ","
-            )
-        val books =
-            if (searchParams[FilterCategory.BOOKS].isNullOrEmpty()) "" else searchParams[FilterCategory.BOOKS]!!.joinToString(
-                ","
-            )
-        val searchResultsCount =
-            searchData.data?.hits?.hits?.count().let { it } ?: return@LaunchedEffect
-        val totalHits = searchData.data?.hits?.total?.value.let { it } ?: return@LaunchedEffect
-        if ((searchResultsCount < totalHits) && (searchResultsCount == (index + 1))) {
-            searchModel.search(
-                20,
-                searchResultsCount,
-                type = types,
-                authors = authors,
-                volumes = volumes,
-                books = books
-            )
         }
     }
 }

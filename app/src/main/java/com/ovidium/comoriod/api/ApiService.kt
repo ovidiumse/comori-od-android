@@ -11,19 +11,35 @@ import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.data.trending.TrendingResponse
+import com.ovidium.comoriod.data.types.TypesResponse
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import okhttp3.ResponseBody
 import retrofit2.http.*
 
 interface ApiService {
+    @GET("types")
+    suspend fun getTypes(
+        @Query("q") q: String = "",
+        @QueryMap params: Map<String, String> = emptyMap()
+    ): TypesResponse
+
     @GET("authors")
-    suspend fun getAuthors(): AuthorsResponse
+    suspend fun getAuthors(
+        @Query("q") q: String = "",
+        @QueryMap params: Map<String, String> = emptyMap()
+    ): AuthorsResponse
 
     @GET("volumes")
-    suspend fun getVolumes(): VolumesResponse
+    suspend fun getVolumes(
+        @Query("q") q: String = "",
+        @QueryMap params: Map<String, String> = emptyMap()
+    ): VolumesResponse
 
     @GET("books")
-    suspend fun getBooks(): BooksResponse
+    suspend fun getBooks(
+        @Query("q") q: String = "",
+        @QueryMap params: Map<String, String> = emptyMap()
+    ): BooksResponse
 
     @GET("recentlyaddedbooks")
     suspend fun getRecentlyAddedBooks(): RecentlyAddedBooksResponse
@@ -46,13 +62,9 @@ interface ApiService {
     @GET("articles")
     suspend fun search(
         @Query("q") q: String,
-        @Query("include_aggs") includeAggs: String = "",
-        @Query("type") type: String = "",
-        @Query("authors") authors: String = "",
-        @Query("volumes") volumes: String = "",
-        @Query("books") books: String = "",
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
+        @QueryMap params: Map<String, String> = emptyMap()
     ): SearchResponse
 
     @GET("data/{id}.json")
@@ -62,19 +74,9 @@ interface ApiService {
 
     @GET("titles")
     suspend fun getTitles(
-        @Query("books") books: String,
-        @Query("limit") limit: Int = 10000
-    ): TitlesResponse
-
-    @GET("titles")
-    suspend fun getTitlesForAuthor(
-        @Query("include_aggs") includeAggs: String = "",
-        @Query("types") type: String = "",
-        @Query("authors") authors: String = "",
-        @Query("volumes") volumes: String = "",
-        @Query("books") books: String = "",
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
+        @QueryMap params: Map<String, String> = emptyMap()
     ): TitlesResponse
 
     @GET("favorites")
@@ -103,12 +105,12 @@ interface ApiService {
     suspend fun deleteMarkup(
         @Header("Authorization") token: String,
         @Path("id") id: String
-    ) : ResponseBody
+    ): ResponseBody
 
     @POST("markups")
     suspend fun saveMarkup(
         @Header("Authorization") token: String,
         @Body markup: Markup
-    ) : Markup
+    ): Markup
 
 }

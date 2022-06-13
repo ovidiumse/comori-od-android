@@ -1,34 +1,36 @@
 package com.ovidium.comoriod.views.search.filter
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.data.search.Aggregations
+import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-
-enum class SearchSource {
-    SEARCH, AUTHOR
-}
-
 
 @Composable
 fun SearchFilterPopup(
-    aggregations: Aggregations?,
-    searchSource: SearchSource,
-    onCheck: (FilterCategory, String) -> Unit,
+    aggregations: SnapshotStateMap<Int, SearchModel.Aggregation>,
+    params: SnapshotStateMap<String, MutableSet<String>>,
+    onCheck: (String, String, Boolean) -> Unit,
     onSaveAction: () -> Unit,
     onExitAction: () -> Unit
 ) {
+    val bgColor = getNamedColor("PrimarySurface", isDark = isSystemInDarkTheme())
+
     Popup(
-        alignment = Alignment.BottomCenter,
     ) {
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp
@@ -37,49 +39,26 @@ fun SearchFilterPopup(
         Box(
             Modifier
                 .size(screenWidth, screenHeight)
-                .background(
-                    getNamedColor("Container", isDark = isDark),
-                    RoundedCornerShape(16.dp)
-                )
+                .background(bgColor, shape = RectangleShape)
         ) {
             Column {
                 FilterViewTopBar(onSaveAction = onSaveAction, onExitAction = onExitAction)
-                LazyColumn(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    if (searchSource == SearchSource.SEARCH) {
-                        item {
-                            FilterCategoryView(
-                                category = FilterCategory.TYPES,
-                                buckets = aggregations?.types!!.buckets,
-                                onCheck = onCheck,
-                                isDark = isDark
-                            )
-                        }
-                        item {
-                            FilterCategoryView(
-                                category = FilterCategory.AUTHORS,
-                                buckets = aggregations?.authors!!.buckets,
-                                onCheck = onCheck,
-                                isDark = isDark
-                            )
-                        }
-                    }
-                    item {
+                LazyColumn(Modifier.padding(12.dp)) {
+                    itemsIndexed(
+                        aggregations.toList().map { (_, agg) -> agg }) { index, aggregation ->
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         FilterCategoryView(
-                            category = FilterCategory.VOLUMES,
-                            buckets = aggregations?.volumes!!.buckets,
+                            category = aggregation.name,
+                            paramName = aggregation.paramName,
+                            buckets = aggregation.buckets,
+                            params = params.getOrDefault(aggregation.paramName, emptySet()),
                             onCheck = onCheck,
                             isDark = isDark
                         )
-                    }
-                    item {
-                        FilterCategoryView(
-                            category = FilterCategory.BOOKS,
-                            buckets = aggregations?.books!!.buckets,
-                            onCheck = onCheck,
-                            isDark = isDark
-                        )
+
+                        if (index == aggregations.count() - 1)
+                            Spacer(modifier = Modifier.height(12.dp))
                     }
                 }
             }

@@ -31,7 +31,6 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.search.filter.FilterCategory
 import java.net.URLEncoder
 
 @Composable
@@ -77,7 +76,7 @@ fun TitlesForAuthorCell(
     }
 
     LaunchedEffect(Unit) {
-        val params = libraryModel.searchParams.let { it }
+        /*val params = libraryModel.searchParams.let { it }
         val types =
             if (params[FilterCategory.TYPES].isNullOrEmpty()) "" else params[FilterCategory.TYPES]!!.joinToString(
                 ","
@@ -105,7 +104,7 @@ fun TitlesForAuthorCell(
                 limit = 20,
                 offset = hitsCount
             )
-        }
+        }*/
     }
 
 }
