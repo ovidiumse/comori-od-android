@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.api
 
 import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.article.SearchArticleResponse
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
 import com.ovidium.comoriod.data.books.BooksResponse
@@ -71,6 +72,12 @@ interface ApiService {
     suspend fun getArticle(
         @Path("id") id: String
     ): ArticleResponse
+
+    @GET("articles")
+    suspend fun getSearchArticle(
+        @Query("id") id: String,
+        @Query("highlight") searchTerm: String
+    ): SearchArticleResponse
 
     @GET("titles")
     suspend fun getTitles(

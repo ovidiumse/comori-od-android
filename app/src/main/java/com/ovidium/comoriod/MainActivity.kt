@@ -104,6 +104,7 @@ fun ComoriOdApp(context: Context) {
                 signInModel = signInModel,
                 libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)),
                 favoritesModel = viewModel(factory = FavoritesModelFactory(jwtUtils, signInModel)),
+                searchModel = viewModel(),
                 markupsModel = viewModel(factory = MarkupsModelFactory(jwtUtils, signInModel))
             )
         }
@@ -120,6 +121,7 @@ fun BottomBarMain(
     signInModel: GoogleSignInModel,
     libraryModel: LibraryModel,
     favoritesModel: FavoritesModel,
+    searchModel: SearchModel,
     markupsModel: MarkupsModel
 ) {
 
@@ -129,7 +131,7 @@ fun BottomBarMain(
         }
 
         composable(Screens.Search.route) {
-            SearchScreen(navController, scaffoldState = scaffoldState)
+            SearchScreen(navController, scaffoldState = scaffoldState, searchModel)
         }
 
         composable(Screens.Favorites.route) {
@@ -170,6 +172,7 @@ fun BottomBarMain(
                 getMarkupId(),
                 signInModel,
                 favoritesModel,
+                searchModel,
                 markupsModel
             )
         }
@@ -195,6 +198,7 @@ fun BottomBarMain(
                 jwtUtils = jwtUtils,
                 signInModel = signInModel,
                 favoritesModel = favoritesModel,
+                searchModel = searchModel,
                 markupsModel = markupsModel
             )
         }

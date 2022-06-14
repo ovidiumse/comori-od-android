@@ -31,9 +31,9 @@ import kotlinx.coroutines.*
 fun SearchScreen(
     navController: NavController,
     scaffoldState: ScaffoldState,
-    searchModel: SearchModel = viewModel()
+    searchModel: SearchModel
 ) {
-    var query by remember { mutableStateOf("") }
+    var query by remember { searchModel.query }
     val autocompleteData by remember { searchModel.autocompleteData }
     val searchData = searchModel.searchData
     val aggregations = searchModel.aggregations

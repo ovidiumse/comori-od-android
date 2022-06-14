@@ -23,13 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun SaveFavoriteDialog(
-    articleToSave: ArticleResponse,
+    articleToSave: Article,
     onSaveAction: (List<String>) -> Unit,
     onExitAction: () -> Unit
 ) {

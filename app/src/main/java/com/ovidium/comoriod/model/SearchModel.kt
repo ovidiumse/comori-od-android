@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 class SearchModel : ViewModel() {
     private val dataSource = SearchDataSource(RetrofitBuilder.apiService, viewModelScope)
 
+    var query = mutableStateOf("")
     var isSearch = mutableStateOf(false)
     var autocompleteData = mutableStateOf<Resource<AutocompleteResponse>>(Resource.loading(null))
 

@@ -89,9 +89,10 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
         return buildAnnotatedString {
             when (chunk.type) {
                 "normal" -> {
-                    withStyle(buildStyle(chunk.style)) {
-                        append(chunk.text)
-                    }
+                    append(highlightText(chunk.text, isDark))
+//                    withStyle(buildStyle(chunk.style)) {
+//                        append(chunk.text)
+//                    }
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL",  annotation = chunk.ref!!) {

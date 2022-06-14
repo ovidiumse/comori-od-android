@@ -38,6 +38,7 @@ fun BookScreen(
     scaffoldState: ScaffoldState,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
+    searchModel: SearchModel,
     markupsModel: MarkupsModel,
 ) {
     val isDark = isSystemInDarkTheme()
@@ -80,6 +81,7 @@ fun BookScreen(
                             articleID = titles.map { it._id }[pageIdx],
                             signInModel = signInModel,
                             favoritesModel = favoritesModel,
+                            searchModel = searchModel,
                             markupsModel = markupsModel
                         )
                     }
@@ -117,6 +119,7 @@ fun BookScreen(
                     articleID = titles.map { it._id }[pageIdx],
                     signInModel = signInModel,
                     favoritesModel = favoritesModel,
+                    searchModel = searchModel,
                     markupsModel = markupsModel
                 )
             }

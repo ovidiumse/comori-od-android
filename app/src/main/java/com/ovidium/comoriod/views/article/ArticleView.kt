@@ -1,6 +1,5 @@
 package com.ovidium.comoriod.views.article
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -26,12 +25,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
+import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
+import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.utils.highlightText
 import com.ovidium.comoriod.utils.parseVerses
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
@@ -42,10 +44,13 @@ fun ArticleView(
     markupId: String? = null,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
+    searchModel: SearchModel,
     markupsModel: MarkupsModel
 ) {
     val articleModel: BookModel = viewModel()
     val bookData = remember { articleModel.bookData }
+    val searchData = remember { articleModel.searchData }
+    var query by remember { searchModel.query }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -54,12 +59,35 @@ fun ArticleView(
             .fillMaxWidth()
     ) {
         val articleData = bookData.getOrDefault(articleID, Resource.loading(data = null))
+        val searchArticleData = searchData.getOrDefault(articleID, Resource.loading(data = null))
         when (articleData.status) {
             Status.SUCCESS -> {
-                articleData.data?.let { article ->
+                articleData.data?.let { data ->
+                    val markups = markupsModel.markups.value.data?.filter { markup -> markup.articleID == data._id } ?: emptyList()
+                    val article = Article(data._id, highlightText(data.title, isSystemInDarkTheme()), data.author, data.volume, data.book, data.type, parseVerses(data.verses, emptyList(), isDark = isSystemInDarkTheme()), data.bibleRefs)
                     ArticleViewContent(
                         article,
                         markupId,
+                        markups,
+                        signInModel,
+                        favoritesModel,
+                        markupsModel
+                    )
+                }
+            }
+            Status.LOADING -> {}
+            Status.ERROR -> {}
+        }
+
+        when (searchArticleData.status) {
+            Status.SUCCESS -> {
+                searchArticleData.data?.let { data ->
+                    val markups = markupsModel.markups.value.data?.filter { markup -> markup.articleID == data._id } ?: emptyList()
+                    val article = Article(data._id, highlightText(data._source.title, isSystemInDarkTheme()), data._source.author, data._source.volume, data._source.book, data._source.type, parseVerses(data._source.verses, emptyList(), isDark = isSystemInDarkTheme()), data._source.bibleRefs)
+                    ArticleViewContent(
+                        article,
+                        markupId,
+                        markups,
                         signInModel,
                         favoritesModel,
                         markupsModel
@@ -71,14 +99,15 @@ fun ArticleView(
         }
     }
     LaunchedEffect(Unit) {
-        articleModel.getArticle(articleID)
+        articleModel.getArticle(articleID, query)
     }
 }
 
 @Composable
 fun ArticleViewContent(
-    article: ArticleResponse,
+    article: Article,
     markupId: String?,
+    markups: List<Markup>,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -86,11 +115,13 @@ fun ArticleViewContent(
     val isDark = isSystemInDarkTheme()
 
     val articleModel: ArticleModel = viewModel()
+
     val listState = rememberLazyListState()
-    val bibleRefs = articleModel.getBibleRefs(article._id)
+    val bibleRefs = articleModel.getBibleRefs(article.id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
     var markupSelection by remember { mutableStateOf("") }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
+    var showHighlightControls by remember { mutableStateOf(false) }
     var startPos by remember { mutableStateOf(0) }
     var endPos by remember { mutableStateOf(0) }
     var scrollOffset by remember { mutableStateOf(0) }
@@ -150,7 +181,7 @@ fun ArticleViewContent(
                                     .padding(bottom = 3.dp)
                             )
                             Text(
-                                text = article.full_book,
+                                text = article.book,
                                 fontSize = 14.sp,
                                 color = mutedTextColor,
                             )
@@ -158,11 +189,6 @@ fun ArticleViewContent(
                     }
                 }
                 item {
-                    val markups =
-                        markupsModel.markups.value.data?.filter { markup -> markup.articleID == article._id }
-                            ?: emptyList()
-                    val parsedText = parseVerses(article.verses, markups, isDark = isDark)
-
                     var selection by remember { mutableStateOf("") }
                     var clearSelection by remember { mutableStateOf(false) }
                     var scrollTopOffset = 0
@@ -188,12 +214,12 @@ fun ArticleViewContent(
                         SelectionContainer(
                             clearSelection = clearSelection,
                             onSelectionChange = { start, end ->
-                                selection = parsedText.text.subSequence(start, end).toString()
+                                selection = article.body.text.subSequence(start, end).toString()
                                 startPos = start
                                 endPos = end
                             }) {
                             ClickableText(
-                                text = parsedText,
+                                text = article.body,
                                 style = TextStyle(
                                     color = textColor,
                                     fontSize = 18.sp,
@@ -211,7 +237,7 @@ fun ArticleViewContent(
                                     }
                                 },
                                 onClick = { offset ->
-                                    val annotation = parsedText.getStringAnnotations(
+                                    val annotation = article.body.getStringAnnotations(
                                         tag = "URL",
                                         start = offset,
                                         end = offset
@@ -223,6 +249,8 @@ fun ArticleViewContent(
 
                                     clearSelection = true
                                     textToolbar.hide()
+                                    showHighlightControls = showHighlightControls.not()
+                                    println("Show highlights: ${showHighlightControls}")
                                 }
                             )
                         }
@@ -246,17 +274,17 @@ fun ArticleViewContent(
             if (userResource.state == UserState.LoggedIn)
                 FloatingActionButton(
                     onClick = {
-                        if (favoritesModel.isFavorite(article._id)) {
+                        if (favoritesModel.isFavorite(article.id)) {
                             showDeleteFavoriteDialog = true
                         } else {
                             showSaveFavoriteDialog = true
                         }
                     },
                     modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                    backgroundColor = if (favoritesModel.isFavorite(article._id)
+                    backgroundColor = if (favoritesModel.isFavorite(article.id)
                     ) Color.Red else getNamedColor("Link", isDark)
                 ) {
-                    if (favoritesModel.isFavorite(article._id)) {
+                    if (favoritesModel.isFavorite(article.id)) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
                             contentDescription = "Delete",
@@ -271,14 +299,48 @@ fun ArticleViewContent(
                     }
                 }
         }
+
+        //Highlights
+        if (showHighlightControls) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                FloatingActionButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
+                    backgroundColor = getNamedColor("SecondarySurface", isDark)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_up),
+                        contentDescription = "Up",
+                        tint = getNamedColor("Container", isDark)
+                    )
+                }
+                FloatingActionButton(
+                    onClick = { /*TODO*/ },
+                    modifier = Modifier.padding(end = 16.dp, top = 16.dp),
+                    backgroundColor = getNamedColor("SecondarySurface", isDark)
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down),
+                        contentDescription = "Down",
+                        tint = getNamedColor("Container", isDark)
+                    )
+                }
+            }
+            println("GET HIGHLIGHTS")
+        }
     }
     if (showSaveFavoriteDialog) {
         SaveFavoriteDialog(
             articleToSave = article,
             onSaveAction = { tags ->
                 val favoriteArticle = FavoriteArticle(
-                    id = article._id,
-                    title = article.title,
+                    id = article.id,
+                    title = article.title.text,
                     tags = tags,
                     author = article.author,
                     book = article.book,
@@ -329,7 +391,7 @@ fun ArticleViewContent(
                         contentColor = Color.White
                     ),
                     onClick = {
-                        favoritesModel.deleteFavoriteArticle(article._id)
+                        favoritesModel.deleteFavoriteArticle(article.id)
                         showDeleteFavoriteDialog = false
                     }) {
                     Text("Șterge")

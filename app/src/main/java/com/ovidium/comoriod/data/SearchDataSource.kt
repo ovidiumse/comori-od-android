@@ -3,6 +3,7 @@ package com.ovidium.comoriod.data
 import androidx.compose.runtime.collectAsState
 import com.ovidium.comoriod.api.ApiService
 import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.article.SearchArticleResponse
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
 import com.ovidium.comoriod.data.books.BooksResponse
@@ -37,6 +38,10 @@ class SearchDataSource(
                 params
             )
         }
+    }
+
+    fun getSearchArticle(id: String, searchTerm: String): SharedFlow<Resource<SearchArticleResponse>> {
+        return buildSharedFlow(externalScope) { apiService.getSearchArticle(id, searchTerm) }
     }
 
     fun getArticle(id: String): SharedFlow<Resource<ArticleResponse>> {

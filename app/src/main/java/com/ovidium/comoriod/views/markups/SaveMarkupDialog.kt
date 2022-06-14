@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.Shapes
@@ -29,7 +30,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun SaveMarkupDialog(
-    articleToSave: ArticleResponse,
+    articleToSave: Article,
     selection: String,
     startPos: Int,
     endPos: Int,
@@ -190,9 +191,9 @@ fun SaveMarkupDialog(
                     onClick = {
                         onSaveAction(Markup(
                             id = "",
-                            title = articleToSave.title,
+                            title = articleToSave.title.text,
                             book = articleToSave.book,
-                            articleID = articleToSave._id,
+                            articleID = articleToSave.id,
                             selection = selection,
                             index = startPos,
                             length = endPos - startPos,
