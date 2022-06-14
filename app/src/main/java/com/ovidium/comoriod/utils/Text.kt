@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTextApi::class)
+
 package com.ovidium.comoriod.utils
 
 import androidx.compose.ui.text.*
@@ -9,7 +11,6 @@ import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import java.text.Normalizer
 import java.time.Duration
 
 val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
@@ -45,22 +46,23 @@ fun highlightText(text: String, isDark: Boolean): AnnotatedString {
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
 
-        withStyle(style=ParagraphStyle) {
-            var highlighted = false
-            for (part in parts) {
-                if (highlighted) {
-                    withStyle(
-                        style = SpanStyle(
-                            color = colorSecondaryText,
-                            background = highlightColor
-                        ),
-                    ) {
+        withAnnotation(tag = "HL",  annotation = "") {
+            withStyle(style = ParagraphStyle) {
+                var highlighted = false
+                for (part in parts) {
+                    if (highlighted) {
+                        withStyle(
+                            style = SpanStyle(
+                                color = colorSecondaryText,
+                                background = highlightColor
+                            ),
+                        ) {
+                            append(part)
+                        }
+                    } else
                         append(part)
-                    }
-                } else
-                    append(part)
-
-                highlighted = !highlighted
+                    highlighted = !highlighted
+                }
             }
         }
     }
@@ -89,15 +91,14 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
         return buildAnnotatedString {
             when (chunk.type) {
                 "normal" -> {
-                    append(highlightText(chunk.text, isDark))
-//                    withStyle(buildStyle(chunk.style)) {
-//                        append(chunk.text)
-//                    }
+                    withStyle(buildStyle(chunk.style)) {
+                        append(highlightText(chunk.text, isDark))
+                    }
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
                         withStyle(style = SpanStyle(color = linkColor)) {
-                            append(chunk.text)
+                            append(highlightText(chunk.text, isDark))
                         }
                     }
                 }
