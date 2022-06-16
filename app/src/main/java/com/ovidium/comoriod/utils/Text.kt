@@ -2,6 +2,8 @@
 
 package com.ovidium.comoriod.utils
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -9,6 +11,7 @@ import androidx.compose.ui.unit.*
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
+import com.ovidium.comoriod.data.search.Highlight
 import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.time.Duration
@@ -40,21 +43,47 @@ fun fmtDuration(duration: Duration): String {
     return "acum"
 }
 
-fun highlightText(text: String, isDark: Boolean): AnnotatedString {
+fun highlightElements(text: String, isDark: Boolean): AnnotatedString {
     val highlightColor = getNamedColor("Highlight", isDark)
 
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
 
-        withAnnotation(tag = "HL",  annotation = "") {
+        withStyle(style = ParagraphStyle) {
+            var highlighted = false
+            for (part in parts) {
+                if (highlighted) {
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color.Black,
+                            background = highlightColor
+                        ),
+                    ) {
+                        append(part)
+                    }
+                } else
+                    append(part)
+                highlighted = !highlighted
+            }
+        }
+    }
+}
+
+
+fun highlightBody(text: String, isDark: Boolean): AnnotatedString {
+    val highlightColor = getNamedColor("Highlight", isDark)
+
+    return buildAnnotatedString {
+        val parts = text.split("<em>", "</em>")
+
             withStyle(style = ParagraphStyle) {
                 var highlighted = false
                 for (part in parts) {
                     if (highlighted) {
                         withStyle(
                             style = SpanStyle(
-                                color = colorSecondaryText,
-                                background = highlightColor
+                                color = getNamedColor("Text", isDark),
+                                background = Color.Transparent
                             ),
                         ) {
                             append(part)
@@ -64,15 +93,14 @@ fun highlightText(text: String, isDark: Boolean): AnnotatedString {
                     highlighted = !highlighted
                 }
             }
-        }
     }
 }
 
 fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
-    return highlightText(verses.joinToString(separator = "\n"), isDark = isDark)
+    return highlightElements(verses.joinToString(separator = "\n"), isDark = isDark)
 }
 
-fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>, isDark: Boolean) : AnnotatedString {
+fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>, highlights: SnapshotStateList<TextRange>, currentHighlightIndex: Int?, isDark: Boolean) : AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)
     val markupTextColor = getNamedColor("Text", false)
 
@@ -91,14 +119,16 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
         return buildAnnotatedString {
             when (chunk.type) {
                 "normal" -> {
-                    withStyle(buildStyle(chunk.style)) {
-                        append(highlightText(chunk.text, isDark))
+                    withAnnotation(tag = "TEXT",  annotation = "") {
+                        withStyle(buildStyle(chunk.style)) {
+                            append(highlightBody(chunk.text, isDark))
+                        }
                     }
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
                         withStyle(style = SpanStyle(color = linkColor)) {
-                            append(highlightText(chunk.text, isDark))
+                            append(highlightBody(chunk.text, isDark))
                         }
                     }
                 }
@@ -116,6 +146,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
     }
 
     return buildAnnotatedString {
+        val highlightColor = getNamedColor("Highlight", isDark)
         for (verse in verses)
             append(buildVerse(verse))
 
@@ -128,6 +159,29 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
                 start = markup.index,
                 end = markup.index + markup.length
             )
+        }
+
+        for (hl in highlights) {
+            println("Highlights: ${hl.start}..<${hl.end}")
+            if (currentHighlightIndex != null && hl == highlights[currentHighlightIndex]) {
+                addStyle(
+                    SpanStyle(
+                        color = Color.Black,
+                        background = Color.Red
+                    ),
+                    start = hl.start,
+                    end = hl.end
+                )
+            } else {
+                addStyle(
+                    SpanStyle(
+                        color = Color.Black,
+                        background = highlightColor
+                    ),
+                    start = hl.start,
+                    end = hl.end
+                )
+            }
         }
     }
 }

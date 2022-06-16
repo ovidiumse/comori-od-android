@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.article
 
+import android.text.SpannableString
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.*
@@ -10,9 +11,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.set
+import androidx.core.text.toSpannable
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.Article
@@ -24,6 +27,7 @@ fun ArticleBodyView(
     article: Article,
     markupSelection: MutableState<String>,
     markups: List<Markup>,
+    highlights: SnapshotStateList<TextRange>,
     markupId: String?,
     textColor: Color,
     startPos: MutableState<Int>,
@@ -36,6 +40,8 @@ fun ArticleBodyView(
     var selection by remember { mutableStateOf("") }
     var clearSelection by remember { mutableStateOf(false) }
     var scrollTopOffset = 0
+
+
 
     with(LocalDensity.current) {
         scrollTopOffset =
@@ -95,6 +101,12 @@ fun ArticleBodyView(
                     textToolbar.hide()
                     if (bibleRefs.isEmpty()) {
                         showHighlightControls.value = showHighlightControls.value.not()
+                        if (showHighlightControls.value) {
+                            val hlAnnotations = article.body.spanStyles.filter { it.item.background == Color.Transparent }
+                            highlights.addAll(hlAnnotations.map { TextRange(it.start, it.end) })
+                        } else {
+                            highlights.clear()
+                        }
                     }
                 }
             )

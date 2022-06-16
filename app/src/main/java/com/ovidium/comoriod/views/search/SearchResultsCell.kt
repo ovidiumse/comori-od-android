@@ -37,10 +37,7 @@ import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.JWTUtils
-import com.ovidium.comoriod.utils.Status
-import com.ovidium.comoriod.utils.fmtVerses
-import com.ovidium.comoriod.utils.highlightText
+import com.ovidium.comoriod.utils.*
 import com.ovidium.comoriod.views.Screens
 import java.net.URLEncoder
 
@@ -63,7 +60,7 @@ fun SearchResultsCell(
 
     TextCard(
         index = index,
-        title = highlightText(getTitle(hit), isDark),
+        title = highlightElements(getTitle(hit), isDark),
         book = hit._source.book,
         author = hit._source.author,
         type = hit._source.type,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,6 +43,8 @@ fun ArticleViewContent(
     article: Article,
     markupId: String?,
     markups: List<Markup>,
+    highlights: SnapshotStateList<TextRange>,
+    currentHighlightIndex: MutableState<Int?>,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel
@@ -58,6 +62,7 @@ fun ArticleViewContent(
     var startPos = remember { mutableStateOf(0) }
     var endPos = remember { mutableStateOf(0) }
     var scrollOffset = remember { mutableStateOf(0) }
+
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
@@ -82,10 +87,22 @@ fun ArticleViewContent(
                     )
                 }
                 item {
-                        ArticleInfoView(article, mutedTextColor)
+                    ArticleInfoView(article, mutedTextColor)
                 }
                 item {
-                    ArticleBodyView(article, markupSelection, markups, markupId, textColor, startPos, endPos, scrollOffset, bibleRefs, showHighlightControls)
+                    ArticleBodyView(
+                        article,
+                        markupSelection,
+                        markups,
+                        highlights,
+                        markupId,
+                        textColor,
+                        startPos,
+                        endPos,
+                        scrollOffset,
+                        bibleRefs,
+                        showHighlightControls
+                    )
                 }
             }
         }
@@ -138,7 +155,18 @@ fun ArticleViewContent(
                     .fillMaxSize()
             ) {
                 FloatingActionButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        if (currentHighlightIndex.value != null) {
+                            if (currentHighlightIndex.value!! > 0) {
+                                currentHighlightIndex.value = currentHighlightIndex.value!! - 1
+                            } else {
+                                currentHighlightIndex.value = highlights.size - 1
+                            }
+                        } else {
+                            currentHighlightIndex.value = 0
+                        }
+                        println("Current index: ${currentHighlightIndex}")
+                    },
                     modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
                     backgroundColor = getNamedColor("SecondarySurface", isDark)
                 ) {
@@ -149,7 +177,18 @@ fun ArticleViewContent(
                     )
                 }
                 FloatingActionButton(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        if (currentHighlightIndex.value != null) {
+                            if (currentHighlightIndex.value!! < highlights.size - 1) {
+                                currentHighlightIndex.value = currentHighlightIndex.value!! + 1
+                            } else {
+                                currentHighlightIndex.value = 0
+                            }
+                        } else {
+                            currentHighlightIndex.value = 0
+                        }
+                        println("Current index: ${currentHighlightIndex.value}")
+                    },
                     modifier = Modifier.padding(end = 16.dp, top = 16.dp),
                     backgroundColor = getNamedColor("SecondarySurface", isDark)
                 ) {

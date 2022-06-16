@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,10 +33,7 @@ import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.Resource
-import com.ovidium.comoriod.utils.Status
-import com.ovidium.comoriod.utils.highlightText
-import com.ovidium.comoriod.utils.parseVerses
+import com.ovidium.comoriod.utils.*
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
 import kotlin.time.ExperimentalTime
@@ -53,6 +51,8 @@ fun ArticleView(
     val bookData = remember { articleModel.bookData }
     val searchData = remember { articleModel.searchData }
     var query by remember { searchModel.query }
+    var highlights = remember { mutableStateListOf<TextRange>() }
+    var currentHighlightIndex = remember { mutableStateOf<Int?>(null) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,11 +66,13 @@ fun ArticleView(
             Status.SUCCESS -> {
                 articleData.data?.let { data ->
                     val markups = markupsModel.markups.value.data?.filter { markup -> markup.articleID == data._id } ?: emptyList()
-                    val article = Article(data._id, highlightText(data.title, isSystemInDarkTheme()), data.author, data.volume, data.book, data.type, parseVerses(data.verses, emptyList(), isDark = isSystemInDarkTheme()), data.bibleRefs)
+                    val article = Article(data._id, highlightBody(data.title, isSystemInDarkTheme()), data.author, data.volume, data.book, data.type, parseVerses(data.verses, emptyList(), highlights, currentHighlightIndex.value, isDark = isSystemInDarkTheme()), data.bibleRefs)
                     ArticleViewContent(
                         article,
                         markupId,
                         markups,
+                        highlights,
+                        currentHighlightIndex,
                         signInModel,
                         favoritesModel,
                         markupsModel
@@ -85,11 +87,13 @@ fun ArticleView(
             Status.SUCCESS -> {
                 searchArticleData.data?.let { data ->
                     val markups = markupsModel.markups.value.data?.filter { markup -> markup.articleID == data._id } ?: emptyList()
-                    val article = Article(data._id, highlightText(data._source.title, isSystemInDarkTheme()), data._source.author, data._source.volume, data._source.book, data._source.type, parseVerses(data._source.verses, emptyList(), isDark = isSystemInDarkTheme()), data._source.bibleRefs)
+                    val article = Article(data._id, highlightBody(data._source.title, isSystemInDarkTheme()), data._source.author, data._source.volume, data._source.book, data._source.type, parseVerses(data._source.verses, emptyList(), highlights, currentHighlightIndex.value, isDark = isSystemInDarkTheme()), data._source.bibleRefs)
                     ArticleViewContent(
                         article,
                         markupId,
                         markups,
+                        highlights,
+                        currentHighlightIndex,
                         signInModel,
                         favoritesModel,
                         markupsModel
