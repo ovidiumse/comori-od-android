@@ -165,7 +165,6 @@ fun ArticleViewContent(
                         } else {
                             currentHighlightIndex.value = 0
                         }
-                        println("Current index: ${currentHighlightIndex}")
                     },
                     modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
                     backgroundColor = getNamedColor("SecondarySurface", isDark)

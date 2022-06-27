@@ -147,6 +147,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
 
     return buildAnnotatedString {
         val highlightColor = getNamedColor("Highlight", isDark)
+        val activeHighlightColor = getNamedColor("ActiveHighlight", isDark)
         for (verse in verses)
             append(buildVerse(verse))
 
@@ -167,7 +168,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
                 addStyle(
                     SpanStyle(
                         color = Color.Black,
-                        background = Color.Red
+                        background = activeHighlightColor
                     ),
                     start = hl.start,
                     end = hl.end
