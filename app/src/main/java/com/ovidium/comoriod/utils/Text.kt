@@ -71,7 +71,6 @@ fun highlightElements(text: String, isDark: Boolean): AnnotatedString {
 
 
 fun highlightBody(text: String, isDark: Boolean): AnnotatedString {
-    val highlightColor = getNamedColor("Highlight", isDark)
 
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
@@ -119,11 +118,9 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
         return buildAnnotatedString {
             when (chunk.type) {
                 "normal" -> {
-                    withAnnotation(tag = "TEXT",  annotation = "") {
                         withStyle(buildStyle(chunk.style)) {
                             append(highlightBody(chunk.text, isDark))
                         }
-                    }
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
