@@ -156,7 +156,7 @@ fun ArticleViewContent(
         }
 
         //Highlights
-        if (showHighlightControls.value) {
+        if (showHighlightControls.value && highlights.isNotEmpty()) {
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End,
