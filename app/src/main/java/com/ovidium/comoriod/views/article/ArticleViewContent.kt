@@ -47,6 +47,7 @@ import kotlin.time.ExperimentalTime
 fun ArticleViewContent(
     article: Article,
     markupId: String?,
+    isSearch: String?,
     markups: List<Markup>,
     highlights: SnapshotStateList<TextRange>,
     offsetList: SnapshotStateList<Int>,
@@ -156,7 +157,8 @@ fun ArticleViewContent(
         }
 
         //Highlights
-        if (showHighlightControls.value && highlights.isNotEmpty()) {
+        if (showHighlightControls.value && isSearch == "true") {
+            println("Show highlights: ${highlights.count()}")
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.End,
@@ -171,10 +173,10 @@ fun ArticleViewContent(
                             } else {
                                 currentHighlightIndex.value = highlights.size - 1
                             }
-                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         } else {
                             currentHighlightIndex.value = 0
-                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         }
                     },
                     modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
@@ -194,10 +196,10 @@ fun ArticleViewContent(
                             } else {
                                 currentHighlightIndex.value = 0
                             }
-                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         } else {
                             currentHighlightIndex.value = 0
-                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         }
                     },
                     modifier = Modifier.padding(end = 16.dp, top = 16.dp),
@@ -210,7 +212,6 @@ fun ArticleViewContent(
                     )
                 }
             }
-            println("GET HIGHLIGHTS")
         }
     }
     if (showSaveFavoriteDialog) {

@@ -71,10 +71,12 @@ fun SearchResultsCell(
     ) {
         navController.navigate(
             Screens.Article.withArgs(
-                URLEncoder.encode(
-                    hit._id,
-                    "utf-8"
-                )
+                "${
+                    URLEncoder.encode(
+                        hit._id,
+                        "utf-8"
+                    )
+                }?isSearch=true"
             )
         ) {
             launchSingleTop = true

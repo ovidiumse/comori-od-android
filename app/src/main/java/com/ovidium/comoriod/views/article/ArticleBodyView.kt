@@ -87,13 +87,6 @@ fun ArticleBodyView(
                             (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
                                 .toInt()
                     }
-//                    if (currentHighlightIndex.value != null) {
-//                        val highlight = highlights[currentHighlightIndex.value!!]
-//                        val rectStart = textLayout.getBoundingBox(highlight.start)
-//                        scrollOffset.value =
-//                            (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
-//                                .toInt()
-//                    }
                     if (offsetList.isEmpty()) {
                         for (highlight in highlights) {
                             val rectStart = textLayout.getBoundingBox(highlight.start)
@@ -102,32 +95,32 @@ fun ArticleBodyView(
                             offsetList.add(offset)
                         }
                     }
-                    println("onTextLayout")
-                },
-                onClick = { offset ->
-                    val annotation = article.body.getStringAnnotations(
-                        tag = "URL",
-                        start = offset,
-                        end = offset
-                    ).firstOrNull()
+                }
+            ) { offset ->
+                val annotation = article.body.getStringAnnotations(
+                    tag = "URL",
+                    start = offset,
+                    end = offset
+                ).firstOrNull()
 
-                    bibleRefs.clear()
-                    if (annotation != null)
-                        bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
+                bibleRefs.clear()
+                if (annotation != null)
+                    bibleRefs.addAll(article.bibleRefs[annotation.item]!!.verses)
 
-                    clearSelection = true
-                    textToolbar.hide()
-                    if (bibleRefs.isEmpty()) {
-                        showHighlightControls.value = showHighlightControls.value.not()
-                        if (showHighlightControls.value) {
-                            val hlAnnotations = article.body.spanStyles.filter { it.item.background == Color.Transparent }
-                            highlights.addAll(hlAnnotations.map { TextRange(it.start, it.end) })
-                        } else {
-                            highlights.clear()
-                        }
+                clearSelection = true
+                textToolbar.hide()
+                if (bibleRefs.isEmpty()) {
+                    showHighlightControls.value = showHighlightControls.value.not()
+                    if (showHighlightControls.value) {
+                        val hlAnnotations =
+                            article.body.spanStyles.filter { it.item.background == Color.Transparent }
+                        highlights.addAll(hlAnnotations.map { TextRange(it.start, it.end) })
+                    } else {
+                        highlights.clear()
+                        offsetList.clear()
                     }
                 }
-            )
+            }
         }
 
         clearSelection = false

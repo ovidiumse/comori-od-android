@@ -22,12 +22,12 @@ class BookModel: ViewModel() {
         bookData.clear()
     }
 
-    fun getArticle(id: String, searchTerm: String) {
+    fun getArticle(id: String, searchTerm: String, isSearch: String?) {
         viewModelScope.launch {
-            if (searchTerm.isEmpty()) {
-                dataSource.getArticle(id).collectLatest { state -> bookData[id] = state }
-            } else {
+            if (searchTerm.isNotEmpty() && isSearch == "true") {
                 dataSource.getSearchArticle(id, searchTerm).collectLatest { state -> searchData[id] = state}
+            } else {
+                dataSource.getArticle(id).collectLatest { state -> bookData[id] = state }
             }
         }
     }

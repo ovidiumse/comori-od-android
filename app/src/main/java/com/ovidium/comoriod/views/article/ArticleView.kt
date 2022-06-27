@@ -23,14 +23,15 @@ import kotlin.time.ExperimentalTime
 fun ArticleView(
     articleID: String,
     markupId: String? = null,
+    isSearch: String? = null,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     searchModel: SearchModel,
     markupsModel: MarkupsModel
 ) {
-    val articleModel: BookModel = viewModel()
-    val bookData = remember { articleModel.bookData }
-    val searchData = remember { articleModel.searchData }
+    val bookModel: BookModel = viewModel()
+    val bookData = remember { bookModel.bookData }
+    val searchData = remember { bookModel.searchData }
     var query by remember { searchModel.query }
     var highlights = remember { mutableStateListOf<TextRange>() }
     var offsetList = remember { mutableStateListOf<Int>() }
@@ -52,6 +53,7 @@ fun ArticleView(
                     ArticleViewContent(
                         article,
                         markupId,
+                        isSearch,
                         markups,
                         highlights,
                         offsetList,
@@ -74,6 +76,7 @@ fun ArticleView(
                     ArticleViewContent(
                         article,
                         markupId,
+                        isSearch,
                         markups,
                         highlights,
                         offsetList,
@@ -89,8 +92,7 @@ fun ArticleView(
         }
     }
     LaunchedEffect(Unit) {
-        articleModel.getArticle(articleID, query)
-        offsetList.clear()
+        bookModel.getArticle(articleID, query, isSearch)
     }
 }
 

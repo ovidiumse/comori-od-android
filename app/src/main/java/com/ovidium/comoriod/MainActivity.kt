@@ -143,7 +143,7 @@ fun BottomBarMain(
         }
 
         composable(
-            route = Screens.Article.route + "/{articleID}?markupId={markupId}",
+            route = Screens.Article.route + "/{articleID}?markupId={markupId}&isSearch={isSearch}",
             arguments = listOf(
                 navArgument("articleID") {
                     type = NavType.StringType
@@ -151,6 +151,10 @@ fun BottomBarMain(
                     nullable = true
                 },
                 navArgument("markupId") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("isSearch") {
                     type = NavType.StringType
                     nullable = true
                 }
@@ -167,9 +171,14 @@ fun BottomBarMain(
                 return entry.arguments?.getString("markupId")
             }
 
+            fun isSearch(): String? {
+                return entry.arguments?.getString("isSearch")
+            }
+
             ArticleView(
-                articleID = getArticleID(),
+                getArticleID(),
                 getMarkupId(),
+                isSearch(),
                 signInModel,
                 favoritesModel,
                 searchModel,
