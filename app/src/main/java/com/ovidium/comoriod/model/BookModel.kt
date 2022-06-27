@@ -25,10 +25,8 @@ class BookModel: ViewModel() {
     fun getArticle(id: String, searchTerm: String) {
         viewModelScope.launch {
             if (searchTerm.isEmpty()) {
-                println("not search: <$searchTerm>")
                 dataSource.getArticle(id).collectLatest { state -> bookData[id] = state }
             } else {
-                println("search: $searchTerm")
                 dataSource.getSearchArticle(id, searchTerm).collectLatest { state -> searchData[id] = state}
             }
         }

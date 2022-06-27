@@ -36,6 +36,11 @@ import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.ExperimentalTime
 
 @Composable
@@ -62,6 +67,7 @@ fun ArticleViewContent(
     var startPos = remember { mutableStateOf(0) }
     var endPos = remember { mutableStateOf(0) }
     var scrollOffset = remember { mutableStateOf(0) }
+    val coroutineScope = rememberCoroutineScope()
 
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
@@ -95,6 +101,7 @@ fun ArticleViewContent(
                         markupSelection,
                         markups,
                         highlights,
+                        currentHighlightIndex,
                         markupId,
                         textColor,
                         startPos,
@@ -165,6 +172,7 @@ fun ArticleViewContent(
                         } else {
                             currentHighlightIndex.value = 0
                         }
+                        coroutineScope.async { listState.animateScrollToItem(2, scrollOffset.value) }
                     },
                     modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
                     backgroundColor = getNamedColor("SecondarySurface", isDark)
@@ -186,7 +194,7 @@ fun ArticleViewContent(
                         } else {
                             currentHighlightIndex.value = 0
                         }
-                        println("Current index: ${currentHighlightIndex.value}")
+                        coroutineScope.async { listState.animateScrollToItem(2, scrollOffset.value) }
                     },
                     modifier = Modifier.padding(end = 16.dp, top = 16.dp),
                     backgroundColor = getNamedColor("SecondarySurface", isDark)

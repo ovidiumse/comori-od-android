@@ -11,8 +11,6 @@ import androidx.compose.ui.unit.*
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
-import com.ovidium.comoriod.data.search.Highlight
-import com.ovidium.comoriod.ui.theme.colors.colorSecondaryText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.time.Duration
 
@@ -149,6 +147,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
             append(buildVerse(verse))
 
         for (markup in markups) {
+            println("Markup: ${markup.index}..<${markup.index + markup.length}")
             addStyle(
                 SpanStyle(
                     color = markupTextColor,
@@ -160,7 +159,7 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
         }
 
         for (hl in highlights) {
-            println("Highlights: ${hl.start}..<${hl.end}")
+            println("Highlight: ${hl.start}..<${hl.end}")
             if (currentHighlightIndex != null && hl == highlights[currentHighlightIndex]) {
                 addStyle(
                     SpanStyle(

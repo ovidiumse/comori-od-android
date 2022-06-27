@@ -28,6 +28,7 @@ fun ArticleBodyView(
     markupSelection: MutableState<String>,
     markups: List<Markup>,
     highlights: SnapshotStateList<TextRange>,
+    currentHighlightIndex: MutableState<Int?>,
     markupId: String?,
     textColor: Color,
     startPos: MutableState<Int>,
@@ -81,6 +82,13 @@ fun ArticleBodyView(
                         markups.firstOrNull { markup -> markup.id == markupId }
                     markup?.let { m ->
                         val rectStart = textLayout.getBoundingBox(m.index)
+                        scrollOffset.value =
+                            (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
+                                .toInt()
+                    }
+                    if (currentHighlightIndex.value != null) {
+                        val highlight = highlights[currentHighlightIndex.value!!]
+                        val rectStart = textLayout.getBoundingBox(highlight.start)
                         scrollOffset.value =
                             (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
                                 .toInt()
