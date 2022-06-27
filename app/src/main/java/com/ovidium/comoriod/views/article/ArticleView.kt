@@ -33,6 +33,7 @@ fun ArticleView(
     val searchData = remember { articleModel.searchData }
     var query by remember { searchModel.query }
     var highlights = remember { mutableStateListOf<TextRange>() }
+    var offsetList = remember { mutableStateListOf<Int>() }
     var currentHighlightIndex = remember { mutableStateOf<Int?>(null) }
 
     Column(
@@ -53,6 +54,7 @@ fun ArticleView(
                         markupId,
                         markups,
                         highlights,
+                        offsetList,
                         currentHighlightIndex,
                         signInModel,
                         favoritesModel,
@@ -74,6 +76,7 @@ fun ArticleView(
                         markupId,
                         markups,
                         highlights,
+                        offsetList,
                         currentHighlightIndex,
                         signInModel,
                         favoritesModel,
@@ -87,6 +90,7 @@ fun ArticleView(
     }
     LaunchedEffect(Unit) {
         articleModel.getArticle(articleID, query)
+        offsetList.clear()
     }
 }
 

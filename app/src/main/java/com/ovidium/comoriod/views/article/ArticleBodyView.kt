@@ -28,6 +28,7 @@ fun ArticleBodyView(
     markupSelection: MutableState<String>,
     markups: List<Markup>,
     highlights: SnapshotStateList<TextRange>,
+    offsetList: SnapshotStateList<Int>,
     currentHighlightIndex: MutableState<Int?>,
     markupId: String?,
     textColor: Color,
@@ -86,13 +87,22 @@ fun ArticleBodyView(
                             (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
                                 .toInt()
                     }
-                    if (currentHighlightIndex.value != null) {
-                        val highlight = highlights[currentHighlightIndex.value!!]
-                        val rectStart = textLayout.getBoundingBox(highlight.start)
-                        scrollOffset.value =
-                            (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
-                                .toInt()
+//                    if (currentHighlightIndex.value != null) {
+//                        val highlight = highlights[currentHighlightIndex.value!!]
+//                        val rectStart = textLayout.getBoundingBox(highlight.start)
+//                        scrollOffset.value =
+//                            (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
+//                                .toInt()
+//                    }
+                    if (offsetList.isEmpty()) {
+                        for (highlight in highlights) {
+                            val rectStart = textLayout.getBoundingBox(highlight.start)
+                            val offset =
+                                (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
+                            offsetList.add(offset)
+                        }
                     }
+                    println("onTextLayout")
                 },
                 onClick = { offset ->
                     val annotation = article.body.getStringAnnotations(

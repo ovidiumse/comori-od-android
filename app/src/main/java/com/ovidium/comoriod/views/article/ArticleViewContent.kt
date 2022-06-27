@@ -49,6 +49,7 @@ fun ArticleViewContent(
     markupId: String?,
     markups: List<Markup>,
     highlights: SnapshotStateList<TextRange>,
+    offsetList: SnapshotStateList<Int>,
     currentHighlightIndex: MutableState<Int?>,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
@@ -101,6 +102,7 @@ fun ArticleViewContent(
                         markupSelection,
                         markups,
                         highlights,
+                        offsetList,
                         currentHighlightIndex,
                         markupId,
                         textColor,
@@ -169,10 +171,11 @@ fun ArticleViewContent(
                             } else {
                                 currentHighlightIndex.value = highlights.size - 1
                             }
+                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         } else {
                             currentHighlightIndex.value = 0
+                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         }
-                        coroutineScope.async { listState.animateScrollToItem(2, scrollOffset.value) }
                     },
                     modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
                     backgroundColor = getNamedColor("SecondarySurface", isDark)
@@ -191,10 +194,11 @@ fun ArticleViewContent(
                             } else {
                                 currentHighlightIndex.value = 0
                             }
+                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         } else {
                             currentHighlightIndex.value = 0
+                            coroutineScope.async { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
                         }
-                        coroutineScope.async { listState.animateScrollToItem(2, scrollOffset.value) }
                     },
                     modifier = Modifier.padding(end = 16.dp, top = 16.dp),
                     backgroundColor = getNamedColor("SecondarySurface", isDark)
