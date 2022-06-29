@@ -1,10 +1,14 @@
 package com.ovidium.comoriod.model
 
+import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
+import com.ovidium.comoriod.MainActivity
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
 import com.ovidium.comoriod.data.titles.TitleHit
@@ -12,6 +16,7 @@ import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -19,6 +24,7 @@ const val TAG = "AggregationsModel"
 
 class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     ViewModel() {
+
     private val dataSource =
         LibraryDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 

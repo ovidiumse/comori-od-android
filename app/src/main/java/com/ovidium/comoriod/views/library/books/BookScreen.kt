@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.ovidium.comoriod.MainActivity
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.launchMenu
@@ -39,7 +40,7 @@ fun BookScreen(
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     searchModel: SearchModel,
-    markupsModel: MarkupsModel,
+    markupsModel: MarkupsModel
 ) {
     val isDark = isSystemInDarkTheme()
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))

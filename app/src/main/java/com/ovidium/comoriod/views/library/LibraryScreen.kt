@@ -24,9 +24,7 @@ import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.ovidium.comoriod.data.authors.Bucket
-import com.ovidium.comoriod.model.GoogleSignInModel
-import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.model.LibraryModelFactory
+import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.*
 import com.ovidium.comoriod.views.library.AuthorsGrid
@@ -169,6 +167,7 @@ fun LibraryScreen(
             authorInfo.value = null
         }
     }
+
 
 }
 

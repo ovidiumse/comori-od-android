@@ -1,18 +1,26 @@
 package com.ovidium.comoriod
 
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -44,11 +52,53 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
+    private val networkStatusViewModel: NetworkStatusViewModel by lazy {
+        ViewModelProvider(
+            this,
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(
+                    modelClass: Class<T>,
+                    extras: CreationExtras
+                ): T {
+                    val networkStatusTracker = NetworkStatusTracker(this@MainActivity)
+                    return NetworkStatusViewModel(networkStatusTracker) as T
+                }
+            },
+        )[NetworkStatusViewModel::class.java]
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            ComoriOdApp(applicationContext)
+        networkStatusViewModel.state.observe(this) { state ->
+            println("Network monitor: ${state.toString()}")
+            when (state) {
+                NetworkState.Fetched -> {
+                    setContent { ComoriOdApp(applicationContext) }
+                }
+                NetworkState.Error -> {
+                    setContent { NoInternetPlaceholder() }
+                }
+            }
         }
+
+    }
+}
+
+@Composable
+fun NoInternetPlaceholder() {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .background(Color.Red)
+            .fillMaxSize()
+    ) {
+        Text(
+            text = "NO INTERNET",
+            color = Color.White,
+            modifier = Modifier
+                .padding()
+        )
     }
 }
 
