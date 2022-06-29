@@ -69,15 +69,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        networkStatusViewModel.state.observe(this) { state ->
-            println("Network monitor: ${state.toString()}")
-            when (state) {
-                NetworkState.Fetched -> {
-                    setContent { ComoriOdApp(applicationContext) }
-                }
-                NetworkState.Error -> {
-                    setContent { NoInternetPlaceholder() }
-                }
+        networkStatusViewModel.status()
+        setContent {
+            var state = remember { networkStatusViewModel.state }
+            when (state.value) {
+                NetworkState.Fetched -> { ComoriOdApp(context = applicationContext) }
+                NetworkState.Error -> { NoInternetPlaceholder() }
             }
         }
 

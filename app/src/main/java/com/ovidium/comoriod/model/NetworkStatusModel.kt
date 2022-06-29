@@ -5,12 +5,16 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 sealed class NetworkState {
     object Fetched : NetworkState()
@@ -18,16 +22,22 @@ sealed class NetworkState {
 }
 
 class NetworkStatusViewModel(
-    networkStatusTracker: NetworkStatusTracker,
+    private val networkStatusTracker: NetworkStatusTracker,
 ) : ViewModel() {
 
-    val state =
-        networkStatusTracker.networkStatus
-            .map(
-                onAvailable = { NetworkState.Fetched },
-                onUnavailable = { NetworkState.Error },
-            )
-            .asLiveData(Dispatchers.IO)
+    var state = mutableStateOf<NetworkState>(NetworkState.Error)
+
+   fun status() {
+           viewModelScope.launch {
+               networkStatusTracker.networkStatus
+                   .map(
+                       onAvailable = { NetworkState.Fetched },
+                       onUnavailable = { NetworkState.Error },
+                   ).collectLatest { response ->
+                       state.value = response
+                   }
+           }
+   }
 }
 
 sealed class NetworkStatus {
