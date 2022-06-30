@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
@@ -16,7 +17,10 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.lerp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
@@ -35,7 +39,6 @@ import com.ovidium.comoriod.views.library.authors.AuthorPopup
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-import kotlin.math.sign
 
 val TAG = "LibraryScreen"
 
@@ -74,6 +77,9 @@ fun LibraryScreen(
     val dropShadowSize = 3
     val isDark = isSystemInDarkTheme()
     val backgroundColor = getNamedColor("Background", isDark)
+    val connection by connectivityState()
+
+    val isConnected = connection === ConnectionState.Available
 
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -103,57 +109,77 @@ fun LibraryScreen(
                     text = { Text(tab.toString()) })
             }
         }
-
         HorizontalPager(count = TabCategory.values().size, state = pagerState) { tab ->
-            Surface(modifier = Modifier
-                .background(backgroundColor)
-                .graphicsLayer {
-                    val pageOffset = calculateCurrentOffsetForPage(tab).absoluteValue
-                    lerp(
-                        start = ScaleFactor(0.85f, 0.85f),
-                        stop = ScaleFactor(1f, 1f),
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                    ).also { scale ->
-                        scaleX = scale.scaleX
-                        scaleY = scale.scaleY
-                    }
+            if (isConnected) {
+                Surface(modifier = Modifier
+                    .background(backgroundColor)
+                    .graphicsLayer {
+                        val pageOffset = calculateCurrentOffsetForPage(tab).absoluteValue
+                        lerp(
+                            start = ScaleFactor(0.85f, 0.85f),
+                            stop = ScaleFactor(1f, 1f),
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        ).also { scale ->
+                            scaleX = scale.scaleX
+                            scaleY = scale.scaleY
+                        }
 
-                    alpha = lerp(
-                        start = ScaleFactor(0.5f, 0.5f),
-                        stop = ScaleFactor(1f, 1f),
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                    ).scaleX
-                }) {
-                when (TabCategory.values()[tab]) {
-                    TabCategory.Toate -> LibraryMain(
-                        navController,
-                        signInModel,
-                        libraryModel,
-                        isDark
-                    ) { bucket -> authorInfo.value = bucket }
-                    TabCategory.Autori -> StateHandler(
-                        navController,
-                        libraryModel.authorsData
-                    ) { data, isLoading ->
-                        AuthorsGrid(
+                        alpha = lerp(
+                            start = ScaleFactor(0.5f, 0.5f),
+                            stop = ScaleFactor(1f, 1f),
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        ).scaleX
+                    }) {
+                    when (TabCategory.values()[tab]) {
+                        TabCategory.Toate -> LibraryMain(
                             navController,
-                            data,
-                            isLoading,
+                            signInModel,
+                            libraryModel,
                             isDark
                         ) { bucket -> authorInfo.value = bucket }
+                        TabCategory.Autori -> StateHandler(
+                            navController,
+                            libraryModel.authorsData
+                        ) { data, isLoading ->
+                            AuthorsGrid(
+                                navController,
+                                data,
+                                isLoading,
+                                isDark
+                            ) { bucket -> authorInfo.value = bucket }
+                        }
+                        TabCategory.Volume -> StateHandler(
+                            navController,
+                            libraryModel.volumesData
+                        ) { data, isLoading ->
+                            VolumesGrid(navController, data, isLoading, isDark)
+                        }
+                        TabCategory.Cărți -> StateHandler(
+                            navController,
+                            libraryModel.booksData
+                        ) { data, isLoading ->
+                            BooksGrid(navController, data, isLoading, isDark) { true }
+                        }
                     }
-                    TabCategory.Volume -> StateHandler(
-                        navController,
-                        libraryModel.volumesData
-                    ) { data, isLoading ->
-                        VolumesGrid(navController, data, isLoading, isDark)
-                    }
-                    TabCategory.Cărți -> StateHandler(
-                        navController,
-                        libraryModel.booksData
-                    ) { data, isLoading ->
-                        BooksGrid(navController, data, isLoading, isDark) { true }
-                    }
+                }
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = "Nu există conexiune la internet. \nTe rugăm să verifici și să revii.",
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 22.sp,
+                        maxLines = 2,
+                        color = Color.Gray,
+                        modifier = Modifier
+                            .padding(16.dp)
+                    )
+                    CircularProgressIndicator()
                 }
             }
         }

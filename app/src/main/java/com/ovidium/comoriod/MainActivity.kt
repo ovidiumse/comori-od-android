@@ -2,6 +2,7 @@ package com.ovidium.comoriod
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -52,50 +53,12 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    private val networkStatusViewModel: NetworkStatusViewModel by lazy {
-        ViewModelProvider(
-            this,
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(
-                    modelClass: Class<T>,
-                    extras: CreationExtras
-                ): T {
-                    val networkStatusTracker = NetworkStatusTracker(this@MainActivity)
-                    return NetworkStatusViewModel(networkStatusTracker) as T
-                }
-            },
-        )[NetworkStatusViewModel::class.java]
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        networkStatusViewModel.status()
         setContent {
-            var state = remember { networkStatusViewModel.state }
-            when (state.value) {
-                NetworkState.Fetched -> { ComoriOdApp(context = applicationContext) }
-                NetworkState.Error -> { NoInternetPlaceholder() }
-            }
+            ComoriOdApp(applicationContext)
         }
 
-    }
-}
-
-@Composable
-fun NoInternetPlaceholder() {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .background(Color.Red)
-            .fillMaxSize()
-    ) {
-        Text(
-            text = "NO INTERNET",
-            color = Color.White,
-            modifier = Modifier
-                .padding()
-        )
     }
 }
 
@@ -144,7 +107,6 @@ fun ComoriOdApp(context: Context) {
             scaffoldState = scaffoldState,
         ) {
             BottomBarMain(
-                context = context,
                 navController = navController,
                 scaffoldState = scaffoldState,
                 jwtUtils = jwtUtils,
@@ -161,7 +123,6 @@ fun ComoriOdApp(context: Context) {
 
 @Composable
 fun BottomBarMain(
-    context: Context,
     navController: NavHostController,
     scaffoldState: ScaffoldState,
     jwtUtils: JWTUtils,
