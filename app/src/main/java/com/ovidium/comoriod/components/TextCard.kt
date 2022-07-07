@@ -42,6 +42,9 @@ fun TextCard(
     bubbleColor: Color,
     onItemClick: () -> Unit
 ) {
+
+    val isDark = isSystemInDarkTheme()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -73,7 +76,8 @@ fun TextCard(
                 fontSize = 20.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Left
+                textAlign = TextAlign.Left,
+                color = if (isDark) Color.White else Color.Black
             )
         }
         Row(
@@ -133,6 +137,7 @@ fun TextCard(
             Divider()
             Text(
                 text = text,
+                color = if (isDark) Color.White else Color.Black,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
