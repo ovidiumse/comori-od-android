@@ -8,11 +8,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -58,7 +61,7 @@ fun SearchScreen(
 
     Column(modifier = Modifier.fillMaxSize()) {
         AppBar(
-            showTitle = false,
+            title = { },
             onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }
         ) @Composable {
             val destinationRoute = navBackStackEntry?.destination?.route
@@ -69,7 +72,6 @@ fun SearchScreen(
                     currentAutocompleteJob?.cancel()
                     searchModel.autocompleteData.value =
                         Resource(Status.SUCCESS, null, null)
-                    println("NAVSTACK: ${destinationRoute} - you're going back")
                 }
             }
 
@@ -145,7 +147,10 @@ fun SearchScreen(
                             NoSearchResultsPlaceholder(query, false, {})
                         } else {
                             Column(modifier = Modifier.padding(horizontal = 12.dp)) {
-                                Row(modifier = Modifier.padding(vertical = 12.dp)) {
+                                Row(
+                                    modifier = Modifier.padding(vertical = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     OutlinedButton(
                                         onClick = {
                                             showFilterPopup = !showFilterPopup
@@ -169,16 +174,28 @@ fun SearchScreen(
                                             contentDescription = "Filtrează",
                                         )
                                     }
+                                    Text(
+                                        text = "${searchResults.size} / ${searchData.value.data?.totalHitsCnt?.value} rezultate",
+                                        color = if (isDark) Color.White else Color.Black,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier
+                                            .padding(start = 16.dp)
+                                    )
                                 }
 
                                 Row {
                                     SearchResultsList(
-                                        query = query,
                                         hits = searchResults,
                                         navController = navController,
                                         listState = listState,
-                                        params = getParams(),
-                                        isDark = isDark
+                                        isDark = isDark,
+                                        loadMoreAction = { offset ->
+                                            searchModel.search(
+                                                query,
+                                                offset = offset,
+                                                params = getParams()
+                                            )
+                                        }
                                     )
                                 }
                             }
@@ -218,4 +235,5 @@ fun SearchScreen(
             },
             onExitAction = { showFilterPopup = false })
     }
+
 }

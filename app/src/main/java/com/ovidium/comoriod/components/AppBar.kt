@@ -5,33 +5,22 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.ovidium.comoriod.R
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
-fun AppBar(showTitle: Boolean, onMenuClicked: () -> Unit, actions: @Composable () -> Unit) {
+fun AppBar(title: @Composable () -> Unit, onMenuClicked: () -> Unit, actions: @Composable () -> Unit) {
     val isDark = isSystemInDarkTheme()
     val background = getNamedColor("HeaderBar", isDark = isDark)
     val headerText = getNamedColor("HeaderText", isDark = isDark)
 
     TopAppBar(
-        title = {
-            if (showTitle)
-                Text(
-                    text = stringResource(id = R.string.app_title),
-                    fontWeight = FontWeight.Bold,
-                    color = headerText
-                )
-        },
+        title = title,
         navigationIcon = {
             Spacer(modifier = Modifier.width(8.dp))
             Icon(

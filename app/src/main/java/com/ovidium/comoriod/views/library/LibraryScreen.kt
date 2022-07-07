@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.lerp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
+import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.launchMenu
@@ -90,10 +92,16 @@ fun LibraryScreen(
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
     var authorInfo = remember { mutableStateOf<Bucket?>(null) }
-
+    val headerText = getNamedColor("HeaderText", isDark = isDark)
 
     Column(modifier = Modifier.fillMaxSize()) {
-        AppBar(showTitle = true, onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
+        AppBar(title = {
+            Text(
+                text = stringResource(id = R.string.app_title),
+                fontWeight = FontWeight.Bold,
+                color = headerText
+            )
+        }, onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
             Icon(
                 imageVector = Icons.Default.Search,
                 contentDescription = "Search",

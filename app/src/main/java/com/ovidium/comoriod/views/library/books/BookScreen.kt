@@ -56,7 +56,7 @@ fun BookScreen(
     Scaffold(
         topBar = {
             AppBar(
-                showTitle = true,
+                title = { Text("") },
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
                 actions = @Composable {
                     Icon(
