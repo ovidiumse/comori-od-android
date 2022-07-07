@@ -2,9 +2,12 @@ package com.ovidium.comoriod.views
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,7 +30,9 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
+import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.data.authors.Bucket
+import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.*
@@ -71,7 +76,8 @@ class DataItem(
 fun LibraryScreen(
     navController: NavController,
     signInModel: GoogleSignInModel,
-    libraryModel: LibraryModel
+    libraryModel: LibraryModel,
+    scaffoldState: ScaffoldState
 ) {
     val tabsHeight = 40
     val dropShadowSize = 3
@@ -85,6 +91,18 @@ fun LibraryScreen(
     val coroutineScope = rememberCoroutineScope()
     var authorInfo = remember { mutableStateOf<Bucket?>(null) }
 
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        AppBar(showTitle = true, onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                modifier = Modifier.clickable(onClick = {
+                    navController.navigate(Screens.Search.route)
+                }),
+                tint = getNamedColor("HeaderText", isDark = isDark)
+            )
+        }
     Column(modifier = Modifier.blur(if (authorInfo.value != null) 16.dp else 0.dp)) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
@@ -184,6 +202,7 @@ fun LibraryScreen(
             }
         }
     }
+}
     if (authorInfo.value != null) {
         AuthorPopup(
             navController = navController,

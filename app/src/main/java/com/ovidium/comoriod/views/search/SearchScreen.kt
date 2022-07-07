@@ -16,6 +16,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.SearchModel
@@ -45,7 +46,7 @@ fun SearchScreen(
     var showFilterPopup by remember { mutableStateOf(false) }
     val searchParams = remember { mutableStateMapOf<String, MutableSet<String>>() }
     val focusRequester = remember { FocusRequester() }
-
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
     val isDark = isSystemInDarkTheme()
     val backgroundColor = getNamedColor("Background", isDark)
     val textColor = getNamedColor("Text", isDark)
@@ -55,44 +56,54 @@ fun SearchScreen(
             .associate { pair -> pair }
     }
 
-    Scaffold(
-        topBar = {
-            AppBar(
-                showTitle = false,
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
-                actions = @Composable {
-                    SearchBar(
-                        searchText = query,
-                        focusRequester = focusRequester,
-                        onSearchTextChanged = {
-                            query = it
-                            isSearchPending = false
-                            currentAutocompleteJob?.cancel()
-                            currentAutocompleteJob = coroutineScope.async {
-                                delay(300L)
-                                if (!isSearchPending)
-                                    searchModel.autocomplete(query)
-                            }
-                        },
-                        onSearchClick = {
-                            if (query.isNotEmpty()) {
-                                isSearchPending = true
-                                keyboardController?.hide()
-                                searchModel.search(query)
-                                searchParams.clear()
-                            }
-                        },
-                        onClearClick = {
-                            isSearchPending = false
-                            query = ""
-                            currentAutocompleteJob?.cancel()
-                            searchModel.autocompleteData.value =
-                                Resource(Status.SUCCESS, null, null)
-                            keyboardController?.show()
-                        })
-                })
+    Column(modifier = Modifier.fillMaxSize()) {
+        AppBar(
+            showTitle = false,
+            onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }
+        ) @Composable {
+            val destinationRoute = navBackStackEntry?.destination?.route
+            when (destinationRoute) {
+                "library" -> {
+                    isSearchPending = false
+                    query = ""
+                    currentAutocompleteJob?.cancel()
+                    searchModel.autocompleteData.value =
+                        Resource(Status.SUCCESS, null, null)
+                    println("NAVSTACK: ${destinationRoute} - you're going back")
+                }
+            }
+
+            SearchBar(
+                searchText = query,
+                focusRequester = focusRequester,
+                onSearchTextChanged = {
+                    query = it
+                    isSearchPending = false
+                    currentAutocompleteJob?.cancel()
+                    currentAutocompleteJob = coroutineScope.async {
+                        delay(300L)
+                        if (!isSearchPending)
+                            searchModel.autocomplete(query)
+                    }
+                },
+                onSearchClick = {
+                    if (query.isNotEmpty()) {
+                        isSearchPending = true
+                        keyboardController?.hide()
+                        searchModel.search(query)
+                        searchParams.clear()
+                    }
+                },
+                onClearClick = {
+                    isSearchPending = false
+                    query = ""
+                    currentAutocompleteJob?.cancel()
+                    searchModel.autocompleteData.value =
+                        Resource(Status.SUCCESS, null, null)
+                    keyboardController?.show()
+                }
+            )
         }
-    ) {
         Column(modifier = Modifier.background(backgroundColor)) {
             if (query.isEmpty()) {
                 SuggestionsView { item ->

@@ -2,26 +2,17 @@ package com.ovidium.comoriod
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -40,10 +31,10 @@ import com.ovidium.comoriod.views.FavoritesScreen
 import com.ovidium.comoriod.views.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
-import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen
-import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.authors.TitlesForAuthorScreen
 import com.ovidium.comoriod.views.library.books.BookScreen
+import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen
+import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
 import com.ovidium.comoriod.views.markups.MarkupsScreen
 import com.ovidium.comoriod.views.search.SearchScreen
@@ -64,7 +55,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ComoriOdApp(context: Context) {
-    val isDark = isSystemInDarkTheme()
 
     val signInModel: GoogleSignInModel = viewModel(factory = GoogleSignInModelFactory(context))
     val jwtUtils = JWTUtils()
@@ -73,50 +63,18 @@ fun ComoriOdApp(context: Context) {
 
         val navController = rememberNavController()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-        val coroutineScope = rememberCoroutineScope()
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
 
-        Scaffold(
-            topBar = {
-                when (navBackStackEntry?.destination?.route?.replaceAfter("/", "")
-                    ?.replace("/", "")) {
-                    Screens.Book.route -> {}
-                    Screens.Search.route -> {}
-                    Screens.Favorites.route -> {}
-                    Screens.Markups.route -> {}
-                    else -> {
-                        AppBar(
-                            showTitle = true,
-                            onMenuClicked = {
-                                launchMenu(coroutineScope, scaffoldState)
-                            },
-                            actions = @Composable {
-                                Icon(
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "Search",
-                                    modifier = Modifier.clickable(onClick = {
-                                        navController.navigate(Screens.Search.route)
-                                    }),
-                                    tint = getNamedColor("HeaderText", isDark = isDark)
-                                )
-                            })
-                    }
-                }
-            },
-            drawerContent = { Drawer(context, scaffoldState.drawerState, navController) },
+        BottomBarMain(
+            navController = navController,
             scaffoldState = scaffoldState,
-        ) {
-            BottomBarMain(
-                navController = navController,
-                scaffoldState = scaffoldState,
-                jwtUtils = jwtUtils,
-                signInModel = signInModel,
-                libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)),
-                favoritesModel = viewModel(factory = FavoritesModelFactory(jwtUtils, signInModel)),
-                searchModel = viewModel(),
-                markupsModel = viewModel(factory = MarkupsModelFactory(jwtUtils, signInModel))
-            )
-        }
+            jwtUtils = jwtUtils,
+            signInModel = signInModel,
+            libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)),
+            favoritesModel = viewModel(factory = FavoritesModelFactory(jwtUtils, signInModel)),
+            searchModel = viewModel(),
+            markupsModel = viewModel(factory = MarkupsModelFactory(jwtUtils, signInModel))
+        )
+
     }
 }
 
@@ -135,7 +93,7 @@ fun BottomBarMain(
 
     NavHost(navController, startDestination = Screens.Library.route) {
         composable(Screens.Library.route) {
-            LibraryScreen(navController, signInModel, libraryModel)
+            LibraryScreen(navController, signInModel, libraryModel, scaffoldState)
         }
 
         composable(Screens.Search.route) {
