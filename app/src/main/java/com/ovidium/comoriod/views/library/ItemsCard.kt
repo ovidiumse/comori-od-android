@@ -7,8 +7,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,25 +19,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
-import com.ovidium.comoriod.data.authors.Bucket
-import com.ovidium.comoriod.data.books.BooksResponse
-import com.ovidium.comoriod.model.GoogleSignInModel
-import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.JWTUtils
-import com.ovidium.comoriod.views.ItemCategory
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.StateHandler
-import com.ovidium.comoriod.views.library.authors.AuthorPopup
-import io.fusionauth.jwks.JWKUtils
 
 @Composable
 fun ItemCard(

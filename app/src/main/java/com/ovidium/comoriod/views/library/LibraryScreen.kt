@@ -1,4 +1,4 @@
-package com.ovidium.comoriod.views
+package com.ovidium.comoriod.views.library
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -9,10 +9,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ScaleFactor
 import androidx.compose.ui.layout.lerp
@@ -24,17 +22,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.pagerTabIndicatorOffset
 import com.google.accompanist.pager.rememberPagerState
-import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.model.*
+import com.ovidium.comoriod.model.GoogleSignInModel
+import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.*
-import com.ovidium.comoriod.views.library.AuthorsGrid
-import com.ovidium.comoriod.views.library.BooksGrid
-import com.ovidium.comoriod.views.library.LibraryMain
-import com.ovidium.comoriod.views.library.VolumesGrid
+import com.ovidium.comoriod.utils.Resource
+import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.library.authors.AuthorPopup
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch

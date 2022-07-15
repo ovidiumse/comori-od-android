@@ -37,7 +37,7 @@ import com.ovidium.comoriod.ui.theme.ComoriODTheme
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.views.FavoritesScreen
-import com.ovidium.comoriod.views.LibraryScreen
+import com.ovidium.comoriod.views.library.LibraryScreen
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
 import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen

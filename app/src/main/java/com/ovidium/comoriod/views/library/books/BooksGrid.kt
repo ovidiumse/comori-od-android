@@ -7,8 +7,6 @@ import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.books.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
-import com.ovidium.comoriod.views.DataItem
-import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
 fun BooksGrid(

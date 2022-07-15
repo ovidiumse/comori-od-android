@@ -30,7 +30,6 @@ import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.data.authors.Bucket
-import com.ovidium.comoriod.data.search.Aggregations
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel

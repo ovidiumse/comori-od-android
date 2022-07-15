@@ -6,8 +6,6 @@ import com.ovidium.comoriod.data.volumes.Bucket
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
-import com.ovidium.comoriod.views.DataItem
-import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
 fun VolumesGrid(

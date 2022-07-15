@@ -10,7 +10,7 @@ import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.utils.JWTUtils
-import com.ovidium.comoriod.views.StateHandler
+import com.ovidium.comoriod.views.library.StateHandler
 import com.ovidium.comoriod.views.library.VolumesGrid
 
 @Composable

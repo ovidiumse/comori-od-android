@@ -42,7 +42,6 @@ data class UserResource(val user: GoogleUserModel?, val state: UserState, val me
     }
 }
 
-@ExperimentalTime
 class GoogleSignInModel(context: Context) : ViewModel() {
     private val errorMessage = "Ceva nu a mers bine."
 

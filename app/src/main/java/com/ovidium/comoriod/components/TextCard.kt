@@ -36,7 +36,7 @@ fun TextCard(
     book: String,
     author: String,
     type: String,
-    text: AnnotatedString,
+    lines: List<AnnotatedString>,
     subtitleColor: Color,
     bgColor: Color,
     bubbleColor: Color,
@@ -129,15 +129,20 @@ fun TextCard(
             }
         }
 
-        if (text.isNotEmpty()) {
+        if (lines.isNotEmpty()) {
             Divider()
-            Text(
-                text = text,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(horizontal = 16.dp)
                     .padding(top = 10.dp, bottom = 16.dp)
-            )
+            ) {
+                lines.forEachIndexed { index, line ->
+                    if (index > 0)
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                    Text(line)
+                }
+            }
         } else
             Spacer(modifier = Modifier.height(11.dp))
     }
@@ -153,7 +158,7 @@ fun TextCardPreview() {
         book = "Semanati Cuvantul Sfant",
         author = "Traian Dorz",
         type = "articol",
-        text = buildAnnotatedString { append("Conştiinţa colectivităţii noastre evanghelice trebuie să determine toată orientarea şi activitatea noastră. Să depăşim - cum s-ar zice stadiul egoist al proprietăţii şi intereselor, iubind, trecând la nivelul înalt, altruist şi superior al părtăşiei, al intereselor şi proprietăţii noastre frăţeşti, în specificul divin al marii Evanghelii în care ne-a încadrat Hristos, Domnul nostru.") },
+        lines = listOf(buildAnnotatedString { append("Conştiinţa colectivităţii noastre evanghelice trebuie să determine toată orientarea şi activitatea noastră. Să depăşim - cum s-ar zice stadiul egoist al proprietăţii şi intereselor, iubind, trecând la nivelul înalt, altruist şi superior al părtăşiei, al intereselor şi proprietăţii noastre frăţeşti, în specificul divin al marii Evanghelii în care ne-a încadrat Hristos, Domnul nostru.") }),
         subtitleColor = getNamedColor("MutedText", isDark),
         bgColor = getNamedColor("PrimarySurface", isDark),
         bubbleColor = getNamedColor("Bubble", isDark)

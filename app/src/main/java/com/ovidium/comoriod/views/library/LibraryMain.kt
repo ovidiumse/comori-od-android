@@ -1,19 +1,16 @@
 package com.ovidium.comoriod.views.library
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.views.*
 
 @Composable
 fun LibraryMain(

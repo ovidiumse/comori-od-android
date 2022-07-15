@@ -25,7 +25,6 @@ import com.google.accompanist.placeholder.material.placeholder
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
 fun AuthorCard(

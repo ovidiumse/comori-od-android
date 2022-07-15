@@ -67,35 +67,38 @@ fun highlightElements(text: String, isDark: Boolean): AnnotatedString {
     }
 }
 
-
 fun highlightBody(text: String, isDark: Boolean): AnnotatedString {
 
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
 
-            withStyle(style = ParagraphStyle) {
-                var highlighted = false
-                for (part in parts) {
-                    if (highlighted) {
-                        withStyle(
-                            style = SpanStyle(
-                                color = getNamedColor("Text", isDark),
-                                background = Color.Transparent
-                            ),
-                        ) {
-                            append(part)
-                        }
-                    } else
+        withStyle(style = ParagraphStyle) {
+            var highlighted = false
+            for (part in parts) {
+                if (highlighted) {
+                    withStyle(
+                        style = SpanStyle(
+                            color = getNamedColor("Text", isDark),
+                            background = Color.Transparent
+                        ),
+                    ) {
                         append(part)
-                    highlighted = !highlighted
-                }
+                    }
+                } else
+                    append(part)
+                highlighted = !highlighted
             }
+        }
     }
 }
 
-fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
-    return highlightElements(verses.joinToString(separator = "\n"), isDark = isDark)
+fun fmtVerses(verses: List<String>, isDark: Boolean): List<AnnotatedString> {
+    return verses.map { verse -> highlightElements(verse, isDark = isDark) }
 }
+
+/*fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
+    return highlightElements(verses.joinToString(separator = "\n"), isDark = isDark)
+}*/
 
 fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>, highlights: SnapshotStateList<TextRange>, currentHighlightIndex: Int?, isDark: Boolean) : AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)

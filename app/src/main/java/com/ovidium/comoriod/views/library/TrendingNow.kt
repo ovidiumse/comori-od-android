@@ -2,13 +2,9 @@ package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.data.trending.TrendingResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
-import com.ovidium.comoriod.views.DataItem
-import com.ovidium.comoriod.views.ItemCategory
 
 @Composable
 fun TrendingRow(
