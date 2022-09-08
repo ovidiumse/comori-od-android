@@ -105,8 +105,13 @@ fun Drawer(
                     if (userResource.state == UserState.LoggedIn)
                         Column {
                             userResource.user?.displayName?.let { Text(it) }
-                            Button(onClick = { signInModel.signOut(applicationContext) }) {
-                                Text("Deloghează-te")
+                            Button(
+                                onClick = { signInModel.signOut(applicationContext) },
+                            ) {
+                                Text(
+                                    "Deloghează-te",
+                                    color = getNamedColor("Link", isDark)
+                                )
                             }
                         }
                     else {
