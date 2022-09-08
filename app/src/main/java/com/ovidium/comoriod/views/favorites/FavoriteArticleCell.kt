@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
@@ -54,6 +55,30 @@ fun FavoriteArticleCell(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
             )
             FavoriteCellTitle(favoriteArticle)
+            if (favoriteArticle.tags.isNotEmpty()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(bottom = 8.dp)
+                ) {
+                    favoriteArticle.tags.forEach { tag ->
+                        if (tag.isNotEmpty())
+                            Text(
+                                text = tag,
+                                style = MaterialTheme.typography.caption,
+                                color = Color.Black,
+                                modifier = Modifier
+                                    .padding(start = 12.dp, end = 8.dp)
+                                    .padding(bottom = 8.dp)
+                                    .background(
+                                        Color.Gray.copy(alpha = .3f),
+                                        RoundedCornerShape(50)
+                                    )
+                                    .padding(8.dp)
+                            )
+                    }
+                }
+            }
             FavoriteCellInfo(favoriteArticle, deleteAction)
         }
     }
@@ -66,7 +91,7 @@ fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(horizontal = 16.dp)
-            .padding(bottom = 16.dp)
+            .padding(bottom = 8.dp)
     ) {
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
@@ -82,6 +107,7 @@ fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
             modifier = Modifier
                 .padding(start = 8.dp)
         )
+
     }
 }
 
@@ -90,7 +116,7 @@ fun FavoriteCellTitle(favoriteArticle: FavoriteArticle) {
 fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) -> Unit) {
     Column(
         modifier = Modifier
-            .background(Color.DarkGray)
+            .background(getNamedColor("Container", isSystemInDarkTheme()))
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
@@ -98,41 +124,11 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Column(horizontalAlignment = Alignment.Start) {
-
-                if (favoriteArticle.tags.isNotEmpty()) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .padding(bottom = 8.dp)
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_tag_24),
-                            contentDescription = "Tag",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .padding(end = 5.dp)
-                        )
-
-                        favoriteArticle.tags.forEach { tag ->
-                            if (tag.isNotEmpty())
-                                Text(
-                                    text = tag,
-                                    style = MaterialTheme.typography.caption,
-                                    color = Color.White,
-                                    modifier = Modifier
-                                        .padding(end = 8.dp)
-                                        .background(Color.Red, RoundedCornerShape(50))
-                                        .padding(5.dp)
-                                )
-                        }
-                    }
-                }
-
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_access_time_24),
                         contentDescription = "Menu",
-                        tint = Color.White,
+                        tint = getNamedColor("Text", isSystemInDarkTheme()),
                         modifier = Modifier
                             .padding(end = 5.dp)
                     )
@@ -142,7 +138,7 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, deleteAction: (String) ->
                     Text(
                         text = formattedDate,
                         style = MaterialTheme.typography.caption,
-                        color = Color.White
+                        color = getNamedColor("Text", isSystemInDarkTheme())
                     )
                 }
 

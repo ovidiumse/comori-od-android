@@ -157,9 +157,9 @@ fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (S
             .padding(end = 8.dp)
             .background(
                 if (isSelected) getNamedColor("Link", isDark) else getNamedColor(
-                    "PopupContainer",
+                    "Container",
                     isDark
-                ).copy(alpha = 0.3f),
+                ),
                 RoundedCornerShape(50)
             )
             .padding(12.dp)
