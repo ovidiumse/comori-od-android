@@ -80,7 +80,7 @@ fun LibraryScreen(
 
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
-    var authorInfo = remember { mutableStateOf<Bucket?>(null) }
+    val authorInfo = remember { mutableStateOf<Bucket?>(null) }
 
     Column(modifier = Modifier.blur(if (authorInfo.value != null) 16.dp else 0.dp)) {
         TabRow(

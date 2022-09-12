@@ -1,10 +1,7 @@
 package com.ovidium.comoriod.views.library
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -39,7 +36,7 @@ fun AuthorsGrid(
         contentPadding = PaddingValues(horizontal = marginSize.dp, vertical = marginSize.dp),
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
         modifier = Modifier
-            .fillMaxHeight()
+            .fillMaxSize()
             .background(color = getNamedColor("Background", isDark))
     ) {
         if (isLoading) {

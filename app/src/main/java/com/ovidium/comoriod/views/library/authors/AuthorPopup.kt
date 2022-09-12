@@ -54,25 +54,19 @@ fun AuthorPopup(
     Popup(
         alignment = Alignment.Center,
     ) {
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp / 2
-        val screenWidth = configuration.screenWidthDp.dp - 40.dp
         val isDark = isSystemInDarkTheme()
 
         Box(
             Modifier
-                .size(screenWidth, screenHeight)
                 .background(
                     getNamedColor("Alice", isDark = isDark),
                     RoundedCornerShape(16.dp)
                 )
-                .padding(horizontal = 16.dp)
+                .padding(top = 0.dp, start = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
             Column {
                 Row(
                     horizontalArrangement = Arrangement.End,
-                    modifier = Modifier
-                        .fillMaxWidth()
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,

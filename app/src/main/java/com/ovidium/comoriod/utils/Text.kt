@@ -16,7 +16,7 @@ import java.time.Duration
 
 val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
 
-fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false) : String {
+fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false): String {
     return "$cnt " + when {
         cnt == 0 -> many
         cnt == 1 -> single
@@ -100,7 +100,13 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): List<AnnotatedString> {
     return highlightElements(verses.joinToString(separator = "\n"), isDark = isDark)
 }*/
 
-fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>, highlights: SnapshotStateList<TextRange>, currentHighlightIndex: Int?, isDark: Boolean) : AnnotatedString {
+fun parseVerses(
+    verses: List<List<ArticleResponseChunk>>,
+    markups: List<Markup>,
+    highlights: SnapshotStateList<TextRange>,
+    currentHighlightIndex: Int?,
+    isDark: Boolean
+): AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)
     val markupTextColor = getNamedColor("Text", false)
 
@@ -119,12 +125,12 @@ fun parseVerses(verses: List<List<ArticleResponseChunk>>, markups: List<Markup>,
         return buildAnnotatedString {
             when (chunk.type) {
                 "normal" -> {
-                        withStyle(buildStyle(chunk.style)) {
-                            append(highlightBody(chunk.text, isDark))
-                        }
+                    withStyle(buildStyle(chunk.style)) {
+                        append(highlightBody(chunk.text, isDark))
+                    }
                 }
                 "bible-ref" -> {
-                    withAnnotation(tag = "URL",  annotation = chunk.ref!!) {
+                    withAnnotation(tag = "URL", annotation = chunk.ref!!) {
                         withStyle(style = SpanStyle(color = linkColor)) {
                             append(highlightBody(chunk.text, isDark))
                         }
