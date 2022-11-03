@@ -50,6 +50,11 @@ fun TOCPopup(
     val listState = rememberLazyListState()
     val searchText = remember { mutableStateOf("") }
 
+    val isDark = isSystemInDarkTheme()
+    val secondarySurface = getNamedColor("SecondarySurface", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
+    val textColor = getNamedColor("HeaderText", isDark)
+
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onExitAction
@@ -62,7 +67,7 @@ fun TOCPopup(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    getNamedColor("Container", isDark = isDark),
+                    bubbleColor,
                     RoundedCornerShape(16.dp)
                 )
         ) {
@@ -92,10 +97,7 @@ fun TOCPopup(
                                 text = "${realIndex + 1}",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = if (currentIndex == index) getNamedColor(
-                                    "Link",
-                                    isDark = isDark
-                                ) else getNamedColor("PopupContainer", isDark = isDark),
+                                color = if (currentIndex == index) secondarySurface else textColor,
                                 modifier = Modifier
                                     .padding(end = 16.dp)
                             )
@@ -103,10 +105,7 @@ fun TOCPopup(
                                 text = item._source.title,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = if (currentIndex == index) getNamedColor(
-                                    "Link",
-                                    isDark = isDark
-                                ) else getNamedColor("PopupContainer", isDark = isDark),
+                                color = if (currentIndex == index) secondarySurface else textColor,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(0.7f)
@@ -114,10 +113,7 @@ fun TOCPopup(
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_left_24),
                                 contentDescription = "Selected",
-                                tint = if (currentIndex == index) getNamedColor(
-                                    "Link",
-                                    isDark = isDark
-                                ) else Color.Transparent,
+                                tint = if (currentIndex == index) secondarySurface else Color.Transparent,
                                 modifier = Modifier
                                     .size(35.dp)
                                     .fillMaxWidth()
@@ -125,8 +121,8 @@ fun TOCPopup(
                             )
                         }
                         Divider(
-                            color = if (isDark) Color.DarkGray else Color.LightGray,
-                            thickness = 0.7.dp
+                            color = textColor.copy(alpha = 0.4f),
+                            thickness = 0.3.dp
                         )
                     }
                 }
@@ -148,6 +144,9 @@ fun TOCTopBar(
 ) {
     val isDark = isSystemInDarkTheme()
     var showSearchBar by remember { mutableStateOf(false) }
+
+    val secondarySurface = getNamedColor("SecondarySurface", isDark)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -157,7 +156,7 @@ fun TOCTopBar(
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = "Search",
-            tint = getNamedColor("Link", isDark = isDark),
+            tint = secondarySurface,
             modifier = Modifier
                 .clickable(onClick = { showSearchBar = true })
         )
@@ -185,7 +184,7 @@ fun TOCTopBar(
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Menu",
-            tint = getNamedColor("Link", isDark = isDark),
+            tint = secondarySurface,
             modifier = Modifier
                 .clickable(onClick = onExitAction)
         )
