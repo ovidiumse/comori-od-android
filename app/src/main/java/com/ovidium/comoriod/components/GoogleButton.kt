@@ -26,7 +26,7 @@ fun GoogleButton(
     Surface(
         shape = RoundedCornerShape(4.dp),
         border = BorderStroke(width = 1.dp, color = borderColor),
-        color = MaterialTheme.colors.surface,
+        color = Color.Transparent,
         modifier = Modifier.clickable { onClicked() }
     ) {
         Row(
@@ -45,7 +45,7 @@ fun GoogleButton(
                 Spacer(modifier = Modifier.width(16.dp))
                 CircularProgressIndicator(
                     modifier = Modifier.size(16.dp),
-                    strokeWidth = 2.dp,
+                    strokeWidth = 1.dp,
                     color = progressIndicatorColor
                 )
             }

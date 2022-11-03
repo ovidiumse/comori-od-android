@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -44,7 +45,7 @@ fun Drawer(
     navController: NavController
 ) {
     val isDark = isSystemInDarkTheme()
-    val lineColor = if (isDark) Color.DarkGray else Color.LightGray
+    val lineColor = if (isDark) Color.LightGray else Color.DarkGray
 
     val signInRequestCode = 1
 
@@ -58,6 +59,10 @@ fun Drawer(
     val userResourceState = signInModel.userResource
     val userResource = userResourceState.value
 
+    val secondarySurface = getNamedColor("SecondarySurface", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
+    val textColor = getNamedColor("HeaderText", isDark)
+
     if (userResource.state == UserState.Unknown)
         signInModel.silentSignIn(applicationContext)
 
@@ -66,9 +71,9 @@ fun Drawer(
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .background(MaterialTheme.colors.background)
+                .background(bubbleColor)
                 .drawBehind {
-                    val strokeWidth = 2f
+                    val strokeWidth = 0.5f
                     val y = size.height - strokeWidth / 2
 
                     drawLine(
@@ -107,10 +112,13 @@ fun Drawer(
                             userResource.user?.displayName?.let { Text(it) }
                             Button(
                                 onClick = { signInModel.signOut(applicationContext) },
+                                colors = ButtonDefaults.textButtonColors(secondarySurface),
+                                modifier = Modifier
+                                    .padding(top = 3.dp)
                             ) {
                                 Text(
                                     "Deloghează-te",
-                                    color = getNamedColor("Link", isDark)
+                                    color = Color.White
                                 )
                             }
                         }
@@ -140,7 +148,9 @@ fun Drawer(
         }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .background(bubbleColor)
         ) {
             if (userResource.state == UserState.LoggedIn) {
                 item {
@@ -160,11 +170,13 @@ fun Drawer(
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
                             contentDescription = "Favorites",
-                            modifier = Modifier.padding(end = 8.dp)
+                            modifier = Modifier.padding(end = 8.dp),
+                            tint = textColor
                         )
                         Text(
                             text = "Favorite",
                             style = MaterialTheme.typography.h6,
+                            color = textColor
                         )
                     }
                 }
@@ -186,11 +198,13 @@ fun Drawer(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_article_24),
                             contentDescription = "Markups",
                             modifier = Modifier
-                                .padding(end = 8.dp)
+                                .padding(end = 8.dp),
+                            tint = textColor
                         )
                         Text(
                             text = "Pasaje",
                             style = MaterialTheme.typography.h6,
+                            color = textColor
                         )
                     }
 

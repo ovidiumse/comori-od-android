@@ -54,6 +54,8 @@ fun MarkupCell(
     var textOverflowingState by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf(initialText) }
 
+    val isDark = isSystemInDarkTheme()
+
     if (initialText != textState)
         textState = markup.selection.trim()
 
