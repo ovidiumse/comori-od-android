@@ -45,6 +45,7 @@ fun FavoritesScreen(
     val coroutineScope = rememberCoroutineScope()
     var selectedTag by remember { mutableStateOf("") }
 
+
     fun getArticles(): List<FavoriteArticle>? {
         // selectedTag may not be in the list of tags after a deletion
         if (!tags.contains(selectedTag))
@@ -148,6 +149,11 @@ fun TagsRow(
 
 @Composable
 fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (String) -> Unit) {
+
+    val tagBG = getNamedColor("SecondarySurface", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
+    val textColor = getNamedColor("HeaderText", isDark)
+
     Text(
         text = text,
         textAlign = TextAlign.Center,
@@ -156,7 +162,7 @@ fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (S
         modifier = Modifier
             .padding(end = 8.dp)
             .background(
-                if (isSelected) getNamedColor("Link", isDark) else getNamedColor(
+                if (isSelected) tagBG else getNamedColor(
                     "Container",
                     isDark
                 ),
