@@ -63,14 +63,13 @@ fun ArticleViewContent(
     val listState = rememberLazyListState()
     val bibleRefs = articleModel.getBibleRefs(article.id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
-    var markupSelection = remember { mutableStateOf("") }
+    val markupSelection = remember { mutableStateOf("") }
     var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
-    var showHighlightControls = remember { mutableStateOf(false) }
-    var startPos = remember { mutableStateOf(0) }
-    var endPos = remember { mutableStateOf(0) }
-    var scrollOffset = remember { mutableStateOf(0) }
+    val showHighlightControls = remember { mutableStateOf(false) }
+    val startPos = remember { mutableStateOf(0) }
+    val endPos = remember { mutableStateOf(0) }
+    val scrollOffset = remember { mutableStateOf(0) }
     val coroutineScope = rememberCoroutineScope()
-
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)

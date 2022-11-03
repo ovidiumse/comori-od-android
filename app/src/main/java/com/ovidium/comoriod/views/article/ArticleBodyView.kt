@@ -43,8 +43,6 @@ fun ArticleBodyView(
     var clearSelection by remember { mutableStateOf(false) }
     var scrollTopOffset = 0
 
-
-
     with(LocalDensity.current) {
         scrollTopOffset =
             (LocalConfiguration.current.screenHeightDp / 3).dp.toPx().toInt()
@@ -125,5 +123,4 @@ fun ArticleBodyView(
 
         clearSelection = false
     }
-
 }

@@ -33,10 +33,10 @@ fun ArticleView(
     val bookModel: BookModel = viewModel()
     val bookData = remember { bookModel.bookData }
     val searchData = remember { bookModel.searchData }
-    var query by remember { searchModel.query }
-    var highlights = remember { mutableStateListOf<TextRange>() }
-    var offsetList = remember { mutableStateListOf<Int>() }
-    var currentHighlightIndex = remember { mutableStateOf<Int?>(null) }
+    val query by remember { searchModel.query }
+    val highlights = remember { mutableStateListOf<TextRange>() }
+    val offsetList = remember { mutableStateListOf<Int>() }
+    val currentHighlightIndex = remember { mutableStateOf<Int?>(null) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
