@@ -20,18 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.*
-import androidx.constraintlayout.solver.widgets.Rectangle
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -55,6 +54,8 @@ fun MarkupCell(
     var maxLinesState by remember { mutableStateOf(initialMaxLines) }
     var textOverflowingState by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf(initialText) }
+    var expandedTextHeight by remember { mutableStateOf(0.dp) }
+    val localDensity = LocalDensity.current
 
     val secondarySurface = getNamedColor("SecondarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
@@ -79,15 +80,21 @@ fun MarkupCell(
     ) {
         Column {
             Row(
-                modifier = Modifier
-                    .height(IntrinsicSize.Max) // Asta nu era inainte, l-am pus doar pentru separator
-                    .padding(horizontal = 8.dp)
-                    .padding(top = 8.dp)
+                // Separator LOGIC --------------------------------
+                modifier = if (expandedState)
+                    Modifier
+                        .height(expandedTextHeight)
+                        .padding(horizontal = 8.dp)
+                        .padding(top = 8.dp)
+                else
+                    Modifier
+                        .height(IntrinsicSize.Min)
+                        .padding(horizontal = 8.dp)
+                        .padding(top = 8.dp)
             ) {
-                // Separator --------------------------------
-                Row(
+                Box(
                     modifier = Modifier
-                        .weight(0.8f) // Asta prioritizeaza spatiul orizontal cu textul si cu sagetica de expand ( 0.8 | 12.4 | 0.8 )
+                        .weight(0.8f)
                 ) {
                     Divider(
                         modifier = Modifier
@@ -97,9 +104,8 @@ fun MarkupCell(
                         color = getNamedColor(markup.bgColor, isDark)
                     )
                 }
-                // ------------------------------------------
+                // Separator END ------------------------------------------
                 Text(
-                    modifier = Modifier.weight(12.4f),
                     text = "„$textState”",
                     color = textColor,
                     letterSpacing = 0.3.sp,
@@ -114,7 +120,13 @@ fun MarkupCell(
                             val wordRange = textLayoutResult.getWordBoundary(end - 3)
                             textState = initialText.substring(0, wordRange.start - 2) + "..."
                         }
-                    }
+                    },
+                    modifier = Modifier
+                        .weight(12.4f)
+                        .onSizeChanged { size ->
+                            if (expandedTextHeight == 0.dp)
+                                expandedTextHeight = size.height.dp
+                        }
                 )
                 if (textOverflowingState) {
                     IconButton(
