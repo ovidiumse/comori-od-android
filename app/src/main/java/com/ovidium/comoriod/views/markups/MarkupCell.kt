@@ -55,7 +55,7 @@ fun MarkupCell(
     var textOverflowingState by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf(initialText) }
 
-    val tagBG = getNamedColor("SecondarySurface", isDark)
+    val secondarySurface = getNamedColor("SecondarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
 
@@ -97,7 +97,7 @@ fun MarkupCell(
                 Text(
                     modifier = Modifier.weight(12f),
                     text = "„$textState”",
-                    color = Color.Black.copy(alpha = .9f),
+                    color = textColor,
                     letterSpacing = 0.3.sp,
                     maxLines = maxLinesState,
                     overflow = TextOverflow.Ellipsis,
@@ -130,7 +130,7 @@ fun MarkupCell(
                             modifier = Modifier.rotate(rotationDegreeState),
                             imageVector = Icons.Rounded.ArrowDropDown,
                             contentDescription = "Expand Arrow",
-                            tint = Color.Black,
+                            tint = textColor,
                         )
                     }
                 }
@@ -146,8 +146,8 @@ fun MarkupCell(
                     markup.tags.forEach { tag ->
                         TagBubble(
                             tag = tag,
-                            textColor = Color.Black.copy(alpha = .8f),
-                            bubbleColor = Color.White.copy(alpha = .5f)
+                            textColor = textColor,
+                            bubbleColor = secondarySurface.copy(alpha = 0.5f)
                         )
                     }
                 }
@@ -155,25 +155,25 @@ fun MarkupCell(
                 Text(
                     text = fmtDuration(duration),
                     style = MaterialTheme.typography.caption,
-                    color = Color.Black.copy(alpha = .7f)
+                    color = textColor
                 )
             }
             Row(
                 modifier = Modifier
-                    .background(Color.Black.copy(alpha = .5f))
+                    .background(secondarySurface.copy(alpha = 0.4f))
                     .fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)) {
                     Text(
                         text = "${markup.author} - ${markup.title}",
-                        color = Color.White,
+                        color = textColor,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.caption
                     )
                     Text(
                         text = markup.book,
-                        color = Color.White.copy(alpha = .9f),
+                        color = textColor,
                         fontSize = 14.sp,
                         style = MaterialTheme.typography.caption
                     )

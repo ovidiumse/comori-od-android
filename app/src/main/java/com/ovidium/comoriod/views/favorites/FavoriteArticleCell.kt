@@ -33,7 +33,7 @@ fun FavoriteArticleCell(
 ) {
 
     val isDark = isSystemInDarkTheme()
-    val tagBG = getNamedColor("SecondarySurface", isDark)
+    val secondarySurface = getNamedColor("SecondarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
 
@@ -76,7 +76,7 @@ fun FavoriteArticleCell(
                                     .padding(start = 12.dp, end = 8.dp)
                                     .padding(bottom = 8.dp)
                                     .background(
-                                        tagBG.copy(alpha = 0.5f),
+                                        secondarySurface.copy(alpha = 0.5f),
                                         RoundedCornerShape(50)
                                     )
                                     .padding(8.dp)
@@ -84,7 +84,7 @@ fun FavoriteArticleCell(
                     }
                 }
             }
-            FavoriteCellInfo(favoriteArticle, tagBG, textColor, deleteAction)
+            FavoriteCellInfo(favoriteArticle, secondarySurface, textColor, deleteAction)
         }
     }
 }
