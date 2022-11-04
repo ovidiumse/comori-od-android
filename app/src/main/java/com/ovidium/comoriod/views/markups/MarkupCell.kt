@@ -20,16 +20,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.*
+import androidx.constraintlayout.solver.widgets.Rectangle
 import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -54,7 +55,9 @@ fun MarkupCell(
     var textOverflowingState by remember { mutableStateOf(false) }
     var textState by remember { mutableStateOf(initialText) }
 
-    val isDark = isSystemInDarkTheme()
+    val tagBG = getNamedColor("SecondarySurface", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
+    val textColor = getNamedColor("HeaderText", isDark)
 
     if (initialText != textState)
         textState = markup.selection.trim()
@@ -70,15 +73,27 @@ fun MarkupCell(
                 )
             ),
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = getNamedColor(markup.bgColor, isDark),
+        backgroundColor = bubbleColor,
         onClick = onItemClick
     ) {
         Column {
             Row(
                 modifier = Modifier
+                    .height(IntrinsicSize.Min) // Asta nu era inainte, l-am pus doar pentru separator
                     .padding(horizontal = 8.dp)
                     .padding(top = 8.dp)
             ) {
+                // Separator --------------------------------
+                Row(modifier = Modifier.weight(0.8f)) {
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(8.dp)
+                            .clip(RoundedCornerShape(4.dp)),
+                        color = getNamedColor(markup.bgColor, isDark)
+                    )
+                }
+                // ------------------------------------------
                 Text(
                     modifier = Modifier.weight(12f),
                     text = "„$textState”",
