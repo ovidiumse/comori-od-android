@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.IntrinsicMeasurable
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -79,12 +80,15 @@ fun MarkupCell(
         Column {
             Row(
                 modifier = Modifier
-                    .height(IntrinsicSize.Min) // Asta nu era inainte, l-am pus doar pentru separator
+                    .height(IntrinsicSize.Max) // Asta nu era inainte, l-am pus doar pentru separator
                     .padding(horizontal = 8.dp)
                     .padding(top = 8.dp)
             ) {
                 // Separator --------------------------------
-                Row(modifier = Modifier.weight(0.8f)) {
+                Row(
+                    modifier = Modifier
+                        .weight(0.8f) // Asta prioritizeaza spatiul orizontal cu textul si cu sagetica de expand ( 0.8 | 12.4 | 0.8 )
+                ) {
                     Divider(
                         modifier = Modifier
                             .fillMaxHeight()
@@ -95,7 +99,7 @@ fun MarkupCell(
                 }
                 // ------------------------------------------
                 Text(
-                    modifier = Modifier.weight(12f),
+                    modifier = Modifier.weight(12.4f),
                     text = "„$textState”",
                     color = textColor,
                     letterSpacing = 0.3.sp,
@@ -115,7 +119,7 @@ fun MarkupCell(
                 if (textOverflowingState) {
                     IconButton(
                         modifier = Modifier
-                            .weight(1f)
+                            .weight(0.8f)
                             .then(Modifier.size(24.dp))
                             .alpha(ContentAlpha.medium),
                         onClick = {
