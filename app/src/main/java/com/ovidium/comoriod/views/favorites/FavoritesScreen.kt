@@ -69,7 +69,7 @@ fun FavoritesScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.background)
+                .background(MaterialTheme.colors.background) //?
         ) {
             when (favoritesData.value.status) {
                 Status.SUCCESS -> {

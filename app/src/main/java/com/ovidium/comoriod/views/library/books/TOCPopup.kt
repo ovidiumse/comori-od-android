@@ -97,7 +97,7 @@ fun TOCPopup(
                                 text = "${realIndex + 1}",
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = if (currentIndex == index) secondarySurface else textColor,
+                                color = if (currentIndex == index) textColor else secondarySurface,
                                 modifier = Modifier
                                     .padding(end = 16.dp)
                             )
@@ -105,7 +105,7 @@ fun TOCPopup(
                                 text = item._source.title,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Medium,
-                                color = if (currentIndex == index) secondarySurface else textColor,
+                                color = if (currentIndex == index) textColor else secondarySurface,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .weight(0.7f)
@@ -113,7 +113,7 @@ fun TOCPopup(
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_left_24),
                                 contentDescription = "Selected",
-                                tint = if (currentIndex == index) secondarySurface else Color.Transparent,
+                                tint = if (currentIndex == index) textColor else Color.Transparent,
                                 modifier = Modifier
                                     .size(35.dp)
                                     .fillMaxWidth()

@@ -70,7 +70,7 @@ fun MarkupsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(bgColor)
+                .background(bubbleColor)
         ) {
             when (markupsData.value.status) {
                 Status.SUCCESS -> {
