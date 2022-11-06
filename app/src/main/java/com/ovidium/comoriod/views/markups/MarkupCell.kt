@@ -80,15 +80,7 @@ fun MarkupCell(
     ) {
         Column {
             Row(
-                // Separator LOGIC --------------------------------
-                modifier = if (expandedState)
-                    Modifier
-                        .height(expandedTextHeight)
-                        .padding(horizontal = 8.dp)
-                        .padding(top = 8.dp)
-                else
-                    Modifier
-                        .height(IntrinsicSize.Min)
+                modifier = Modifier
                         .padding(horizontal = 8.dp)
                         .padding(top = 8.dp)
             ) {
@@ -98,13 +90,12 @@ fun MarkupCell(
                 ) {
                     Divider(
                         modifier = Modifier
-                            .fillMaxHeight()
+                            .height(expandedTextHeight)
                             .width(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
                         color = getNamedColor(markup.bgColor, isDark)
                     )
                 }
-                // Separator END ------------------------------------------
                 Text(
                     text = "„$textState”",
                     color = textColor,
@@ -124,8 +115,7 @@ fun MarkupCell(
                     modifier = Modifier
                         .weight(12.4f)
                         .onSizeChanged { size ->
-                            if (expandedTextHeight == 0.dp)
-                                expandedTextHeight = size.height.dp
+                                expandedTextHeight = with(localDensity) { size.height.toDp() }
                         }
                 )
                 if (textOverflowingState) {
