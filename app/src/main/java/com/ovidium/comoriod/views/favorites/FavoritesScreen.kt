@@ -17,11 +17,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.NoContentPlaceholder
-import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.FavoritesModel
@@ -59,10 +60,7 @@ fun FavoritesScreen(
 
     Scaffold(
         topBar = {
-            SearchTopBar(
-                title = { Text(text = "Favorite") },
-                isSearch = false,
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
+            AppBar(title = "Favorite", onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
             }
         }
     ) {
@@ -146,27 +144,24 @@ fun TagsRow(
     }
 }
 
-
 @Composable
 fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (String) -> Unit) {
 
-    val tagBG = getNamedColor("SecondarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
+    val unselectedText = getNamedColor("MutedText", isDark)
 
     Text(
         text = text,
         textAlign = TextAlign.Center,
-        style = MaterialTheme.typography.caption,
-        color = if (isSelected) Color.White else getNamedColor("Text", isDark = isDark),
+        fontSize = MaterialTheme.typography.caption.fontSize,
+        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+        color = if (isSelected) textColor else unselectedText,
         modifier = Modifier
             .padding(end = 8.dp)
             .background(
-                if (isSelected) tagBG else getNamedColor(
-                    "Container",
-                    isDark
-                ),
-                RoundedCornerShape(50)
+                bubbleColor.copy(alpha = if (isSelected) 1.0f else 0.3f),
+                shape =MaterialTheme.shapes.medium,
             )
             .padding(12.dp)
             .clickable { action(text) }

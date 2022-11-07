@@ -89,7 +89,6 @@ fun ComoriOdApp(context: Context) {
                     Screens.Markups.route -> {}
                     else -> {
                         AppBar(
-                            showTitle = true,
                             onMenuClicked = {
                                 launchMenu(coroutineScope, scaffoldState)
                             },

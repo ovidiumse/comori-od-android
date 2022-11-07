@@ -4,10 +4,7 @@ package com.ovidium.comoriod.components
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,10 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -59,8 +58,10 @@ fun Drawer(
     val userResourceState = signInModel.userResource
     val userResource = userResourceState.value
 
+    val surfaceColor = getNamedColor("PrimarySurface", isDark)
     val secondarySurface = getNamedColor("SecondarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
+    val headerColor = getNamedColor("HeaderBar", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
 
     if (userResource.state == UserState.Unknown)
@@ -71,7 +72,7 @@ fun Drawer(
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .background(bubbleColor)
+                .background(headerColor)
                 .drawBehind {
                     val strokeWidth = 0.5f
                     val y = size.height - strokeWidth / 2
@@ -108,17 +109,24 @@ fun Drawer(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     if (userResource.state == UserState.LoggedIn)
-                        Column {
-                            userResource.user?.displayName?.let { Text(it) }
-                            Button(
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            userResource.user?.displayName?.let { name ->
+                                Text(
+                                    name,
+                                    color = textColor,
+                                    fontSize = MaterialTheme.typography.h6.fontSize,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            OutlinedButton(
                                 onClick = { signInModel.signOut(applicationContext) },
-                                colors = ButtonDefaults.textButtonColors(secondarySurface),
+                                colors = ButtonDefaults.outlinedButtonColors(bubbleColor, textColor),
                                 modifier = Modifier
                                     .padding(top = 3.dp)
                             ) {
                                 Text(
                                     "Deloghează-te",
-                                    color = Color.White
+                                    color = textColor
                                 )
                             }
                         }
@@ -132,7 +140,8 @@ fun Drawer(
 
                         GoogleButton(
                             text = "Loghează-te",
-                            borderColor = lineColor,
+                            borderColor = textColor.copy(alpha = 0.3f),
+                            bgColor = bubbleColor,
                             loading = userResource.state == UserState.Loading,
                             onClicked = {
                                 when (userResource.state) {
@@ -150,7 +159,7 @@ fun Drawer(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(bubbleColor)
+                .background(surfaceColor)
         ) {
             if (userResource.state == UserState.LoggedIn) {
                 item {

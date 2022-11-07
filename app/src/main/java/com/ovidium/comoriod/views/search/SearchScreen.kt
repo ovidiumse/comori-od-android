@@ -47,8 +47,11 @@ fun SearchScreen(
     val focusRequester = remember { FocusRequester() }
 
     val isDark = isSystemInDarkTheme()
+    val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
     val backgroundColor = getNamedColor("Background", isDark)
     val textColor = getNamedColor("Text", isDark)
+    val headerTextColor = getNamedColor("HeaderText", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
 
     fun getParams(): Map<String, String> {
         return searchParams.map { entry -> Pair(entry.key, entry.value.joinToString()) }
@@ -58,7 +61,6 @@ fun SearchScreen(
     Scaffold(
         topBar = {
             AppBar(
-                showTitle = false,
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
                 actions = @Composable {
                     SearchBar(
@@ -145,10 +147,11 @@ fun SearchScreen(
                                                 searchModel.getAuthors(query, params)
                                                 searchModel.getVolumes(query, params)
                                                 searchModel.getBooks(query, params)
-                                            } },
+                                            }
+                                        },
                                         colors = ButtonDefaults.outlinedButtonColors(
-                                            backgroundColor,
-                                            textColor
+                                            primarySurfaceColor,
+                                            headerTextColor
                                         )
                                     ) {
                                         Text("Filtrează")

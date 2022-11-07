@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.NoContentPlaceholder
-import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.MarkupsModel
@@ -60,9 +60,8 @@ fun MarkupsScreen(
 
     Scaffold(
         topBar = {
-            SearchTopBar(
-                title = { Text(text = "Pasaje") },
-                isSearch = false,
+            AppBar(
+                title = "Pasaje",
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
             }
         }

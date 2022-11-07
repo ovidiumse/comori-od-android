@@ -57,7 +57,7 @@ fun MarkupCell(
     var expandedTextHeight by remember { mutableStateOf(0.dp) }
     val localDensity = LocalDensity.current
 
-    val secondarySurface = getNamedColor("SecondarySurface", isDark)
+    val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
 
@@ -75,7 +75,7 @@ fun MarkupCell(
                 )
             ),
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = bubbleColor,
+        backgroundColor = primarySurfaceColor,
         onClick = onItemClick
     ) {
         Column {
@@ -153,7 +153,7 @@ fun MarkupCell(
                         TagBubble(
                             tag = tag,
                             textColor = textColor,
-                            bubbleColor = secondarySurface.copy(alpha = 0.5f)
+                            bubbleColor = bubbleColor
                         )
                     }
                 }
@@ -166,7 +166,7 @@ fun MarkupCell(
             }
             Row(
                 modifier = Modifier
-                    .background(secondarySurface.copy(alpha = 0.4f))
+                    .background(bubbleColor)
                     .fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)) {

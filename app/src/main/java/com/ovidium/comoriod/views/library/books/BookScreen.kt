@@ -1,7 +1,6 @@
 package com.ovidium.comoriod.views.library.books
 
 import androidx.compose.foundation.clickable
-
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
@@ -10,20 +9,15 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.ovidium.comoriod.MainActivity
 import com.ovidium.comoriod.components.AppBar
-import com.ovidium.comoriod.components.SearchTopBar
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -56,7 +50,6 @@ fun BookScreen(
     Scaffold(
         topBar = {
             AppBar(
-                showTitle = true,
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
                 actions = @Composable {
                     Icon(

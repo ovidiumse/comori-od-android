@@ -1,15 +1,11 @@
 package com.ovidium.comoriod.views.library.authors
 
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.*
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.navigation.NavController
-import com.ovidium.comoriod.components.SearchTopBar
-import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun TitlesForAuthorScreen(

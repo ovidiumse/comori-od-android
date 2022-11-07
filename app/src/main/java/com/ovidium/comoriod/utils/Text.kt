@@ -108,7 +108,7 @@ fun parseVerses(
     isDark: Boolean
 ): AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)
-    val markupTextColor = getNamedColor("Text", false)
+    val markupTextColor = getNamedColor("HeaderText", isDark)
 
     fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
@@ -159,8 +159,8 @@ fun parseVerses(
             println("Markup: ${markup.index}..<${markup.index + markup.length}")
             addStyle(
                 SpanStyle(
-                    color = markupTextColor,
-                    background = getNamedColor(markup.bgColor, isDark)
+                    color = if (isDark) Color.White else Color.Black,
+                    background = getNamedColor(markup.bgColor, isDark).copy(alpha=0.4f)
                 ),
                 start = markup.index,
                 end = markup.index + markup.length

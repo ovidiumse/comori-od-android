@@ -20,13 +20,14 @@ fun GoogleButton(
     loadingText: String = "Se loghează...",
     loading: Boolean = false,
     borderColor: Color = Color.LightGray,
+    bgColor: Color = Color.Transparent,
     progressIndicatorColor: Color = MaterialTheme.colors.primaryVariant,
     onClicked: () -> Unit
 ) {
     Surface(
-        shape = RoundedCornerShape(4.dp),
+        shape = MaterialTheme.shapes.small,
         border = BorderStroke(width = 1.dp, color = borderColor),
-        color = Color.Transparent,
+        color = bgColor,
         modifier = Modifier.clickable { onClicked() }
     ) {
         Row(
