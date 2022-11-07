@@ -57,7 +57,7 @@ fun SearchBar(
             Text(text = placeholderText)
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            backgroundColor = getNamedColor("Background", isDark),
+            backgroundColor = getNamedColor("Bubble", isDark),
             textColor = getNamedColor("MutedText", isDark),
             cursorColor = getNamedColor("MutedText", isDark),
             focusedBorderColor = getNamedColor("Border", isDark),
