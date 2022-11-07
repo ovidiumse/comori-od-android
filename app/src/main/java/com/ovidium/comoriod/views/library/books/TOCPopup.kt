@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -25,8 +26,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -51,9 +56,13 @@ fun TOCPopup(
     val searchText = remember { mutableStateOf("") }
 
     val isDark = isSystemInDarkTheme()
+    val bgColor = getNamedColor("Background", isDark)
+    val headerBarColor = getNamedColor("HeaderBar", isDark)
+    val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
     val secondarySurface = getNamedColor("SecondarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
+    val mutedTextColor = getNamedColor("MutedText", isDark)
 
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -62,24 +71,25 @@ fun TOCPopup(
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp
         val screenWidth = configuration.screenWidthDp.dp
-        val isDark = isSystemInDarkTheme()
+
         Box(
             Modifier
                 .size(screenWidth, screenHeight)
                 .background(
-                    bubbleColor,
+                    bgColor,
                     RoundedCornerShape(16.dp)
                 )
         ) {
             Column {
-                TOCTopBar(
-                    searchText = searchText,
-                    focusRequester = focusRequester,
-                    onExitAction = onExitAction
-                )
+                Column(modifier = Modifier.background(headerBarColor)) {
+                    TOCTopBar(
+                        searchText = searchText,
+                        focusRequester = focusRequester,
+                        onExitAction = onExitAction
+                    )
+                }
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.padding(16.dp)
                 ) {
                     itemsIndexed(if (searchText.value.isEmpty()) titles else titles.filter {
                         it._source.title.lowercase().normalize()
@@ -90,25 +100,19 @@ fun TOCPopup(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .clickable { onSelectAction(realIndex) }
-                                .padding(vertical = 8.dp),
+                                .background(if (currentIndex == index) primarySurfaceColor else Color.Transparent)
+                                .padding(vertical = 2.dp),
                             horizontalArrangement = Arrangement.Start
                         ) {
                             Text(
-                                text = "${realIndex + 1}",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = if (currentIndex == index) textColor else secondarySurface,
+                                text = "${realIndex + 1}.  ${item._source.title}",
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.subtitle1,
+                                fontWeight = if (currentIndex == index) FontWeight.Bold else FontWeight.Normal,
+                                color = if (currentIndex == index) textColor else mutedTextColor,
                                 modifier = Modifier
-                                    .padding(end = 16.dp)
-                            )
-                            Text(
-                                text = item._source.title,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = if (currentIndex == index) textColor else secondarySurface,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(0.7f)
+                                    .padding(horizontal = 12.dp)
+                                    .weight(0.9f)
                             )
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_arrow_left_24),
@@ -121,7 +125,7 @@ fun TOCPopup(
                             )
                         }
                         Divider(
-                            color = textColor.copy(alpha = 0.4f),
+                            color = mutedTextColor.copy(alpha = 0.5f),
                             thickness = 0.3.dp
                         )
                     }
@@ -145,18 +149,16 @@ fun TOCTopBar(
     val isDark = isSystemInDarkTheme()
     var showSearchBar by remember { mutableStateOf(false) }
 
-    val secondarySurface = getNamedColor("SecondarySurface", isDark)
+    val textColor = getNamedColor("Text", isDark)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 20.dp, top = 10.dp)
+        modifier = Modifier.padding(if (showSearchBar) 1.dp else 12.dp)
     ) {
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = "Search",
-            tint = secondarySurface,
+            tint = textColor,
             modifier = Modifier
                 .clickable(onClick = { showSearchBar = true })
         )
@@ -173,18 +175,17 @@ fun TOCTopBar(
         } else {
             Text(
                 text = "Cuprins",
-                fontSize = 18.sp,
+                style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(top = 16.dp)
             )
         }
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Menu",
-            tint = secondarySurface,
+            tint = textColor,
             modifier = Modifier
                 .clickable(onClick = onExitAction)
         )

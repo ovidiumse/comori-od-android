@@ -29,7 +29,6 @@ fun TitlesForAuthorScreen(
         )
     }
 
-
     if (showFilterPopup) {
         /*libraryModel.titlesForAuthorData.value.data?.aggregations.let { aggregations ->
             SearchFilterPopup(
