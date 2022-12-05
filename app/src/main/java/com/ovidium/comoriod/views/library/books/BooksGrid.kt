@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.books.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
+import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 
 @Composable
@@ -25,23 +26,30 @@ fun BooksGrid(
         return getVolumeCoverGradient(getVolume(bucket), isDark)
     }
 
-    fun getAuthor(bucket: Bucket): String? {
-        val authors = bucket.authors.buckets
-        return if (authors.isEmpty()) null else authors[0].key
+    fun getAuthorDisplay(bucket: Bucket): String {
+        if (bucket.authors.buckets.size != 1)
+            return articulate(bucket.authors.buckets.size, "autori", "autor")
+
+        return bucket.authors.buckets[0].key
     }
 
+    fun getAuthorImageId(bucket: Bucket): Int {
+        if (bucket.authors.buckets.size != 1)
+            return getDrawableByAuthor("Unknown")
+
+        return getDrawableByAuthor(bucket.authors.buckets[0].key)
+    }
     val items =
         response?.aggregations?.books?.buckets?.filter { bucket ->
             return@filter filter(bucket)
         }?.map { bucket ->
-            val author = getAuthor(bucket)
             val volume = getVolume(bucket)
             DataItem(
                 title = bucket.key,
                 id = bucket.key,
-                secondary = author,
+                secondary = getAuthorDisplay(bucket),
                 detail = volume,
-                imageId = author?.let { getDrawableByAuthor(author) },
+                imageId = getAuthorImageId(bucket),
                 gradient = getGradient(bucket),
                 type = ItemCategory.Book
             )

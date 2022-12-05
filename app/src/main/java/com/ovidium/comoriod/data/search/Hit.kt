@@ -5,6 +5,6 @@ data class Hit(
     val _index: String,
     val _score: Double,
     val _source: Source,
-    val highlight: Highlight,
+    val highlight: Highlight?,
     val sort: List<Any>
 )

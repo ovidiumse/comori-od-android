@@ -35,7 +35,7 @@ fun BooksForAuthorScreen(
                 isDark = isSystemInDarkTheme(),
                 filter = { bucket ->
                     var hasAuthor = false
-                    bucket.authors.buckets.forEach { a -> hasAuthor = a.key == author }
+                    bucket.authors.buckets.forEach { a -> if (a.key == author) hasAuthor = true }
                     hasAuthor
                 }
             )

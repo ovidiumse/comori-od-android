@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponseItem
+import com.ovidium.comoriod.data.volumes.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
+import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 
 @Composable
@@ -14,19 +16,27 @@ fun RecentlyAddedBooksRow(
     isLoading: Boolean,
     isDark: Boolean
 ) {
-    fun getAuthor(item: RecentlyAddedBooksResponseItem): String? {
-        return if (item.authors.isEmpty()) null else item.authors[0]
+    fun getAuthorDisplay(item: RecentlyAddedBooksResponseItem): String {
+        if (item.authors.size != 1)
+            return articulate(item.authors.size, "autori", "autor")
+
+        return item.authors[0]
+    }
+
+    fun getAuthorImageId(item: RecentlyAddedBooksResponseItem): Int {
+        if (item.authors.size != 1)
+            return getDrawableByAuthor("Unknown")
+
+        return getDrawableByAuthor(item.authors[0])
     }
 
     val items = response?.map { item ->
-        val author = getAuthor(item)
-
         DataItem(
             item.name,
             "",
-            author,
+            getAuthorDisplay(item),
             item.volume,
-            author?.let { getDrawableByAuthor(author) },
+            getAuthorImageId(item),
             getVolumeCoverGradient(item.volume, isDark),
             type = ItemCategory.Book
         )

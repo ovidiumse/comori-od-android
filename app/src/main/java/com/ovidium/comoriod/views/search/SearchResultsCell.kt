@@ -23,8 +23,8 @@ fun SearchResultsCell(
     val bubbleColor = getNamedColor("Bubble", isDark)
 
     fun getTitle(hit: Hit): String {
-        return if (!hit.highlight.title.isNullOrEmpty()) {
-            hit.highlight.title[0]
+        return if (!hit.highlight?.title.isNullOrEmpty()) {
+            hit.highlight!!.title!![0]
         } else hit._source.title
     }
 
@@ -34,7 +34,7 @@ fun SearchResultsCell(
         book = hit._source.book,
         author = hit._source.author,
         type = hit._source.type,
-        lines = fmtVerses(hit.highlight.verses_text.orEmpty(), isDark = isSystemInDarkTheme()),
+        lines = fmtVerses(hit.highlight?.verses_text.orEmpty(), isDark = isSystemInDarkTheme()),
         subtitleColor = mutedText,
         bgColor = bgColor,
         bubbleColor = bubbleColor

@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import com.ovidium.comoriod.data.volumes.Bucket
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
+import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 
 @Composable
@@ -14,19 +15,25 @@ fun VolumesRow(
     isLoading: Boolean,
     isDark: Boolean
 ) {
-    fun getAuthor(bucket: Bucket): String? {
-        val authors = bucket.authors.buckets
-        return if (authors.isEmpty()) null else authors[0].key
+    fun getAuthorDisplay(bucket: Bucket): String {
+        if (bucket.authors.buckets.size != 1)
+            return articulate(bucket.authors.buckets.size, "autori", "autor")
+
+        return bucket.authors.buckets[0].key
     }
 
+    fun getAuthorImageId(bucket: Bucket): Int {
+        if (bucket.authors.buckets.size != 1)
+            return getDrawableByAuthor("Unknown")
+
+        return getDrawableByAuthor(bucket.authors.buckets[0].key)
+    }
     val items = response?.aggregations?.volumes?.buckets?.map { bucket ->
-        val author = getAuthor(bucket)
-        val imageId = if (author != null) getDrawableByAuthor(author) else null
         DataItem(
             bucket.key,
             "",
-            author,
-            imageId = imageId,
+            getAuthorDisplay(bucket),
+            imageId = getAuthorImageId(bucket),
             gradient = getVolumeCoverGradient(bucket.key, isDark),
             type = ItemCategory.Volume
         )

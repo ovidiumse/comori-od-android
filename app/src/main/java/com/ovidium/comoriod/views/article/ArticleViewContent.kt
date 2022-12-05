@@ -156,7 +156,7 @@ fun ArticleViewContent(
         }
 
         //Highlights
-        if (showHighlightControls.value && isSearch == "true") {
+        if (showHighlightControls.value && offsetList.isNotEmpty() && isSearch == "true") {
             println("Show highlights: ${highlights.count()}")
             Column(
                 verticalArrangement = Arrangement.Center,

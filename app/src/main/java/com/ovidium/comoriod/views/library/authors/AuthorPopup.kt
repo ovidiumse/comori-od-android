@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.ovidium.comoriod.data.authors.Authors
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -98,23 +99,26 @@ fun AuthorPopup(
                             modifier = Modifier
                                 .padding(bottom = 8.dp)
                         )
-                        Text(
-                            text = authorInfo.dob + " - " + authorInfo.dod,
-                            color = colors.colorSecondaryText,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light
-                        )
+                        if (authorInfo.dob != null)
+                            Text(
+                                text = authorInfo.dob + " - " + (authorInfo.dod?: ""),
+                                color = colors.colorSecondaryText,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Light
+                            )
                     }
                 }
                 Column {
-                    Text(
-                        text = authorInfo.shortAbout,
-                        color = colors.colorSecondaryText,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Light,
-                        modifier = Modifier
-                            .padding(bottom = 24.dp)
-                    )
+                    if (authorInfo.shortAbout != null)
+                        Text(
+                            text = authorInfo.shortAbout,
+                            color = colors.colorSecondaryText,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Light,
+                            modifier = Modifier
+                                .padding(bottom = 24.dp)
+                        )
+
                     Row {
                         Text(
                             text = getBooksNumber(authorInfo),
@@ -129,11 +133,12 @@ fun AuthorPopup(
                                 )
                                 .padding(8.dp)
                                 .clickable {
-                                    navController.navigate(
-                                        Screens.BooksForAuthor.withArgs(
-                                            authorInfo.name
+                                    if (getBooksCnt(authorInfo) > 0)
+                                        navController.navigate(
+                                            Screens.BooksForAuthor.withArgs(
+                                                authorInfo.name
+                                            )
                                         )
-                                    )
                                 }
                         )
                         Text(
@@ -149,11 +154,12 @@ fun AuthorPopup(
                                 )
                                 .padding(8.dp)
                                 .clickable {
-                                    navController.navigate(
-                                        Screens.VolumesForAuthor.withArgs(
-                                            authorInfo.name
+                                    if (getVolumesCnt(authorInfo) > 0)
+                                        navController.navigate(
+                                            Screens.VolumesForAuthor.withArgs(
+                                                authorInfo.name
+                                            )
                                         )
-                                    )
                                 }
                         )
                         Text(
@@ -169,17 +175,20 @@ fun AuthorPopup(
                                 )
                                 .padding(8.dp)
                                 .clickable {
-                                    navController.navigate(
-                                        Screens.PoemsForAuthor.withArgs(
-                                            authorInfo.name
+                                    if (getPoemsCnt(authorInfo) > 0) {
+                                        navController.navigate(
+                                            Screens.PoemsForAuthor.withArgs(
+                                                authorInfo.name
+                                            )
                                         )
-                                    )
-                                    libraryModel.getTitles(
-                                        params = mapOf(
-                                            "authors" to authorInfo.name,
-                                            "types" to "poezie"
+
+                                        libraryModel.getTitles(
+                                            params = mapOf(
+                                                "authors" to authorInfo.name,
+                                                "types" to "poezie"
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                         )
                         Text(
@@ -194,17 +203,19 @@ fun AuthorPopup(
                                 )
                                 .padding(8.dp)
                                 .clickable {
-                                    navController.navigate(
-                                        Screens.ArticlesForAuthor.withArgs(
-                                            authorInfo.name
+                                    if (getArticlesCnt(authorInfo) > 0) {
+                                        navController.navigate(
+                                            Screens.ArticlesForAuthor.withArgs(
+                                                authorInfo.name
+                                            )
                                         )
-                                    )
-                                    libraryModel.getTitles(
-                                        params = mapOf(
-                                            "authors" to authorInfo.name,
-                                            "types" to "articol"
+                                        libraryModel.getTitles(
+                                            params = mapOf(
+                                                "authors" to authorInfo.name,
+                                                "types" to "articol"
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                         )
                     }
@@ -214,22 +225,42 @@ fun AuthorPopup(
     }
 }
 
+fun getBooksCnt(authorBucket: Bucket): Int {
+    return authorBucket.books.buckets.size
+}
+
 fun getBooksNumber(authorBucket: Bucket): String {
-    return articulate(authorBucket.books.buckets.size, "cărți", "carte")
+    return articulate(getBooksCnt(authorBucket), "cărți", "carte")
+}
+
+fun getVolumesCnt(authorBucket: Bucket): Int {
+    return authorBucket.volumes.buckets.size
 }
 
 fun getVolumesNumber(authorBucket: Bucket): String {
-    return articulate(authorBucket.volumes.buckets.size, "volume", "volum")
+    return articulate(getVolumesCnt(authorBucket), "volume", "volum")
+}
+
+fun getPoemsCnt(authorBucket: Bucket): Int {
+    val poems = authorBucket.types.buckets.filter { type -> type.key == "poezie" }
+    if (poems.isEmpty())
+        return 0
+
+    return poems.first().doc_count
 }
 
 fun getPoemsNumber(authorBucket: Bucket): String {
-    val poems =
-        authorBucket.types.buckets.filter({ type -> type.key == "poezie" }).first().doc_count
-    return articulate(poems, "poezii", "poezie", isShort = true)
+    return articulate(getPoemsCnt(authorBucket), "poezii", "poezie", isShort = true)
+}
+
+fun getArticlesCnt(authorBucket: Bucket): Int {
+    val articles = authorBucket.types.buckets.filter { type -> type.key == "articol" }
+    if (articles.isEmpty())
+        return 0
+
+    return articles.first().doc_count
 }
 
 fun getArticlesNumber(authorBucket: Bucket): String {
-    val articles =
-        authorBucket.types.buckets.filter({ type -> type.key == "articol" }).first().doc_count
-    return articulate(articles, "articole", "articol", isShort = true)
+    return articulate(getArticlesCnt(authorBucket), "articole", "articol", isShort = true)
 }
