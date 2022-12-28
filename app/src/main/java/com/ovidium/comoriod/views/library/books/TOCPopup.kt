@@ -85,15 +85,17 @@ fun TOCPopup(
                     TOCTopBar(
                         searchText = searchText,
                         focusRequester = focusRequester,
+                        onTextChanged = { fieldValue -> searchText = fieldValue },
+                        onClearClick = { searchText = "" },
                         onExitAction = onExitAction
                     )
                 }
                 LazyColumn(
                     state = listState,
                 ) {
-                    itemsIndexed(if (searchText.value.isEmpty()) titles else titles.filter {
+                    itemsIndexed(if (searchText.isEmpty()) titles else titles.filter {
                         it._source.title.lowercase().normalize()
-                            .contains(searchText.value.lowercase().normalize())
+                            .contains(searchText.lowercase().normalize())
                     }) { index, item ->
                         var realIndex = titles.indexOf(item)
                         Row(
@@ -142,12 +144,22 @@ fun TOCPopup(
 
 @Composable
 fun TOCTopBar(
-    searchText: MutableState<String>,
+    searchText: String,
     focusRequester: FocusRequester,
+    onTextChanged: (String) -> Unit,
+    onClearClick: () -> Unit,
     onExitAction: () -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
     var showSearchBar by remember { mutableStateOf(false) }
+    var searchTextFieldValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                searchText,
+                TextRange(searchText.length)
+            )
+        )
+    }
 
     val textColor = getNamedColor("Text", isDark)
 
@@ -164,13 +176,17 @@ fun TOCTopBar(
         )
         if (showSearchBar) {
             SearchBar(
-                searchText = searchText.value,
+                searchText = searchTextFieldValue,
                 focusRequester = focusRequester,
                 onClearClick = {
                     showSearchBar = false
-                    searchText.value = ""
+                    onClearClick()
                 },
-                onSearchTextChanged = { searchText.value = it }
+                onSearchTextChanged = { newFieldValue ->
+                    if (newFieldValue.composition != null) onTextChanged(
+                        newFieldValue.text.substring(newFieldValue.composition!!)
+                    )
+                }
             )
         } else {
             Text(

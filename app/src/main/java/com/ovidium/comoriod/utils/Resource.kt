@@ -10,5 +10,7 @@ data class Resource<out T>(val status: Status, val data: T?, val message: String
 
         fun <T> loading(data: T?): Resource<T> =
             Resource(status = Status.LOADING, data = data, message = null)
+
+        fun <T> uninitialized(): Resource<T> = Resource(status = Status.UNINITIALIZED, data = null, message = null)
     }
 }

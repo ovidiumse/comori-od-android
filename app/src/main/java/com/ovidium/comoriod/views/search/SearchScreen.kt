@@ -13,6 +13,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -34,10 +37,10 @@ fun SearchScreen(
     searchModel: SearchModel
 ) {
     var query by remember { searchModel.query }
-    val autocompleteData by remember { searchModel.autocompleteData }
+    var searchTextFieldValue by remember { mutableStateOf(TextFieldValue(query, TextRange(query.length))) }
+    val autocompleteData = searchModel.autocompleteData
     val searchData = searchModel.searchData
     val aggregations = searchModel.aggregations
-    var isSearchPending by searchModel.isSearch
     val coroutineScope = rememberCoroutineScope()
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -64,32 +67,37 @@ fun SearchScreen(
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
                 actions = @Composable {
                     SearchBar(
-                        searchText = query,
+                        searchText = searchTextFieldValue,
                         focusRequester = focusRequester,
-                        onSearchTextChanged = {
-                            query = it
-                            isSearchPending = false
-                            currentAutocompleteJob?.cancel()
-                            currentAutocompleteJob = coroutineScope.async {
-                                delay(300L)
-                                if (!isSearchPending)
+                        onSearchTextChanged = { newFieldValue ->
+                            if (searchData.value.status != Status.LOADING) {
+                                query = newFieldValue.text
+                                searchTextFieldValue = newFieldValue
+
+                                if (searchData.value.status == Status.SUCCESS)
+                                    searchData.value = Resource.uninitialized()
+
+                                currentAutocompleteJob?.cancel()
+                                currentAutocompleteJob = coroutineScope.async {
+                                    delay(300L)
                                     searchModel.autocomplete(query)
+                                }
                             }
                         },
                         onSearchClick = {
                             if (query.isNotEmpty()) {
-                                isSearchPending = true
                                 keyboardController?.hide()
                                 searchModel.search(query)
                                 searchParams.clear()
                             }
                         },
                         onClearClick = {
-                            isSearchPending = false
                             query = ""
+                            searchTextFieldValue = TextFieldValue(query, TextRange(query.length))
+                            
                             currentAutocompleteJob?.cancel()
-                            searchModel.autocompleteData.value =
-                                Resource(Status.SUCCESS, null, null)
+                            autocompleteData.value = Resource.uninitialized()
+                            searchData.value = Resource.uninitialized()
                             keyboardController?.show()
                         })
                 })
@@ -99,35 +107,15 @@ fun SearchScreen(
             if (query.isEmpty()) {
                 SuggestionsView { item ->
                     query = item
-                    isSearchPending = true
+                    searchTextFieldValue = TextFieldValue(query, TextRange(query.length))
+
                     coroutineScope.launch {
                         keyboardController?.hide()
                         searchModel.search(item)
                         searchParams.clear()
                     }
                 }
-            } else if (!isSearchPending) {
-                when (autocompleteData.status) {
-                    Status.SUCCESS -> {
-                        if (autocompleteData.data?.hits?.hits.isNullOrEmpty()) {
-                            NoSearchResultsPlaceholder(query, true) {
-                                if (query.isNotEmpty()) {
-                                    isSearchPending = true
-                                    keyboardController?.hide()
-                                    searchModel.search(query)
-                                    searchParams.clear()
-                                }
-                            }
-                        } else {
-                            autocompleteData.data?.hits?.hits?.let { hits ->
-                                AutocompleteList(hits, navController, isDark)
-                            }
-                        }
-                    }
-                    Status.LOADING -> {}
-                    Status.ERROR -> {}
-                }
-            } else {
+            } else if (searchData.value.status != Status.UNINITIALIZED) {
                 when (searchData.value.status) {
                     Status.SUCCESS -> {
                         val searchResults = searchData.value.data?.searchResults
@@ -173,6 +161,27 @@ fun SearchScreen(
                                         isDark = isDark
                                     )
                                 }
+                            }
+                        }
+                    }
+                    Status.LOADING -> {}
+                    Status.ERROR -> {}
+                    Status.UNINITIALIZED -> TODO()
+                }
+            } else {
+                when (autocompleteData.value.status) {
+                    Status.SUCCESS -> {
+                        if (autocompleteData.value.data?.hits?.hits.isNullOrEmpty()) {
+                            NoSearchResultsPlaceholder(query, true) {
+                                if (query.isNotEmpty()) {
+                                    keyboardController?.hide()
+                                    searchModel.search(query)
+                                    searchParams.clear()
+                                }
+                            }
+                        } else {
+                            autocompleteData.value.data?.hits?.hits?.let { hits ->
+                                AutocompleteList(hits, navController, isDark)
                             }
                         }
                     }

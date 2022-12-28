@@ -20,8 +20,7 @@ class SearchModel : ViewModel() {
     private val dataSource = SearchDataSource(RetrofitBuilder.apiService, viewModelScope)
 
     var query = mutableStateOf("")
-    var isSearch = mutableStateOf(false)
-    var autocompleteData = mutableStateOf<Resource<AutocompleteResponse>>(Resource.loading(null))
+    var autocompleteData = mutableStateOf<Resource<AutocompleteResponse>>(Resource.uninitialized())
 
     class AggregationBucket(val key: String, val doc_count: Int)
 
@@ -36,7 +35,7 @@ class SearchModel : ViewModel() {
         var searchResults = mutableStateListOf<Hit>()
     }
 
-    var searchData = mutableStateOf<Resource<SearchData>>(Resource.loading(null))
+    var searchData = mutableStateOf<Resource<SearchData>>(Resource.uninitialized())
     var aggregations = mutableStateMapOf<Int, Aggregation>()
 
     fun autocomplete(query: String) {
@@ -73,7 +72,7 @@ class SearchModel : ViewModel() {
         }
 
         viewModelScope.launch {
-            dataSource.search(query, limit, offset, params)
+            dataSource.search(query.trim(), limit, offset, params)
                 .collectLatest { response -> handleResponse(response) }
         }
     }

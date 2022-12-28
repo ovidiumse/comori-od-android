@@ -36,10 +36,10 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun SearchBar(
-    searchText: String,
+    searchText: TextFieldValue,
     focusRequester: FocusRequester,
-    placeholderText: String = searchText.ifEmpty { "Caută..." },
-    onSearchTextChanged: (String) -> Unit = {},
+    placeholderText: String = searchText.text.ifEmpty { "Caută..." },
+    onSearchTextChanged: (TextFieldValue) -> Unit = {},
     onClearClick: () -> Unit = {},
     onSearchClick: () -> Unit = {}
 ) {
@@ -88,8 +88,6 @@ fun SearchBar(
     )
 
     LaunchedEffect(Unit) {
-        if (searchText.isEmpty()) {
-            focusRequester.requestFocus()
-        }
+        focusRequester.requestFocus()
     }
 }
