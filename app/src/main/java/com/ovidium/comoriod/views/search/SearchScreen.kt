@@ -94,7 +94,7 @@ fun SearchScreen(
                         onClearClick = {
                             query = ""
                             searchTextFieldValue = TextFieldValue(query, TextRange(query.length))
-                            
+
                             currentAutocompleteJob?.cancel()
                             autocompleteData.value = Resource.uninitialized()
                             searchData.value = Resource.uninitialized()

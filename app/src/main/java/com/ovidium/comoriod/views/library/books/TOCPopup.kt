@@ -183,9 +183,8 @@ fun TOCTopBar(
                     onClearClick()
                 },
                 onSearchTextChanged = { newFieldValue ->
-                    if (newFieldValue.composition != null) onTextChanged(
-                        newFieldValue.text.substring(newFieldValue.composition!!)
-                    )
+                    searchTextFieldValue = newFieldValue
+                    onTextChanged(newFieldValue.text)
                 }
             )
         } else {
