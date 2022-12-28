@@ -13,6 +13,10 @@ data class Bucket(
     val name: String,
     @SerializedName("short-about")
     val shortAbout: String?,
+    @SerializedName("photo-url-sm")
+    val photo_url_sm: String?,
+    @SerializedName("photo-url-lg")
+    val photo_url_lg: String?,
     val types: Types,
     val volumes: Volumes
 )

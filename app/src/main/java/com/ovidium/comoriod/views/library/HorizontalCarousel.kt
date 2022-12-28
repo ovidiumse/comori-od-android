@@ -97,7 +97,7 @@ fun HorizontalCarousel(
                             isLoading,
                             dataItem.secondary,
                             dataItem.detail,
-                            dataItem.imageId,
+                            dataItem.image_url,
                             dataItem.gradient,
                             itemSize,
                             marginSize,

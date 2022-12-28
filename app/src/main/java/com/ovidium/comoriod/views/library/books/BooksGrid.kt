@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.library
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
+import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.books.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
@@ -33,11 +34,11 @@ fun BooksGrid(
         return bucket.authors.buckets[0].key
     }
 
-    fun getAuthorImageId(bucket: Bucket): Int {
+    fun getAuthorPhotoUrl(bucket: Bucket): String? {
         if (bucket.authors.buckets.size != 1)
-            return getDrawableByAuthor("Unknown")
+            return RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg"
 
-        return getDrawableByAuthor(bucket.authors.buckets[0].key)
+        return bucket.authors.buckets[0].photo_url_sm
     }
     val items =
         response?.aggregations?.books?.buckets?.filter { bucket ->
@@ -49,7 +50,7 @@ fun BooksGrid(
                 id = bucket.key,
                 secondary = getAuthorDisplay(bucket),
                 detail = volume,
-                imageId = getAuthorImageId(bucket),
+                image_url = getAuthorPhotoUrl(bucket),
                 gradient = getGradient(bucket),
                 type = ItemCategory.Book
             )

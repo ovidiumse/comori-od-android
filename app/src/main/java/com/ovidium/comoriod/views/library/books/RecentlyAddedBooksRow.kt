@@ -2,6 +2,7 @@ package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponseItem
 import com.ovidium.comoriod.data.volumes.Bucket
@@ -20,14 +21,14 @@ fun RecentlyAddedBooksRow(
         if (item.authors.size != 1)
             return articulate(item.authors.size, "autori", "autor")
 
-        return item.authors[0]
+        return item.authors[0].name
     }
 
-    fun getAuthorImageId(item: RecentlyAddedBooksResponseItem): Int {
+    fun getAuthorPhotoUrl(item: RecentlyAddedBooksResponseItem): String? {
         if (item.authors.size != 1)
-            return getDrawableByAuthor("Unknown")
+            return RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg"
 
-        return getDrawableByAuthor(item.authors[0])
+        return item.authors[0].photo_url_sm
     }
 
     val items = response?.map { item ->
@@ -36,7 +37,7 @@ fun RecentlyAddedBooksRow(
             "",
             getAuthorDisplay(item),
             item.volume,
-            getAuthorImageId(item),
+            getAuthorPhotoUrl(item),
             getVolumeCoverGradient(item.volume, isDark),
             type = ItemCategory.Book
         )

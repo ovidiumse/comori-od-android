@@ -26,12 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -42,6 +41,7 @@ import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.normalize
 import com.ovidium.comoriod.views.search.SearchBar
+import kotlin.text.substring
 
 @Composable
 fun TOCPopup(
@@ -53,7 +53,7 @@ fun TOCPopup(
 ) {
 
     val listState = rememberLazyListState()
-    val searchText = remember { mutableStateOf("") }
+    var searchText by remember { mutableStateOf("") }
 
     val isDark = isSystemInDarkTheme()
     val bgColor = getNamedColor("Background", isDark)

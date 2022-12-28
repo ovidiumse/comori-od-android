@@ -2,6 +2,7 @@ package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
@@ -19,7 +20,7 @@ fun RecommendedRow(
             item._id,
             item.author,
             item.book,
-            getDrawableByAuthor(item.author),
+            item.author_photo_url_sm ?: (RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg"),
             getVolumeCoverGradient(item.volume, isDark),
             type = ItemCategory.Article
         )

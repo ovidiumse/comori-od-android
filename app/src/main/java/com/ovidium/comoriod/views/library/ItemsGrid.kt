@@ -86,7 +86,7 @@ fun ItemsGrid(
                                     isLoading,
                                     item.secondary,
                                     item.detail,
-                                    item.imageId,
+                                    item.image_url,
                                     item.gradient,
                                     itemSize,
                                     marginSize,

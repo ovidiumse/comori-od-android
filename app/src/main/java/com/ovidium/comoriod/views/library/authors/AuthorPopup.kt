@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.ovidium.comoriod.data.authors.Authors
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
@@ -83,7 +84,7 @@ fun AuthorPopup(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(getDrawableByAuthor(authorInfo.name)),
+                        painter = rememberAsyncImagePainter(authorInfo.photo_url_sm),
                         contentDescription = "details",
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
@@ -120,62 +121,64 @@ fun AuthorPopup(
                         )
 
                     Row {
-                        Text(
-                            text = getBooksNumber(authorInfo),
-                            color = colors.colorSecondaryText,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .background(
-                                    getNamedColor("CardButton", isDark = isDark),
-                                    RoundedCornerShape(50)
-                                )
-                                .padding(8.dp)
-                                .clickable {
-                                    if (getBooksCnt(authorInfo) > 0)
+                        if (getBooksCnt(authorInfo) > 0) {
+                            Text(
+                                text = getBooksNumber(authorInfo),
+                                color = colors.colorSecondaryText,
+                                fontSize = 11.sp,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .background(
+                                        getNamedColor("CardButton", isDark = isDark),
+                                        RoundedCornerShape(50)
+                                    )
+                                    .padding(8.dp)
+                                    .clickable {
                                         navController.navigate(
                                             Screens.BooksForAuthor.withArgs(
                                                 authorInfo.name
                                             )
                                         )
-                                }
-                        )
-                        Text(
-                            text = getVolumesNumber(authorInfo),
-                            color = colors.colorSecondaryText,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .background(
-                                    getNamedColor("CardButton", isDark = isDark),
-                                    RoundedCornerShape(50)
-                                )
-                                .padding(8.dp)
-                                .clickable {
-                                    if (getVolumesCnt(authorInfo) > 0)
+                                    }
+                            )
+                        }
+                        if (getVolumesCnt(authorInfo) > 0) {
+                            Text(
+                                text = getVolumesNumber(authorInfo),
+                                color = colors.colorSecondaryText,
+                                fontSize = 11.sp,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .background(
+                                        getNamedColor("CardButton", isDark = isDark),
+                                        RoundedCornerShape(50)
+                                    )
+                                    .padding(8.dp)
+                                    .clickable {
                                         navController.navigate(
                                             Screens.VolumesForAuthor.withArgs(
                                                 authorInfo.name
                                             )
                                         )
-                                }
-                        )
-                        Text(
-                            text = getPoemsNumber(authorInfo),
-                            color = colors.colorSecondaryText,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .background(
-                                    getNamedColor("CardButton", isDark = isDark),
-                                    RoundedCornerShape(50)
-                                )
-                                .padding(8.dp)
-                                .clickable {
-                                    if (getPoemsCnt(authorInfo) > 0) {
+                                    }
+                            )
+                        }
+                        if (getPoemsCnt(authorInfo) > 0) {
+                            Text(
+                                text = getPoemsNumber(authorInfo),
+                                color = colors.colorSecondaryText,
+                                fontSize = 11.sp,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .background(
+                                        getNamedColor("CardButton", isDark = isDark),
+                                        RoundedCornerShape(50)
+                                    )
+                                    .padding(8.dp)
+                                    .clickable {
                                         navController.navigate(
                                             Screens.PoemsForAuthor.withArgs(
                                                 authorInfo.name
@@ -189,21 +192,21 @@ fun AuthorPopup(
                                             )
                                         )
                                     }
-                                }
-                        )
-                        Text(
-                            text = getArticlesNumber(authorInfo),
-                            color = colors.colorSecondaryText,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            modifier = Modifier
-                                .background(
-                                    getNamedColor("CardButton", isDark = isDark),
-                                    RoundedCornerShape(50)
-                                )
-                                .padding(8.dp)
-                                .clickable {
-                                    if (getArticlesCnt(authorInfo) > 0) {
+                            )
+                        }
+                        if (getArticlesCnt(authorInfo) > 0) {
+                            Text(
+                                text = getArticlesNumber(authorInfo),
+                                color = colors.colorSecondaryText,
+                                fontSize = 11.sp,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .background(
+                                        getNamedColor("CardButton", isDark = isDark),
+                                        RoundedCornerShape(50)
+                                    )
+                                    .padding(8.dp)
+                                    .clickable {
                                         navController.navigate(
                                             Screens.ArticlesForAuthor.withArgs(
                                                 authorInfo.name
@@ -216,8 +219,8 @@ fun AuthorPopup(
                                             )
                                         )
                                     }
-                                }
-                        )
+                            )
+                        }
                     }
                 }
             }

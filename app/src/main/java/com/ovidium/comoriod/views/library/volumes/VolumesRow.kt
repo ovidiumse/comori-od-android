@@ -2,6 +2,7 @@ package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.volumes.Bucket
 import com.ovidium.comoriod.data.volumes.VolumesResponse
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
@@ -22,18 +23,18 @@ fun VolumesRow(
         return bucket.authors.buckets[0].key
     }
 
-    fun getAuthorImageId(bucket: Bucket): Int {
+    fun getAuthorImageUrl(bucket: Bucket): String? {
         if (bucket.authors.buckets.size != 1)
-            return getDrawableByAuthor("Unknown")
+            return RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg"
 
-        return getDrawableByAuthor(bucket.authors.buckets[0].key)
+        return bucket.authors.buckets[0].photo_url_sm
     }
     val items = response?.aggregations?.volumes?.buckets?.map { bucket ->
         DataItem(
             bucket.key,
             "",
             getAuthorDisplay(bucket),
-            imageId = getAuthorImageId(bucket),
+            image_url = getAuthorImageUrl(bucket),
             gradient = getVolumeCoverGradient(bucket.key, isDark),
             type = ItemCategory.Volume
         )

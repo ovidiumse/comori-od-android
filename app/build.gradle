@@ -24,12 +24,12 @@ def privateProps = new Properties()
 privateProps.load(new FileInputStream(privatePropsFile))
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.ovidium.comoriod"
         minSdk 26
-        targetSdk 30
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 

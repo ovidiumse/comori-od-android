@@ -59,7 +59,7 @@ class DataItem(
     val id: String,
     val secondary: String? = null,
     val detail: String? = null,
-    val imageId: Int? = null,
+    val image_url: String? = null,
     val gradient: List<Color>,
     val type: ItemCategory = ItemCategory.None
 )

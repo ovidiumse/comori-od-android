@@ -1,10 +1,9 @@
-package com.ovidium.comoriod.data.books
+package com.ovidium.comoriod.data.recentlyaddedbooks
 
 import com.google.gson.annotations.SerializedName
 
-data class BucketX(
-    val doc_count: Int,
-    val key: String,
+data class Author(
+    val name: String,
     @SerializedName("photo-url-lg")
     val photo_url_lg: String?,
     @SerializedName("photo-url-sm")

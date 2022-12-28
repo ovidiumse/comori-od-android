@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
@@ -35,7 +36,7 @@ fun ItemCard(
     isLoading: Boolean,
     secondary: String? = null,
     detail: String? = null,
-    imageId: Int? = null,
+    image_url: String? = null,
     colors: List<Color>,
     itemSize: Int,
     marginSize: Int,
@@ -104,9 +105,9 @@ fun ItemCard(
                     Row(
                         modifier = Modifier.fillMaxHeight()
                     ) {
-                        imageId?.let {
+                        image_url?.let {
                             Image(
-                                painter = painterResource(imageId),
+                                painter = rememberAsyncImagePainter(image_url),
                                 contentDescription = "details",
                                 contentScale = ContentScale.FillBounds,
                                 modifier = Modifier

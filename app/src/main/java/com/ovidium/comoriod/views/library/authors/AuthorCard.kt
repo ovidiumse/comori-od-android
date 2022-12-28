@@ -19,9 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
+import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -36,7 +38,7 @@ fun AuthorCard(
     isDark: Boolean,
     showAuthorAction: (Bucket?) -> Unit
 ) {
-    val imageAreaSize = itemSize * 0.80
+    val imageAreaSize = itemSize * 0.70
     val authorImageSize = imageAreaSize * 0.80
 
     val secondaryBackground = getNamedColor("SecondaryBackground", isDark)
@@ -55,28 +57,32 @@ fun AuthorCard(
             boxModifier = boxModifier.background(brush = Brush.verticalGradient(colors))
 
         Box(boxModifier) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(modifier = Modifier.height(20.dp))
-                Image(
-                    painter = painterResource(getDrawableByAuthor(authorInfo?.name ?: "")),
-                    contentDescription = "details",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .requiredSize(authorImageSize.dp)
-                        .clip(RoundedCornerShape(100))
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = authorInfo?.name ?: "",
-                    color = Color.Black,
-                    style = MaterialTheme.typography.h6,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .fillMaxWidth()
-                        .padding(horizontal = marginSize.dp)
-                )
+            Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            authorInfo?.photo_url_sm
+                                ?: (RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg")
+                        ),
+                        contentDescription = "details",
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .requiredSize(authorImageSize.dp)
+                            .clip(RoundedCornerShape(100))
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = authorInfo?.name ?: "",
+                        color = Color.Black,
+                        style = MaterialTheme.typography.h6,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .fillMaxWidth()
+                            .padding(horizontal = marginSize.dp)
+                    )
+                }
             }
         }
     }
