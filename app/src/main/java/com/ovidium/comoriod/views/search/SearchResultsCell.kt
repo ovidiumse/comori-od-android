@@ -34,7 +34,7 @@ fun SearchResultsCell(
         book = hit._source.book,
         author = hit._source.author,
         type = hit._source.type,
-        lines = fmtVerses(hit.highlight?.verses_text.orEmpty(), isDark = isSystemInDarkTheme()),
+        lines = fmtVerses(hit.highlight?.body.orEmpty(), isDark = isSystemInDarkTheme()),
         subtitleColor = mutedText,
         bgColor = bgColor,
         bubbleColor = bubbleColor

@@ -51,6 +51,8 @@ class SearchModel : ViewModel() {
         offset: Int = 0,
         params: Map<String, String> = emptyMap()
     ) {
+        autocompleteData.value = Resource.uninitialized()
+
         fun handleResponse(response: Resource<SearchResponse>) {
             when (response.status) {
                 Status.SUCCESS -> {

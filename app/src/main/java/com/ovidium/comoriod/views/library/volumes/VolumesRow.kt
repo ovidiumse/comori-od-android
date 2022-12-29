@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.volumes.Bucket
 import com.ovidium.comoriod.data.volumes.VolumesResponse
-import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 

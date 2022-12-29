@@ -43,7 +43,7 @@ interface ApiService {
     ): BooksResponse
 
     @GET("recentlyaddedbooks")
-    suspend fun getRecentlyAddedBooks(@Query("include_author_photo") include_author_photo: Boolean = true): RecentlyAddedBooksResponse
+    suspend fun getRecentlyAddedBooks(): RecentlyAddedBooksResponse
 
     @GET("recommended")
     suspend fun getRecommended(

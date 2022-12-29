@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
-import com.ovidium.comoriod.mappings.getDrawableByAuthor
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 
 @Composable

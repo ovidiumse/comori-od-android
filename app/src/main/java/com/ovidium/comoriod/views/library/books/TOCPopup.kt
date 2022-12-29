@@ -177,6 +177,7 @@ fun TOCTopBar(
         if (showSearchBar) {
             SearchBar(
                 searchText = searchTextFieldValue,
+                shouldFocus = false,
                 focusRequester = focusRequester,
                 onClearClick = {
                     showSearchBar = false

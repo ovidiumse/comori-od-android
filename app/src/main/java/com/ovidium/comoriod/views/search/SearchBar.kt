@@ -1,8 +1,10 @@
 package com.ovidium.comoriod.views.search
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +22,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
@@ -37,6 +42,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 @Composable
 fun SearchBar(
     searchText: TextFieldValue,
+    shouldFocus: Boolean,
     focusRequester: FocusRequester,
     placeholderText: String = searchText.text.ifEmpty { "Caută..." },
     onSearchTextChanged: (TextFieldValue) -> Unit = {},
@@ -45,17 +51,21 @@ fun SearchBar(
 ) {
     val isDark = isSystemInDarkTheme()
     val showClearButton: MutableState<Boolean> = remember { mutableStateOf(false) }
+    var isFocused by remember { mutableStateOf(false) };
 
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 3.dp, horizontal = 3.dp)
             .onFocusChanged { focusState ->
-                showClearButton.value = (focusState.isFocused)
+                showClearButton.value = focusState.hasFocus
+                isFocused = focusState.hasFocus
             }
             .focusRequester(focusRequester),
         value = searchText,
-        onValueChange = onSearchTextChanged,
+        onValueChange = { newFieldValue ->
+            onSearchTextChanged(newFieldValue)
+        },
         placeholder = {
             Text(text = placeholderText)
         },
@@ -88,6 +98,13 @@ fun SearchBar(
     )
 
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        if (isFocused || shouldFocus)
+            focusRequester.requestFocus()
+    }
+
+    DisposableEffect(LocalLifecycleOwner.current) {
+        onDispose {
+            isFocused = false
+        }
     }
 }

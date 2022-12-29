@@ -5,45 +5,29 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Colors
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import com.ovidium.comoriod.data.authors.Authors
 import com.ovidium.comoriod.data.authors.Bucket
-import com.ovidium.comoriod.mappings.getDrawableByAuthor
-import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.JWTUtils
+import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.search.filter.FilterCategoryView
-import com.ovidium.comoriod.views.search.filter.FilterViewTopBar
-import kotlinx.coroutines.launch
 
 @Composable
 fun AuthorPopup(
@@ -121,9 +105,10 @@ fun AuthorPopup(
                         )
 
                     Row {
-                        if (getBooksCnt(authorInfo) > 0) {
+                        val bookCnt = getBooksCnt(authorInfo)
+                        if (bookCnt > 0) {
                             Text(
-                                text = getBooksNumber(authorInfo),
+                                text = fmtBooksNumber(bookCnt),
                                 color = colors.colorSecondaryText,
                                 fontSize = 11.sp,
                                 maxLines = 1,
@@ -143,9 +128,11 @@ fun AuthorPopup(
                                     }
                             )
                         }
-                        if (getVolumesCnt(authorInfo) > 0) {
+
+                        val volumeCnt = getVolumesCnt(authorInfo)
+                        if (volumeCnt > 0) {
                             Text(
-                                text = getVolumesNumber(authorInfo),
+                                text = fmtVolumesNumber(volumeCnt),
                                 color = colors.colorSecondaryText,
                                 fontSize = 11.sp,
                                 maxLines = 1,
@@ -232,16 +219,16 @@ fun getBooksCnt(authorBucket: Bucket): Int {
     return authorBucket.books.buckets.size
 }
 
-fun getBooksNumber(authorBucket: Bucket): String {
-    return articulate(getBooksCnt(authorBucket), "cărți", "carte")
+fun fmtBooksNumber(bookCnt: Int): String {
+    return articulate(bookCnt, "cărți", "carte")
 }
 
 fun getVolumesCnt(authorBucket: Bucket): Int {
     return authorBucket.volumes.buckets.size
 }
 
-fun getVolumesNumber(authorBucket: Bucket): String {
-    return articulate(getVolumesCnt(authorBucket), "volume", "volum")
+fun fmtVolumesNumber(volumeCnt: Int): String {
+    return articulate(volumeCnt, "volume", "volum")
 }
 
 fun getPoemsCnt(authorBucket: Bucket): Int {
