@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.search
 
 import SuggestionsView
+import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowInsets.Type.ime
 import androidx.compose.foundation.background
@@ -192,6 +193,7 @@ fun SearchScreen(
 
                                 Row {
                                     SearchResultsList(
+                                        searchModel,
                                         query = query,
                                         hits = searchResults,
                                         navController = navController,

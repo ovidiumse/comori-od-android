@@ -14,6 +14,7 @@ import com.ovidium.comoriod.model.SearchModel
 
 @Composable
 fun SearchResultsList(
+    searchModel: SearchModel,
     query: String,
     hits: List<Hit>,
     navController: NavController,
@@ -21,7 +22,6 @@ fun SearchResultsList(
     params: Map<String, String>,
     isDark: Boolean
 ) {
-    val searchModel: SearchModel = viewModel()
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize()
