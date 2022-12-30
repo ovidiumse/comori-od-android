@@ -27,6 +27,8 @@ fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false)
 
 fun fmtDuration(duration: Duration): String {
     val durations = listOf(
+        Pair(duration.toDays() / 365, Pair("ani", "an")),
+        Pair(duration.toDays() / 30, Pair("luni", "lună")),
         Pair(duration.toDays(), Pair("zile", "zi")),
         Pair(duration.toHours(), Pair("ore", "oră")),
         Pair(duration.toMinutes(), Pair("minute", "minut"))

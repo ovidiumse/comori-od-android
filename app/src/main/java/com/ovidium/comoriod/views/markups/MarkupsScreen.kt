@@ -4,10 +4,7 @@ import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -84,13 +81,13 @@ fun MarkupsScreen(
                             onTagsChanged = { tag -> selectedTag = tag })
 
                         LazyColumn(
-                            contentPadding = PaddingValues(12.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            markups.forEach { markup ->
+                            markups.forEachIndexed { index, markup ->
                                 item(key = markup.id) {
                                     Column(
-                                        modifier = Modifier.animateItemPlacement(
+                                        modifier = Modifier.padding(horizontal = 12.dp)
+                                            .animateItemPlacement(
                                             animationSpec = tween(durationMillis = 300)
                                         )
                                     ) {
@@ -115,6 +112,9 @@ fun MarkupsScreen(
                                                 )
                                             })
                                     }
+
+                                    if (index == markups.size - 1)
+                                        Spacer(modifier = Modifier.height(12.dp))
                                 }
                             }
                         }

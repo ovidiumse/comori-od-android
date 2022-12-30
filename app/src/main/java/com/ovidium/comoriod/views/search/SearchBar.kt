@@ -95,7 +95,7 @@ fun SearchBar(
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(onSearch = { onSearchClick() }),
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(12.dp)
     )
 
     LaunchedEffect(Unit) {

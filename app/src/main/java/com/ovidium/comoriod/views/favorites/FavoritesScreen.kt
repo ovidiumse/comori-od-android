@@ -1,12 +1,10 @@
 package com.ovidium.comoriod.views
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +28,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
 import com.ovidium.comoriod.views.favorites.FavoriteArticleCell
+import com.ovidium.comoriod.views.favorites.SwipeableFavoriteArticleCell
 
 @Composable
 fun FavoritesScreen(
@@ -42,10 +41,12 @@ fun FavoritesScreen(
         ?.filter { tag -> tag.isNotEmpty() }
         ?: emptyList()
 
-    val articleToDelete = remember { mutableStateOf("") }
+    val isDark = isSystemInDarkTheme()
+    val surfaceColor = getNamedColor("PrimarySurface", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
+
     val coroutineScope = rememberCoroutineScope()
     var selectedTag by remember { mutableStateOf("") }
-
 
     fun getArticles(): List<FavoriteArticle>? {
         // selectedTag may not be in the list of tags after a deletion
@@ -60,7 +61,9 @@ fun FavoritesScreen(
 
     Scaffold(
         topBar = {
-            AppBar(title = "Favorite", onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
+            AppBar(
+                title = "Favorite",
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
             }
         }
     ) {
@@ -73,36 +76,46 @@ fun FavoritesScreen(
                 Status.SUCCESS -> {
                     val favorites = getArticles()
                     if (!favorites.isNullOrEmpty()) {
-                    TagsRow(
-                        tags,
-                        selectedTag,
-                        onTagsChanged = { tag -> selectedTag = tag })
+                        TagsRow(
+                            tags,
+                            selectedTag,
+                            onTagsChanged = { tag -> selectedTag = tag })
 
-                    LazyColumn {
-                        favorites.forEach { article ->
-                            item {
-                                FavoriteArticleCell(navController, article) { idToDelete ->
-                                    articleToDelete.value = idToDelete
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            favorites.forEachIndexed { index, article ->
+                                item(key = article.id) {
+                                    Column(
+                                        modifier = Modifier.padding(horizontal = 12.dp)
+                                            .animateItemPlacement(
+                                                animationSpec = tween(durationMillis = 300)
+                                            )
+                                    ) {
+                                        SwipeableFavoriteArticleCell(
+                                            favoriteArticle = article,
+                                            isDark = isDark,
+                                            surfaceColor = surfaceColor,
+                                            bubbleColor = bubbleColor,
+                                            onItemClick = {
+                                                navController.navigate(
+                                                    Screens.Article.withArgs(article.id)
+                                                )
+                                            },
+                                            deleteAction = {
+                                                favoritesModel.deleteFavoriteArticle(article.id)
+                                            })
+                                    }
+
+                                    if (index == favorites.size - 1)
+                                        Spacer(modifier = Modifier.height(12.dp))
                                 }
                             }
                         }
-                    }
-                } else {
-                    NoContentPlaceholder("Nu ai nici un articol favorit")
+                    } else {
+                        NoContentPlaceholder("Nu ai nici un articol favorit")
                     }
                 }
                 else -> {}
             }
-        }
-
-        if (articleToDelete.value.isNotEmpty()) {
-            DeleteFavoriteConfirmationDialog(
-                deleteAction = {
-                    favoritesModel.deleteFavoriteArticle(articleToDelete.value)
-                    articleToDelete.value = ""
-                },
-                dismissAction = { articleToDelete.value = "" }
-            )
         }
     }
 }
@@ -118,7 +131,7 @@ fun TagsRow(
 
     LazyRow(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         item {
             CapsuleButton(
@@ -161,7 +174,7 @@ fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (S
             .padding(end = 8.dp)
             .background(
                 bubbleColor.copy(alpha = if (isSelected) 1.0f else 0.3f),
-                shape =MaterialTheme.shapes.medium,
+                shape = MaterialTheme.shapes.medium,
             )
             .padding(12.dp)
             .clickable { action(text) }

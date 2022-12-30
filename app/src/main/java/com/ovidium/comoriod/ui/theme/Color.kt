@@ -75,7 +75,7 @@ private val DarkNamedColors = mapOf(
     "Snow" to Color(0xFFF9F1F5),
     "Highlight" to Color(0xFFFFF2CC),
     "ActiveHighlight" to Color(0xFFFFE599),
-    "Container" to Color(0xFF1C1F25),
+    "Container" to Color(0xFF242830),
     "Button" to Color(0xFF064B9C),
     "Link" to Color(0xff58a6ff),
     "BibleRefBlue" to Color(0xff58a6ff),
@@ -91,7 +91,7 @@ private val DarkNamedColors = mapOf(
     "OnBackground" to Color(0xffc9d1d9),
     "DarkBar" to Color(0xff232830),
     "SecondaryBackground" to Color(0xff383F4D),
-    "PrimarySurface" to Color(0xFF252B33),
+    "PrimarySurface" to Color(0xFF2E3641),
     "SecondarySurface" to Color(0xFF707D99),
     "Bubble" to Color(0xff383F4D),
     //Markup colors
