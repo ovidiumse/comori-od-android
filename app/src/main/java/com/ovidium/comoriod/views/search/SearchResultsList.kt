@@ -27,6 +27,9 @@ fun SearchResultsList(
         modifier = Modifier.fillMaxSize()
     ) {
         itemsIndexed(hits) { index, hit ->
+            if (index == 0)
+                Spacer(modifier = Modifier.height(12.dp))
+
             SearchResultsCell(index, hit = hit, navController = navController, isDark)
             Spacer(modifier = Modifier.height(12.dp))
 

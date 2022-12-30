@@ -44,6 +44,7 @@ fun SearchBar(
     searchText: TextFieldValue,
     shouldFocus: Boolean,
     focusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
     placeholderText: String = searchText.text.ifEmpty { "Caută..." },
     onSearchTextChanged: (TextFieldValue) -> Unit = {},
     onClearClick: () -> Unit = {},
@@ -55,13 +56,13 @@ fun SearchBar(
 
     OutlinedTextField(
         modifier = Modifier
-            .fillMaxWidth()
             .padding(vertical = 3.dp, horizontal = 3.dp)
             .onFocusChanged { focusState ->
                 showClearButton.value = focusState.hasFocus
                 isFocused = focusState.hasFocus
             }
-            .focusRequester(focusRequester),
+            .focusRequester(focusRequester)
+            .then(modifier),
         value = searchText,
         onValueChange = { newFieldValue ->
             onSearchTextChanged(newFieldValue)

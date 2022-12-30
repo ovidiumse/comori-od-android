@@ -5,15 +5,18 @@ import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowInsets.Type.ime
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -44,7 +47,14 @@ fun SearchScreen(
     searchModel: SearchModel
 ) {
     var query by remember { searchModel.query }
-    var searchTextFieldValue by remember { mutableStateOf(TextFieldValue(query, TextRange(query.length))) }
+    var searchTextFieldValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                query,
+                TextRange(query.length)
+            )
+        )
+    }
     val autocompleteData = searchModel.autocompleteData
     val searchData = searchModel.searchData
     val aggregations = searchModel.aggregations
@@ -70,48 +80,76 @@ fun SearchScreen(
 
     val focusManager = LocalFocusManager.current
 
+    val hasSearchResults = searchData.value.status == Status.SUCCESS
+
     Scaffold(
         topBar = {
             AppBar(
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
                 actions = @Composable {
-                    SearchBar(
-                        searchText = searchTextFieldValue,
-                        shouldFocus = searchData.value.status == Status.UNINITIALIZED,
-                        focusRequester = focusRequester,
-                        onSearchTextChanged = { newFieldValue ->
-                            searchTextFieldValue = newFieldValue
-                            query = if (newFieldValue.composition != null)
-                                newFieldValue.text.substring(newFieldValue.composition!!)
-                            else
-                                newFieldValue.text
+                    Row {
+                        SearchBar(
+                            modifier = Modifier.weight(if (hasSearchResults) 0.9f else 1f),
+                            searchText = searchTextFieldValue,
+                            shouldFocus = searchData.value.status == Status.UNINITIALIZED,
+                            focusRequester = focusRequester,
+                            onSearchTextChanged = { newFieldValue ->
+                                searchTextFieldValue = newFieldValue
+                                query = if (newFieldValue.composition != null)
+                                    newFieldValue.text.substring(newFieldValue.composition!!)
+                                else
+                                    newFieldValue.text
 
-                            searchData.value = Resource.uninitialized()
-                            currentAutocompleteJob?.cancel()
-                            currentAutocompleteJob = coroutineScope.async {
-                                delay(300L)
-                                if (searchData.value.status != Status.LOADING)
-                                    searchModel.autocomplete(query)
-                            }
-                        },
-                        onSearchClick = {
-                            if (query.isNotEmpty()) {
-                                keyboardController?.hide()
-                                searchData.value = Resource.loading(null)
-                                focusManager.clearFocus()
-                                searchModel.search(query)
-                                searchParams.clear()
-                            }
-                        },
-                        onClearClick = {
-                            query = ""
-                            searchTextFieldValue = TextFieldValue(query, TextRange(query.length))
+                                searchData.value = Resource.uninitialized()
+                                currentAutocompleteJob?.cancel()
+                                currentAutocompleteJob = coroutineScope.async {
+                                    delay(300L)
+                                    if (searchData.value.status != Status.LOADING)
+                                        searchModel.autocomplete(query)
+                                }
+                            },
+                            onSearchClick = {
+                                if (query.isNotEmpty()) {
+                                    keyboardController?.hide()
+                                    searchData.value = Resource.loading(null)
+                                    focusManager.clearFocus()
+                                    searchModel.search(query)
+                                    searchParams.clear()
+                                }
+                            },
+                            onClearClick = {
+                                query = ""
+                                searchTextFieldValue =
+                                    TextFieldValue(query, TextRange(query.length))
 
-                            currentAutocompleteJob?.cancel()
-                            autocompleteData.value = Resource.uninitialized()
-                            searchData.value = Resource.uninitialized()
-                            keyboardController?.show()
-                        })
+                                currentAutocompleteJob?.cancel()
+                                autocompleteData.value = Resource.uninitialized()
+                                searchData.value = Resource.uninitialized()
+                                keyboardController?.show()
+                            })
+
+                        if (hasSearchResults) {
+                            Icon(
+                                modifier = Modifier
+                                    .weight(0.1f)
+                                    .align(Alignment.CenterVertically)
+                                    .clickable {
+                                        showFilterPopup = !showFilterPopup
+
+                                        val params = getParams()
+                                        if (aggregations.isEmpty()) {
+                                            searchModel.getTypes(query, params)
+                                            searchModel.getAuthors(query, params)
+                                            searchModel.getVolumes(query, params)
+                                            searchModel.getBooks(query, params)
+                                        }
+                                    },
+                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
+                                tint = textColor,
+                                contentDescription = "Filtrează",
+                            )
+                        }
+                    }
                 })
         }
     ) {
@@ -164,33 +202,6 @@ fun SearchScreen(
                             NoSearchResultsPlaceholder(query, false, {})
                         } else {
                             Column(modifier = Modifier.padding(horizontal = 12.dp)) {
-                                Row(modifier = Modifier.padding(vertical = 12.dp)) {
-                                    OutlinedButton(
-                                        onClick = {
-                                            showFilterPopup = !showFilterPopup
-
-                                            val params = getParams()
-                                            if (aggregations.isEmpty()) {
-                                                searchModel.getTypes(query, params)
-                                                searchModel.getAuthors(query, params)
-                                                searchModel.getVolumes(query, params)
-                                                searchModel.getBooks(query, params)
-                                            }
-                                        },
-                                        colors = ButtonDefaults.outlinedButtonColors(
-                                            primarySurfaceColor,
-                                            headerTextColor
-                                        )
-                                    ) {
-                                        Text("Filtrează")
-                                        Spacer(modifier = Modifier.width(12.dp))
-                                        Icon(
-                                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
-                                            contentDescription = "Filtrează",
-                                        )
-                                    }
-                                }
-
                                 Row {
                                     SearchResultsList(
                                         searchModel,

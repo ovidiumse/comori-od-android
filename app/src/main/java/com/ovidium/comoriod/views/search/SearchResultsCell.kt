@@ -18,9 +18,9 @@ fun SearchResultsCell(
     navController: NavController,
     isDark: Boolean
 ) {
-    val bgColor = getNamedColor("PrimarySurface", isDark)
+    val bgColor = getNamedColor("Container", isDark)
     val mutedText = getNamedColor("MutedText", isDark)
-    val bubbleColor = getNamedColor("Bubble", isDark)
+    val bubbleColor = getNamedColor("PrimarySurface", isDark)
 
     fun getTitle(hit: Hit): String {
         return if (!hit.highlight?.title.isNullOrEmpty()) {

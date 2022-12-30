@@ -109,8 +109,8 @@ fun TOCPopup(
                             Text(
                                 text = "${realIndex + 1}.  ${item._source.title}",
                                 overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.subtitle1,
-                                fontWeight = if (currentIndex == index) FontWeight.Bold else FontWeight.Normal,
+                                style = MaterialTheme.typography.body1,
+                                fontWeight = if (currentIndex == index) FontWeight.ExtraBold else FontWeight.Normal,
                                 color = if (currentIndex == index) textColor else mutedTextColor,
                                 modifier = Modifier
                                     .padding(horizontal = 12.dp)
