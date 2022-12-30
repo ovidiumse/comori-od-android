@@ -131,6 +131,9 @@ fun ArticleBodyView(
             }
         }
 
+        DisposableEffect(textToolbar) {
+            onDispose { textToolbar.hide() }
+        }
         clearSelection = false
     }
 }
