@@ -6,6 +6,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -15,8 +16,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,14 +43,17 @@ fun TitlesForAuthorCell(
     hit: TitleHit,
     index: Int,
     navController: NavController,
-    libraryModel: LibraryModel,
+    bgColor: Color,
+    mutedTextColor: Color,
+    bubbleColor: Color
 ) {
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(shape = RoundedCornerShape(16.dp))
-            .background(getNamedColor("Container", isDark = isSystemInDarkTheme()))
+            .clip(shape = RoundedCornerShape(10.dp))
+            .background(bgColor)
+            .padding(12.dp)
             .clickable {
                 navController.navigate(
                     Screens.Article.withArgs(
@@ -59,59 +67,23 @@ fun TitlesForAuthorCell(
                 }
             }
     ) {
-        TitlesForAuthorTitleView(hit, index)
+        TitlesForAuthorTitleView(hit, index, mutedTextColor)
         Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 16.dp)
-                .wrapContentSize(Alignment.Center),
+            modifier = Modifier.wrapContentSize(Alignment.Center),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column {
-                TitlesForAuthorBookView(hit)
-                TitlesForAuthorAuthorView(hit)
+                TitlesForAuthorBookView(hit, mutedTextColor)
+                TitlesForAuthorAuthorView(hit, mutedTextColor)
             }
-            TitlesForAuthorTypeView(hit)
+            TitlesForAuthorTypeView(hit, mutedTextColor, bubbleColor)
         }
     }
-
-    LaunchedEffect(Unit) {
-        /*val params = libraryModel.searchParams.let { it }
-        val types =
-            if (params[FilterCategory.TYPES].isNullOrEmpty()) "" else params[FilterCategory.TYPES]!!.joinToString(
-                ","
-            )
-        val authors =
-            if (params[FilterCategory.AUTHORS].isNullOrEmpty()) "" else params[FilterCategory.AUTHORS]!!.joinToString(
-                ","
-            )
-        val volumes =
-            if (params[FilterCategory.VOLUMES].isNullOrEmpty()) "" else params[FilterCategory.VOLUMES]!!.joinToString(
-                ","
-            )
-        val books =
-            if (params[FilterCategory.BOOKS].isNullOrEmpty()) "" else params[FilterCategory.BOOKS]!!.joinToString(
-                ","
-            )
-        val totalHits = libraryModel.titlesForAuthorData.value.data?.hits?.total?.value ?: return@LaunchedEffect
-        val hitsCount = libraryModel.titlesForAuthorData.value.data?.hits?.hits?.count() ?: return@LaunchedEffect
-        if ((hitsCount < totalHits) && (hitsCount == (index + 1))) {
-            libraryModel.getTitlesForAuthor(
-                authors = authors,
-                types = types,
-                volumes = volumes,
-                books = books,
-                limit = 20,
-                offset = hitsCount
-            )
-        }*/
-    }
-
 }
 
 
 @Composable
-fun TitlesForAuthorTitleView(hit: TitleHit, index: Int) {
+fun TitlesForAuthorTitleView(hit: TitleHit, index: Int, mutedTextColor: Color) {
 
     Row(
         modifier = Modifier
@@ -120,43 +92,38 @@ fun TitlesForAuthorTitleView(hit: TitleHit, index: Int) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "${index + 1}.",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Left,
-            modifier = Modifier
-                .padding(start = 16.dp)
-        )
-        Text(
-            text = hit._source.title,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Left,
-            maxLines = 2,
-            modifier = Modifier
-                .padding(vertical = 10.dp)
-                .padding(horizontal = 16.dp)
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = mutedTextColor)) {
+                    append("${index + 1}.  ")
+                }
+
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(hit._source.title)
+                }
+            },
+            style = MaterialTheme.typography.h6,
+            textAlign = TextAlign.Left
         )
     }
 }
 
 
 @Composable
-fun TitlesForAuthorBookView(hit: TitleHit) {
+fun TitlesForAuthorBookView(hit: TitleHit, mutedTextColor: Color) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier.size(14.dp),
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
-            contentDescription = "Some icon",
-            tint = Color.Red
+            contentDescription = "Book icon",
+            tint = mutedTextColor.copy(alpha = 0.7f)
         )
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = hit._source.book,
-            fontSize = 12.sp,
-            color = Color.Gray,
+            style = MaterialTheme.typography.subtitle2,
+            color = mutedTextColor,
             modifier = Modifier
         )
     }
@@ -164,21 +131,21 @@ fun TitlesForAuthorBookView(hit: TitleHit) {
 
 
 @Composable
-fun TitlesForAuthorAuthorView(hit: TitleHit) {
+fun TitlesForAuthorAuthorView(hit: TitleHit, mutedTextColor: Color) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier.size(14.dp),
             imageVector = ImageVector.vectorResource(id = R.drawable.ic_author),
-            contentDescription = "Some icon",
-            tint = Color.Red
+            contentDescription = "Author icon",
+            tint = mutedTextColor.copy(alpha = 0.7f)
         )
         Spacer(modifier = Modifier.width(5.dp))
         Text(
             text = hit._source.author,
-            fontSize = 12.sp,
-            color = Color.Gray,
+            style = MaterialTheme.typography.subtitle2,
+            color = mutedTextColor,
             modifier = Modifier
         )
     }
@@ -186,7 +153,7 @@ fun TitlesForAuthorAuthorView(hit: TitleHit) {
 
 
 @Composable
-fun TitlesForAuthorTypeView(hit: TitleHit) {
+fun TitlesForAuthorTypeView(hit: TitleHit, mutedTextColor: Color, bubbleColor: Color) {
     Column(
         horizontalAlignment = Alignment.End,
         modifier = Modifier
@@ -196,11 +163,12 @@ fun TitlesForAuthorTypeView(hit: TitleHit) {
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .clip(shape = RoundedCornerShape(10.dp))
-                .background(Color.LightGray.copy(alpha = 0.6f))
+                .background(bubbleColor)
         ) {
             Text(
                 text = hit._source.type,
-                fontSize = 12.sp,
+                color = mutedTextColor,
+                style = MaterialTheme.typography.caption,
                 modifier = Modifier
                     .padding(vertical = 3.dp)
                     .padding(horizontal = 5.dp)

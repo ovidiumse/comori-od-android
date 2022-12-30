@@ -310,7 +310,6 @@ fun BottomBarMain(
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
-                scaffoldState = scaffoldState,
                 params = mapOf("authors" to getAuthor(), "types" to "poezie")
             )
         }
@@ -332,7 +331,6 @@ fun BottomBarMain(
             TitlesForAuthorScreen(
                 navController = navController,
                 libraryModel = libraryModel,
-                scaffoldState = scaffoldState,
                 params = mapOf("authors" to getAuthor(), "types" to "articol")
             )
         }
