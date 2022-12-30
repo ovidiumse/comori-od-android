@@ -50,7 +50,7 @@ fun FilterCategoryView(
     onCheck: (String, String, Boolean) -> Unit,
     isDark: Boolean
 ) {
-    val bgColor = getNamedColor("Background", isDark)
+    val bgColor = if (isDark) getNamedColor("Container", isDark) else getNamedColor("Background", isDark)
 
     Column(
         modifier = Modifier
