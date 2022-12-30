@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -74,6 +75,7 @@ fun ArticleViewContent(
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
     val bgColor = getNamedColor("Background", isDark)
+    val handleColor = getNamedColor("HandleColor", isDark)
 
     Box(modifier = Modifier.background(bgColor)) {
         Column {
@@ -106,6 +108,7 @@ fun ArticleViewContent(
                         currentHighlightIndex,
                         markupId,
                         textColor,
+                        handleColor,
                         startPos,
                         endPos,
                         scrollOffset,

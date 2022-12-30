@@ -3,6 +3,8 @@ package com.ovidium.comoriod.views.article
 import android.text.SpannableString
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
+import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun ArticleBodyView(
@@ -32,6 +35,7 @@ fun ArticleBodyView(
     currentHighlightIndex: MutableState<Int?>,
     markupId: String?,
     textColor: Color,
+    handleColor: Color,
     startPos: MutableState<Int>,
     endPos: MutableState<Int>,
     scrollOffset: MutableState<Int>,
@@ -58,8 +62,14 @@ fun ArticleBodyView(
             clearSelection = true
         })
 
+    val customTextSelectionColors = TextSelectionColors(
+        handleColor = handleColor,
+        backgroundColor = handleColor.copy(alpha = 0.3f)
+    )
+
     CompositionLocalProvider(
-        LocalTextToolbar provides textToolbar
+        LocalTextToolbar provides textToolbar,
+        LocalTextSelectionColors provides customTextSelectionColors
     ) {
         SelectionContainer(
             clearSelection = clearSelection,
