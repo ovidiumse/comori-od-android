@@ -1,23 +1,25 @@
 package com.ovidium.comoriod.api
 
+import android.content.Context
 import com.google.gson.GsonBuilder
 import com.ovidium.comoriod.BuildConfig
+import com.ovidium.comoriod.MainActivity
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
 object RetrofitBuilder {
-    // const val BASE_URL = "https://api.comori-od.ro/od/"
-    const val BASE_URL = "https://testapi.comori-od.ro/od/"
+    const val BASE_URL = "https://api.comori-od.ro/od/"
+    // const val BASE_URL = "https://testapi.comori-od.ro/od/"
     // const val BASE_URL = "https://newapi.comori-od.ro/od/"
     // private const val BASE_URL = "https://379b-151-15-55-136.eu.ngrok.io/od/"
 
     private const val connectTimeout = 60L
     private const val readTimeout = 60L
     private const val writeTimeout = 60L
+    lateinit var appContext: Context
 
     private val retrofit by lazy {
         val interceptor = HttpLoggingInterceptor()
@@ -27,8 +29,11 @@ object RetrofitBuilder {
             interceptor.setLevel(HttpLoggingInterceptor.Level.NONE)
         }
 
+        System.getProperty("http.agent")
+
         val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(interceptor)
+            .addInterceptor(UserAgentInterceptor(appContext))
             .connectTimeout(connectTimeout, TimeUnit.SECONDS)
             .writeTimeout(readTimeout, TimeUnit.SECONDS)
             .readTimeout(writeTimeout, TimeUnit.SECONDS)
