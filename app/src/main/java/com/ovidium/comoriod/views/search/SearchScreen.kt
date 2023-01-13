@@ -55,6 +55,8 @@ fun SearchScreen(
             )
         )
     }
+    var isSearchPending by remember { mutableStateOf(false) }
+
     val autocompleteData = searchModel.autocompleteData
     val searchData = searchModel.searchData
     val aggregations = searchModel.aggregations
@@ -94,24 +96,31 @@ fun SearchScreen(
                             shouldFocus = searchData.value.status == Status.UNINITIALIZED,
                             focusRequester = focusRequester,
                             onSearchTextChanged = { newFieldValue ->
-                                searchTextFieldValue = newFieldValue
-                                query = if (newFieldValue.composition != null)
-                                    newFieldValue.text.substring(newFieldValue.composition!!)
-                                else
-                                    newFieldValue.text
+                                if (!isSearchPending) {
+                                    searchTextFieldValue = newFieldValue
+                                    query = if (newFieldValue.composition != null)
+                                        newFieldValue.text.substring(newFieldValue.composition!!)
+                                    else
+                                        newFieldValue.text
 
-                                searchData.value = Resource.uninitialized()
-                                currentAutocompleteJob?.cancel()
-                                currentAutocompleteJob = coroutineScope.async {
-                                    delay(300L)
-                                    if (searchData.value.status != Status.LOADING)
-                                        searchModel.autocomplete(query)
+                                    searchData.value = Resource.uninitialized()
+                                    currentAutocompleteJob?.cancel()
+
+                                    currentAutocompleteJob = coroutineScope.async {
+                                        delay(300L)
+                                        if (!isSearchPending)
+                                            searchModel.autocomplete(query)
+                                    }
                                 }
                             },
                             onSearchClick = {
                                 if (query.isNotEmpty()) {
                                     keyboardController?.hide()
-                                    searchData.value = Resource.loading(null)
+
+                                    currentAutocompleteJob?.cancel()
+                                    autocompleteData.value = Resource.uninitialized()
+                                    isSearchPending = true
+
                                     focusManager.clearFocus()
                                     searchModel.search(query)
                                     searchParams.clear()
@@ -119,12 +128,13 @@ fun SearchScreen(
                             },
                             onClearClick = {
                                 query = ""
-                                searchTextFieldValue =
-                                    TextFieldValue(query, TextRange(query.length))
+                                searchTextFieldValue = TextFieldValue(query, TextRange(query.length))
 
                                 currentAutocompleteJob?.cancel()
                                 autocompleteData.value = Resource.uninitialized()
                                 searchData.value = Resource.uninitialized()
+                                isSearchPending = false
+
                                 keyboardController?.show()
                             })
 
@@ -168,6 +178,7 @@ fun SearchScreen(
                     }
                 }
             } else if (autocompleteData.value.status != Status.UNINITIALIZED) {
+
                 when (autocompleteData.value.status) {
                     Status.SUCCESS -> {
                         if (autocompleteData.value.data?.hits?.hits.isNullOrEmpty()) {
@@ -192,9 +203,7 @@ fun SearchScreen(
             } else {
                 when (searchData.value.status) {
                     Status.SUCCESS -> {
-                        // cancel any pending autocomplete jobs
-                        currentAutocompleteJob?.cancel()
-                        autocompleteData.value = Resource.uninitialized()
+                        isSearchPending = false
 
                         val searchResults = searchData.value.data?.searchResults
 
