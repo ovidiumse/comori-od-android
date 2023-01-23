@@ -98,10 +98,7 @@ fun SearchScreen(
                             onSearchTextChanged = { newFieldValue ->
                                 if (!isSearchPending) {
                                     searchTextFieldValue = newFieldValue
-                                    query = if (newFieldValue.composition != null)
-                                        newFieldValue.text.substring(newFieldValue.composition!!)
-                                    else
-                                        newFieldValue.text
+                                    query = newFieldValue.text
 
                                     searchData.value = Resource.uninitialized()
                                     currentAutocompleteJob?.cancel()

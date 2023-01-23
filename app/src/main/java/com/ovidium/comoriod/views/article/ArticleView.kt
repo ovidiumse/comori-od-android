@@ -13,6 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.article.Article
+import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.article.SearchArticleResponse
+import com.ovidium.comoriod.data.markups.Markup
+import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
@@ -44,55 +48,86 @@ fun ArticleView(
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        val articleData = bookData.getOrDefault(articleID, Resource.loading(data = null))
-        val searchArticleData = searchData.getOrDefault(articleID, Resource.loading(data = null))
-        when (articleData.status) {
-            Status.SUCCESS -> {
-                articleData.data?.let { data ->
-                    val markups = markupsModel.markups.value.data?.filter { markup -> markup.articleID == data._id } ?: emptyList()
-                    val article = Article(data._id, highlightBody(data.title, isSystemInDarkTheme()), data.author, data.volume, data.book, data.type, parseVerses(data.verses, markups, highlights, currentHighlightIndex.value, isDark = isSystemInDarkTheme()), data.bibleRefs)
-                    ArticleViewContent(
-                        article,
-                        markupId,
-                        isSearch,
-                        markups,
-                        highlights,
-                        offsetList,
-                        currentHighlightIndex,
-                        signInModel,
-                        favoritesModel,
-                        markupsModel
-                    )
-                }
-            }
-            Status.LOADING -> {}
-            Status.ERROR -> {}
+        val articleData = bookData.getOrDefault(articleID, Resource.uninitialized())
+        val searchArticleData = searchData.getOrDefault(articleID, Resource.uninitialized())
+
+        @Composable
+        fun buildArticle(currentArticle: ArticleResponse, markups: List<Markup>): Article {
+            return Article(
+                currentArticle._id,
+                highlightBody(currentArticle.title, isSystemInDarkTheme()),
+                currentArticle.author,
+                currentArticle.volume,
+                currentArticle.book,
+                currentArticle.type,
+                parseVerses(
+                    currentArticle.verses,
+                    markups,
+                    highlights,
+                    currentHighlightIndex.value,
+                    isDark = isSystemInDarkTheme()
+                ),
+                currentArticle.bibleRefs
+            )
         }
 
-        when (searchArticleData.status) {
-            Status.SUCCESS -> {
-                searchArticleData.data?.let { data ->
-                    val markups = markupsModel.markups.value.data?.filter { markup -> markup.articleID == data._id } ?: emptyList()
-                    val article = Article(data._id, highlightBody(data._source.title, isSystemInDarkTheme()), data._source.author, data._source.volume, data._source.book, data._source.type, parseVerses(data._source.verses, markups, highlights, currentHighlightIndex.value, isDark = isSystemInDarkTheme()), data._source.bibleRefs)
-                    ArticleViewContent(
-                        article,
-                        markupId,
-                        isSearch,
-                        markups,
-                        highlights,
-                        offsetList,
-                        currentHighlightIndex,
-                        signInModel,
-                        favoritesModel,
-                        markupsModel
-                    )
-                }
-            }
-            Status.LOADING -> {
-                Text("Loading...")
-            }
-            Status.ERROR -> {}
+        @Composable
+        fun buildArticle(currentArticle: SearchArticleResponse, markups: List<Markup>): Article {
+            return Article(
+                currentArticle._id,
+                highlightBody(currentArticle._source.title, isSystemInDarkTheme()),
+                currentArticle._source.author,
+                currentArticle._source.volume,
+                currentArticle._source.book,
+                currentArticle._source.type,
+                parseVerses(
+                    currentArticle._source.verses,
+                    markups,
+                    highlights,
+                    currentHighlightIndex.value,
+                    isDark = isSystemInDarkTheme()
+                ),
+                currentArticle._source.bibleRefs
+            )
         }
+
+        @Composable
+        fun <T> showArticle(articleID: String, currentArticle: Resource<T>) {
+            when (currentArticle.status) {
+                Status.SUCCESS -> {
+                    currentArticle.data?.let { data ->
+                        val markups =
+                            markupsModel.markups.value.data?.filter { markup -> markup.articleID == articleID }
+                                ?: emptyList()
+
+                        val article = if (currentArticle.data is ArticleResponse) buildArticle(
+                            currentArticle.data as ArticleResponse,
+                            markups
+                        ) else buildArticle(currentArticle.data as SearchArticleResponse, markups)
+
+                        ArticleViewContent(
+                            article,
+                            markupId,
+                            isSearch,
+                            markups,
+                            highlights,
+                            offsetList,
+                            currentHighlightIndex,
+                            signInModel,
+                            favoritesModel,
+                            markupsModel
+                        )
+                    }
+                }
+                Status.LOADING -> {}
+                Status.ERROR -> {}
+            }
+        }
+
+        if (articleData.status != Status.UNINITIALIZED)
+            showArticle(articleID, articleData)
+        else
+            showArticle(articleID, searchArticleData)
     }
     LaunchedEffect(Unit) {
         bookModel.getArticle(articleID, query, isSearch)

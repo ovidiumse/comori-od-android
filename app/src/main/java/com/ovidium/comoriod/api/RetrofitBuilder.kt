@@ -14,7 +14,7 @@ object RetrofitBuilder {
     const val BASE_URL = "https://api.comori-od.ro/od/"
     // const val BASE_URL = "https://testapi.comori-od.ro/od/"
     // const val BASE_URL = "https://newapi.comori-od.ro/od/"
-    // private const val BASE_URL = "https://379b-151-15-55-136.eu.ngrok.io/od/"
+    // const val BASE_URL = "https://80e4-109-97-21-5.eu.ngrok.io/od/"
 
     private const val connectTimeout = 60L
     private const val readTimeout = 60L

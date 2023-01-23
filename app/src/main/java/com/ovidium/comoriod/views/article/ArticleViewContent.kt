@@ -65,7 +65,6 @@ fun ArticleViewContent(
     val bibleRefs = articleModel.getBibleRefs(article.id)
     var showSaveFavoriteDialog by remember { mutableStateOf(false) }
     val markupSelection = remember { mutableStateOf("") }
-    var showDeleteFavoriteDialog by remember { mutableStateOf(false) }
     val showHighlightControls = remember { mutableStateOf(false) }
     val startPos = remember { mutableStateOf(0) }
     val endPos = remember { mutableStateOf(0) }
@@ -75,6 +74,7 @@ fun ArticleViewContent(
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
     val bgColor = getNamedColor("Background", isDark)
+    val surfaceColor = getNamedColor("PrimarySurface", isDark)
     val handleColor = getNamedColor("HandleColor", isDark)
 
     Box(modifier = Modifier.background(bgColor)) {
@@ -133,26 +133,27 @@ fun ArticleViewContent(
                 FloatingActionButton(
                     onClick = {
                         if (favoritesModel.isFavorite(article.id)) {
-                            showDeleteFavoriteDialog = true
+                            favoritesModel.deleteFavoriteArticle(article.id)
                         } else {
                             showSaveFavoriteDialog = true
                         }
                     },
-                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                    backgroundColor = if (favoritesModel.isFavorite(article.id)
-                    ) Color.Red else getNamedColor("Link", isDark)
+                    modifier = Modifier.padding(bottom = 100.dp, end = 16.dp),
+                    backgroundColor = surfaceColor
                 ) {
                     if (favoritesModel.isFavorite(article.id)) {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_delete_24),
-                            contentDescription = "Delete",
-                            tint = getNamedColor("Container", isDark),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_favorite_24),
+                            contentDescription = "Remove from favorites",
+                            modifier = Modifier.size(35.dp),
+                            tint = Color.Red,
                         )
                     } else {
                         Icon(
-                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_star_24),
-                            contentDescription = "Favorite",
-                            tint = getNamedColor("Container", isDark),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_favorite_border_24),
+                            contentDescription = "Mark as favorite",
+                            modifier = Modifier.size(35.dp),
+                            tint = Color.Black,
                         )
                     }
                 }
@@ -253,43 +254,6 @@ fun ArticleViewContent(
                 markupSelection.value = ""
                 startPos.value = 0
                 endPos.value = 0
-            }
-        )
-    }
-
-    if (showDeleteFavoriteDialog) {
-        AlertDialog(
-            onDismissRequest = { /*TODO*/ },
-            title = {
-                Text(text = "Atenție")
-            },
-            text = {
-                Text("Ești sigur că vrei să ștergi acest articol favorit?")
-            },
-            confirmButton = {
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Red,
-                        contentColor = Color.White
-                    ),
-                    onClick = {
-                        favoritesModel.deleteFavoriteArticle(article.id)
-                        showDeleteFavoriteDialog = false
-                    }) {
-                    Text("Șterge")
-                }
-            },
-            dismissButton = {
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = getNamedColor("Link", isDark),
-                        contentColor = Color.White
-                    ),
-                    onClick = {
-                        showDeleteFavoriteDialog = false
-                    }) {
-                    Text("Renunță")
-                }
             }
         )
     }
