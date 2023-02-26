@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.ovidium.comoriod.components.AppBar
@@ -23,6 +25,7 @@ import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
 import kotlinx.coroutines.launch
 
@@ -34,7 +37,8 @@ fun BookScreen(
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     searchModel: SearchModel,
-    markupsModel: MarkupsModel
+    markupsModel: MarkupsModel,
+    navController: NavHostController
 ) {
     val isDark = isSystemInDarkTheme()
     val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
@@ -51,6 +55,11 @@ fun BookScreen(
         topBar = {
             AppBar(
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
+                onTitleClicked = {
+                     navController.navigate(Screens.Library.route) {
+                         launchSingleTop = true
+                     }
+                },
                 actions = @Composable {
                     Icon(
                         imageVector = Icons.Default.List,

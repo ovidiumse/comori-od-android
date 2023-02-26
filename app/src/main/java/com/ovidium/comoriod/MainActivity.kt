@@ -95,6 +95,11 @@ fun ComoriOdApp(context: Context) {
                             onMenuClicked = {
                                 launchMenu(coroutineScope, scaffoldState)
                             },
+                            onTitleClicked = {
+                                navController.navigate(Screens.Library.route) {
+                                    launchSingleTop = true
+                                }
+                            },
                             actions = @Composable {
                                 Icon(
                                     imageVector = Icons.Default.Search,
@@ -221,7 +226,8 @@ fun BottomBarMain(
                 signInModel = signInModel,
                 favoritesModel = favoritesModel,
                 searchModel = searchModel,
-                markupsModel = markupsModel
+                markupsModel = markupsModel,
+                navController = navController
             )
         }
 

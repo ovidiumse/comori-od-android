@@ -54,9 +54,9 @@ fun FavoritesScreen(
             selectedTag = ""
 
         return if (selectedTag.isEmpty())
-            favoritesData.value.data
+            favoritesData.value.data?.reversed()
         else
-            favoritesData.value.data?.filter { fav -> fav.tags.contains(selectedTag) }
+            favoritesData.value.data?.reversed()?.filter { fav -> fav.tags.contains(selectedTag) }
     }
 
     Scaffold(

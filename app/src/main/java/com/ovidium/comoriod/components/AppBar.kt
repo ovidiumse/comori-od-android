@@ -19,18 +19,24 @@ import com.ovidium.comoriod.R
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
-fun AppBar(title: String? = null, onMenuClicked: () -> Unit, actions: @Composable () -> Unit) {
+fun AppBar(
+    title: String? = null,
+    onMenuClicked: () -> Unit,
+    onTitleClicked: (() -> Unit)? = null,
+    actions: @Composable () -> Unit
+) {
     val isDark = isSystemInDarkTheme()
     val background = getNamedColor("HeaderBar", isDark = isDark)
     val headerText = getNamedColor("HeaderText", isDark = isDark)
 
     TopAppBar(
         title = {
-                Text(
-                    text = title?: stringResource(id = R.string.app_title),
-                    fontWeight = FontWeight.Bold,
-                    color = headerText
-                )
+            Text(
+                text = title ?: stringResource(id = R.string.app_title),
+                fontWeight = FontWeight.Bold,
+                color = headerText,
+                modifier = if (onTitleClicked == null) Modifier else Modifier.clickable(onClick = onTitleClicked)
+            )
         },
         navigationIcon = {
             Spacer(modifier = Modifier.width(8.dp))
