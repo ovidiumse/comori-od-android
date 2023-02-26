@@ -34,6 +34,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtDuration
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.markups.MarkupCell
+import java.sql.Timestamp
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -43,7 +44,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun FavoriteArticleCell(
     modifier: Modifier = Modifier,
-    favoriteArticle: FavoriteArticle,
+    title: String,
+    author: String,
+    book: String,
+    timestamp: String?,
+    tags: List<String>,
     isDark: Boolean,
     onItemClick: () -> Unit,
 ) {
@@ -69,7 +74,7 @@ fun FavoriteArticleCell(
                     .padding(top = 12.dp)
             ) {
                 Text(
-                    text = favoriteArticle.title,
+                    text = title,
                     style = MaterialTheme.typography.h6,
                     fontWeight = FontWeight.Bold,
                     color = textColor,
@@ -85,7 +90,7 @@ fun FavoriteArticleCell(
                         modifier = Modifier.size(16.dp)
                     )
                     Text(
-                        text = "${favoriteArticle.author} - ${favoriteArticle.book}",
+                        text = "${author} - ${book}",
                         style = MaterialTheme.typography.caption,
                         color = textColor.copy(alpha = 0.7f),
                         modifier = Modifier
@@ -95,7 +100,7 @@ fun FavoriteArticleCell(
                 }
             }
 
-            FavoriteCellInfo(favoriteArticle, bubbleColor, textColor)
+            FavoriteCellInfo(timestamp, tags, bubbleColor, textColor)
         }
     }
 }
@@ -171,7 +176,11 @@ fun SwipeableFavoriteArticleCell(
                         .onGloballyPositioned { layoutCoordinates ->
                             boxHeight = layoutCoordinates.size.height
                         },
-                    favoriteArticle = favoriteArticle,
+                    title = favoriteArticle.title,
+                    author = favoriteArticle.author,
+                    book = favoriteArticle.book,
+                    timestamp = favoriteArticle.timestamp,
+                    tags = favoriteArticle.tags,
                     isDark = isDark,
                     onItemClick = onItemClick
                 )
@@ -181,7 +190,7 @@ fun SwipeableFavoriteArticleCell(
 }
 
 @Composable
-fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, bubbleColor: Color, textColor: Color) {
+fun FavoriteCellInfo(timestamp: String?, tags: List<String>, bubbleColor: Color, textColor: Color) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -190,18 +199,16 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, bubbleColor: Color, textC
     ) {
         Column(horizontalAlignment = Alignment.Start) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                val date =
-                    ZonedDateTime.parse(favoriteArticle.timestamp, DateTimeFormatter.ISO_DATE_TIME)
-                val duration = Duration.between(date.toInstant(), Instant.now())
 
-                if (favoriteArticle.tags.isEmpty()) {
+
+                if (tags.isEmpty()) {
                     Spacer(modifier = Modifier.weight(7f))
                 } else {
                     Row(
                         modifier = Modifier.weight(7f),
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        favoriteArticle.tags.forEach { tag ->
+                        tags.forEach { tag ->
                             TagBubble(
                                 tag = tag,
                                 textColor = textColor,
@@ -211,11 +218,16 @@ fun FavoriteCellInfo(favoriteArticle: FavoriteArticle, bubbleColor: Color, textC
                     }
                 }
 
-                Text(
-                    text = fmtDuration(duration),
-                    style = MaterialTheme.typography.caption,
-                    color = textColor
-                )
+                if (!timestamp.isNullOrEmpty()) {
+                    val date = ZonedDateTime.parse(timestamp, DateTimeFormatter.ISO_DATE_TIME)
+                    val duration = Duration.between(date.toInstant(), Instant.now())
+
+                    Text(
+                        text = fmtDuration(duration),
+                        style = MaterialTheme.typography.caption,
+                        color = textColor
+                    )
+                }
             }
         }
     }

@@ -35,96 +35,106 @@ fun SaveFavoriteDialog(
     onSaveAction: (List<String>) -> Unit,
     onExitAction: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+    val isDark = isSystemInDarkTheme()
+    val bgColor = getNamedColor("Background", isDark)
+    val textColor = getNamedColor("Text", isDark)
+    val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
+
+    var tags = remember { mutableStateListOf<String>() }
+    var currentTag by remember { mutableStateOf("") }
+    var resetTag by remember { mutableStateOf(false) }
+
+    if (resetTag) {
+        currentTag = ""
+        resetTag = false
+    }
 
     Dialog(
         properties = DialogProperties(usePlatformDefaultWidth = false),
         onDismissRequest = onExitAction
     ) {
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp
-        val screenWidth = configuration.screenWidthDp.dp
-        val isDark = isSystemInDarkTheme()
-        var tags = remember { mutableStateListOf<String>() }
-        var currentTag by remember { mutableStateOf("") }
-
         Box(
             Modifier
-                .size(screenWidth, screenHeight)
+                .width(screenWidth)
                 .background(
-                    getNamedColor("Container", isDark = isDark),
+                    bgColor,
                     RoundedCornerShape(16.dp)
                 )
         ) {
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp),
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SaveFavoriteTopBar(
                     onExitAction = onExitAction
                 )
-                Text(
-                    text = articleToSave.title,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.h5,
-                    color = Color.Red,
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                )
-                Row(horizontalArrangement = Arrangement.Start) {
-                    Text(text = "Tag-uri:", modifier = Modifier.padding(end = 5.dp))
-                    repeat(tags.count()) { index ->
-                        Text(
-                            text = tags[index],
-                            style = MaterialTheme.typography.caption,
-                            color = Color.White,
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .background(Color.Red, RoundedCornerShape(50))
-                                .padding(5.dp)
-                        )
-                    }
+
+                FavoriteArticleCell(
+                    title = articleToSave.title.text,
+                    author = articleToSave.author,
+                    book = articleToSave.book,
+                    timestamp = null,
+                    tags = tags,
+                    isDark = isDark
+                ) {
+
                 }
+
                 Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    fun addTag(tag: String) {
+                        if (tag.isNotEmpty())
+                            tags.add(tag)
+                        resetTag = true
+                    }
+
+                    Text(text = "Tag-uri:")
+
                     OutlinedTextField(
                         value = currentTag,
                         onValueChange = { text -> currentTag = text },
-                        textStyle = TextStyle(fontSize = 12.5.sp),
                         maxLines = 1,
                         singleLine = true,
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            backgroundColor = getNamedColor("InvertedText", isDark = isDark),
-                            cursorColor = getNamedColor("Link", isDark = isDark),
-                            focusedBorderColor = Color.Transparent,
+                            backgroundColor = getNamedColor("PrimarySurface", isDark),
+                            textColor = getNamedColor("MutedText", isDark),
+                            cursorColor = getNamedColor("MutedText", isDark),
+                            focusedBorderColor = getNamedColor("Border", isDark)
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(
                             onDone = {
-                                if (currentTag.isNotEmpty())
-                                    tags.add(currentTag.lowercase())
-                                currentTag = ""
+                                addTag(currentTag.trim().lowercase())
                             }
                         ),
-                        shape = Shapes.medium,
-                        modifier = Modifier
-                            .padding(16.dp)
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.weight(0.85f)
                     )
+
                     Button(
                         onClick = {
-                            if (currentTag.isNotEmpty())
-                                tags.add(currentTag.lowercase())
-                            currentTag = ""
+                            addTag(currentTag.trim().lowercase())
                         },
                         colors = ButtonDefaults.buttonColors(
                             backgroundColor = getNamedColor("Link", isDark),
-                            contentColor = Color.White),
-                        enabled = currentTag.isNotEmpty()
+                            disabledBackgroundColor = primarySurfaceColor,
+                            contentColor = Color.White
+                        ),
+                        enabled = currentTag.isNotEmpty(),
+                        modifier = Modifier.weight(0.15f)
                     ) {
-                        Text(text = "+") //Am vrut sa fie mic butonul si nu am avut inspiratie pentru altceva, revenim :)
+                        Text(text = "+")
                     }
                 }
+
                 Button(
                     onClick = {
                         if (tags.isNotEmpty()) {
@@ -135,10 +145,9 @@ fun SaveFavoriteDialog(
                     },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = getNamedColor("Link", isDark),
-                        contentColor = Color.White),
-                    modifier = Modifier
-                        .defaultMinSize(minWidth = 200.dp, minHeight = 50.dp)
-                        .padding(top = 16.dp)
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.defaultMinSize(minWidth = 120.dp)
                 ) {
                     Text(text = "Salvează")
                 }
@@ -152,30 +161,26 @@ fun SaveFavoriteDialog(
 fun SaveFavoriteTopBar(
     onExitAction: () -> Unit
 ) {
-
     val isDark = isSystemInDarkTheme()
+    val textColor = getNamedColor("Text", isDark)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 20.dp, top = 10.dp)
+        modifier = Modifier.padding(horizontal = 12.dp)
     ) {
         Text(
-            text = "Salvează articolul",
-            fontSize = 18.sp,
+            text = "Salvare articol favorit",
+            style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(top = 16.dp)
         )
         Icon(
             imageVector = Icons.Default.Close,
             contentDescription = "Close",
-            tint = getNamedColor("Link", isDark = isDark),
-            modifier = Modifier
-                .clickable(onClick = onExitAction)
+            tint = textColor,
+            modifier = Modifier.clickable(onClick = onExitAction)
         )
     }
 }

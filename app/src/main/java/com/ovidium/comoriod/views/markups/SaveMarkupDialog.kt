@@ -213,8 +213,7 @@ fun SaveMarkupDialog(
                                 backgroundColor = getNamedColor("Link", isDark),
                                 contentColor = Color.White
                             ),
-                            modifier = Modifier
-                                .defaultMinSize(minWidth = 120.dp)
+                            modifier = Modifier.defaultMinSize(minWidth = 120.dp)
                         ) {
                             Text(text = "Salvează")
                         }
@@ -243,7 +242,7 @@ fun SaveMarkupTopBar(
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.9f)
+                .weight(1f)
         )
         Icon(
             imageVector = Icons.Default.Close,

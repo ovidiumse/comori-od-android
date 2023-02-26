@@ -2,6 +2,8 @@
 
 package com.ovidium.comoriod.views.article
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -75,10 +77,21 @@ fun ArticleViewContent(
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val textColor = getNamedColor("Text", isDark)
     val bgColor = getNamedColor("Background", isDark)
-    val surfaceColor = getNamedColor("PrimarySurface", isDark)
+    val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
+    val buttonColor = getNamedColor("PrimarySurface", isDark)
     val handleColor = getNamedColor("HandleColor", isDark)
 
-    Box(modifier = Modifier.background(bgColor).blur(if (markupSelection.value.isNotEmpty()) 16.dp else 0.dp)) {
+    val hasPopup = markupSelection.value.isNotEmpty() || showSaveFavoriteDialog;
+    val bgColorState = animateColorAsState(
+        targetValue = if (hasPopup) primarySurfaceColor else bgColor,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    Box(
+        modifier = Modifier
+            .background(bgColorState.value)
+            .blur(if (markupSelection.value.isNotEmpty() || showSaveFavoriteDialog) 16.dp else 0.dp)
+    ) {
         Column {
             LazyColumn(
                 modifier = Modifier
@@ -140,7 +153,7 @@ fun ArticleViewContent(
                         }
                     },
                     modifier = Modifier.padding(bottom = 100.dp, end = 16.dp),
-                    backgroundColor = surfaceColor
+                    backgroundColor = buttonColor
                 ) {
                     if (favoritesModel.isFavorite(article.id)) {
                         Icon(
@@ -177,10 +190,20 @@ fun ArticleViewContent(
                             } else {
                                 currentHighlightIndex.value = highlights.size - 1
                             }
-                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(
+                                    2,
+                                    offsetList[currentHighlightIndex.value!!]
+                                )
+                            }
                         } else {
                             currentHighlightIndex.value = 0
-                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(
+                                    2,
+                                    offsetList[currentHighlightIndex.value!!]
+                                )
+                            }
                         }
                     },
                     modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
@@ -200,10 +223,20 @@ fun ArticleViewContent(
                             } else {
                                 currentHighlightIndex.value = 0
                             }
-                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(
+                                    2,
+                                    offsetList[currentHighlightIndex.value!!]
+                                )
+                            }
                         } else {
                             currentHighlightIndex.value = 0
-                            coroutineScope.launch { listState.animateScrollToItem(2, offsetList[currentHighlightIndex.value!!]) }
+                            coroutineScope.launch {
+                                listState.animateScrollToItem(
+                                    2,
+                                    offsetList[currentHighlightIndex.value!!]
+                                )
+                            }
                         }
                     },
                     modifier = Modifier.padding(end = 16.dp, top = 16.dp),
