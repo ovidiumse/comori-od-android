@@ -200,7 +200,7 @@ fun TOCTopBar(
         }
         Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = "Menu",
+            contentDescription = "Close",
             tint = textColor,
             modifier = Modifier
                 .clickable(onClick = onExitAction)

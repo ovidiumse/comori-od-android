@@ -44,12 +44,18 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun MarkupCell(
     modifier: Modifier = Modifier,
-    markup: Markup,
+    textSelection: String,
+    markupColor: String,
+    timestamp: String?,
+    author: String,
+    title: String,
+    book: String,
+    tags: List<String>,
     isDark: Boolean,
     onItemClick: () -> Unit
 ) {
     val initialMaxLines = 4
-    val initialText = markup.selection.trim()
+    val initialText = textSelection.trim()
     var expandedState by remember { mutableStateOf(false) }
     var maxLinesState by remember { mutableStateOf(initialMaxLines) }
     var textOverflowingState by remember { mutableStateOf(false) }
@@ -63,7 +69,7 @@ fun MarkupCell(
     val textColor = getNamedColor("HeaderText", isDark)
 
     if (initialText != textState)
-        textState = markup.selection.trim()
+        textState = textSelection.trim()
 
     val rotationDegreeState by animateFloatAsState(targetValue = if (expandedState) 180f else 0f)
 
@@ -94,7 +100,7 @@ fun MarkupCell(
                             .height(expandedTextHeight)
                             .width(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
-                        color = getNamedColor(markup.bgColor, isDark)
+                        color = getNamedColor(markupColor, isDark)
                     )
                 }
                 Text(
@@ -143,14 +149,11 @@ fun MarkupCell(
                 }
             }
             Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                val date = ZonedDateTime.parse(markup.timestamp, DateTimeFormatter.ISO_DATE_TIME)
-                val duration = Duration.between(date.toInstant(), Instant.now())
-
                 Row(
                     modifier = Modifier.weight(7f),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
-                    markup.tags.forEach { tag ->
+                    tags.forEach { tag ->
                         TagBubble(
                             tag = tag,
                             textColor = textColor,
@@ -159,11 +162,16 @@ fun MarkupCell(
                     }
                 }
 
-                Text(
-                    text = fmtDuration(duration),
-                    style = MaterialTheme.typography.caption,
-                    color = textColor
-                )
+                if (!timestamp.isNullOrEmpty()) {
+                    val date = ZonedDateTime.parse(timestamp, DateTimeFormatter.ISO_DATE_TIME)
+                    val duration = Duration.between(date.toInstant(), Instant.now())
+
+                    Text(
+                        text = fmtDuration(duration),
+                        style = MaterialTheme.typography.caption,
+                        color = textColor
+                    )
+                }
             }
             Row(
                 modifier = Modifier
@@ -172,14 +180,14 @@ fun MarkupCell(
             ) {
                 Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)) {
                     Text(
-                        text = "${markup.author} - ${markup.title}",
+                        text = "${author} - ${title}",
                         color = textColor,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
                         style = MaterialTheme.typography.caption
                     )
                     Text(
-                        text = markup.book,
+                        text = book,
                         color = textColor,
                         fontSize = 14.sp,
                         style = MaterialTheme.typography.caption
@@ -261,7 +269,13 @@ fun SwipeableMarkupCell(
                         .onGloballyPositioned { layoutCoordinates ->
                             boxHeight = layoutCoordinates.size.height
                         },
-                    markup = markup,
+                    textSelection = markup.selection,
+                    markupColor = markup.bgColor,
+                    timestamp = markup.timestamp,
+                    title = markup.title,
+                    author = markup.author,
+                    book = markup.book,
+                    tags = markup.tags,
                     isDark = isDark,
                     onItemClick = onItemClick
                 )

@@ -56,7 +56,7 @@ fun SearchBar(
 
     OutlinedTextField(
         modifier = Modifier
-            .padding(vertical = 3.dp, horizontal = 3.dp)
+            .padding(3.dp)
             .onFocusChanged { focusState ->
                 showClearButton.value = focusState.hasFocus
                 isFocused = focusState.hasFocus
