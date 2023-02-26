@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
@@ -77,7 +78,7 @@ fun ArticleViewContent(
     val surfaceColor = getNamedColor("PrimarySurface", isDark)
     val handleColor = getNamedColor("HandleColor", isDark)
 
-    Box(modifier = Modifier.background(bgColor)) {
+    Box(modifier = Modifier.background(bgColor).blur(if (markupSelection.value.isNotEmpty()) 16.dp else 0.dp)) {
         Column {
             LazyColumn(
                 modifier = Modifier

@@ -16,13 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -80,7 +78,7 @@ fun SaveMarkupDialog(
         ) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.padding(horizontal = 16.dp),
+                modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 item {
@@ -237,7 +235,7 @@ fun SaveMarkupTopBar(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 12.dp).padding(top = 12.dp)
+        modifier = Modifier.padding(horizontal = 12.dp)
     ) {
         Text(
             text = "Salvare pasaj",
