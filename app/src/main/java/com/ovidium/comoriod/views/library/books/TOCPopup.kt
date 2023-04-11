@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -165,15 +162,16 @@ fun TOCTopBar(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(if (showSearchBar) 1.dp else 12.dp)
+        modifier = Modifier.height(54.dp)
     ) {
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = "Search",
-            tint = textColor,
-            modifier = Modifier
-                .clickable(onClick = { showSearchBar = true })
-        )
+        IconButton(modifier = Modifier.size(48.dp), onClick = { showSearchBar = true }) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                tint = textColor,
+            )
+        }
+
         if (showSearchBar) {
             SearchBar(
                 searchText = searchTextFieldValue,
@@ -186,8 +184,14 @@ fun TOCTopBar(
                 onSearchTextChanged = { newFieldValue ->
                     searchTextFieldValue = newFieldValue
                     onTextChanged(newFieldValue.text)
-                }
+                },
+                modifier = Modifier.weight(0.8f)
             )
+
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+
         } else {
             Text(
                 text = "Cuprins",
@@ -198,12 +202,15 @@ fun TOCTopBar(
                     .weight(1f)
             )
         }
-        Icon(
-            imageVector = Icons.Default.Close,
-            contentDescription = "Close",
-            tint = textColor,
-            modifier = Modifier
-                .clickable(onClick = onExitAction)
-        )
+        IconButton(modifier = Modifier.size(48.dp), onClick = onExitAction)
+        {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+                tint = textColor,
+                modifier = Modifier
+                    .clickable(onClick = onExitAction)
+            )
+        }
     }
 }

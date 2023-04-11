@@ -136,25 +136,27 @@ fun SearchScreen(
                             })
 
                         if (hasSearchResults) {
-                            Icon(
-                                modifier = Modifier
-                                    .weight(0.1f)
-                                    .align(Alignment.CenterVertically)
-                                    .clickable {
-                                        showFilterPopup = !showFilterPopup
+                            IconButton(modifier = Modifier
+                                .size(48.dp)
+                                .weight(0.1f)
+                                .align(Alignment.CenterVertically),
+                                onClick = {
+                                    showFilterPopup = !showFilterPopup
 
-                                        val params = getParams()
-                                        if (aggregations.isEmpty()) {
-                                            searchModel.getTypes(query, params)
-                                            searchModel.getAuthors(query, params)
-                                            searchModel.getVolumes(query, params)
-                                            searchModel.getBooks(query, params)
-                                        }
-                                    },
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
-                                tint = textColor,
-                                contentDescription = "Filtrează",
-                            )
+                                    val params = getParams()
+                                    if (aggregations.isEmpty()) {
+                                        searchModel.getTypes(query, params)
+                                        searchModel.getAuthors(query, params)
+                                        searchModel.getVolumes(query, params)
+                                        searchModel.getBooks(query, params)
+                                    }
+                                }) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
+                                    tint = textColor,
+                                    contentDescription = "Filtrează",
+                                )
+                            }
                         }
                     }
                 })

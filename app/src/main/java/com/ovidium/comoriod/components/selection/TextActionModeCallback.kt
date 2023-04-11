@@ -26,7 +26,7 @@ class TextActionModeCallback(
         requireNotNull(mode)
 
         onCopyRequested?.let {
-            menu.add(0, MENU_ITEM_COPY, 0, android.R.string.copy)
+            menu.add(0, MENU_ITEM_COPY, 0, "Copiază")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
         }
 
@@ -46,7 +46,7 @@ class TextActionModeCallback(
         }
 
         onHighlight?.let {
-            menu.add(0, MENU_ITEM_HIGHLIGHT, 4, "Highlight")
+            menu.add(0, MENU_ITEM_HIGHLIGHT, 4, "Marchează")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
         }
 

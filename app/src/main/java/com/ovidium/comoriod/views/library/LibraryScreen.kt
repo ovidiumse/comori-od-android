@@ -70,7 +70,7 @@ fun LibraryScreen(
     signInModel: GoogleSignInModel,
     libraryModel: LibraryModel
 ) {
-    val tabsHeight = 40
+    val tabsHeight = 48
     val dropShadowSize = 3
     val isDark = isSystemInDarkTheme()
     val backgroundColor = getNamedColor("Background", isDark)

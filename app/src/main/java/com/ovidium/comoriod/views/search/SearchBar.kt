@@ -6,10 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -56,7 +53,7 @@ fun SearchBar(
 
     OutlinedTextField(
         modifier = Modifier
-            .padding(3.dp)
+            .height(52.dp)
             .onFocusChanged { focusState ->
                 showClearButton.value = focusState.hasFocus
                 isFocused = focusState.hasFocus
@@ -82,7 +79,7 @@ fun SearchBar(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                IconButton(onClick = { onClearClick() }) {
+                IconButton(modifier = Modifier.size(48.dp), onClick = { onClearClick() }) {
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = "Close"
