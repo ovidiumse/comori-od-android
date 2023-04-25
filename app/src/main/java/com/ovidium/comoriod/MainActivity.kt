@@ -51,6 +51,7 @@ import com.ovidium.comoriod.views.markups.MarkupsScreen
 import com.ovidium.comoriod.views.search.SearchScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.net.URLDecoder
 
 
 class MainActivity : ComponentActivity() {
@@ -182,15 +183,17 @@ fun BottomBarMain(
                 return if (entry.arguments == null)
                     ""
                 else
-                    entry.arguments!!.getString("articleID", "")
+                    URLDecoder.decode(entry.arguments!!.getString("articleID", ""), "utf-8")
             }
 
             fun getMarkupId(): String? {
                 return entry.arguments?.getString("markupId")
+                    ?.let { markupId -> URLDecoder.decode(markupId, "utf-8") }
             }
 
             fun isSearch(): String? {
                 return entry.arguments?.getString("isSearch")
+                    ?.let { isSearch -> URLDecoder.decode(isSearch, "utf-8") }
             }
 
             ArticleView(
@@ -216,7 +219,7 @@ fun BottomBarMain(
                 return if (entry.arguments == null)
                     ""
                 else
-                    entry.arguments!!.getString("book", "")
+                    URLDecoder.decode(entry.arguments!!.getString("book", ""), "utf-8")
             }
 
             BookScreen(
@@ -243,7 +246,7 @@ fun BottomBarMain(
                 return if (entry.arguments == null)
                     ""
                 else
-                    entry.arguments!!.getString("volume", "")
+                    URLDecoder.decode(entry.arguments!!.getString("volume", ""), "utf-8")
             }
 
             BooksForVolumeScreen(
@@ -267,7 +270,7 @@ fun BottomBarMain(
                 return if (entry.arguments == null)
                     ""
                 else
-                    entry.arguments!!.getString("author", "")
+                    URLDecoder.decode(entry.arguments!!.getString("author", ""), "utf-8")
             }
 
             BooksForAuthorScreen(
@@ -290,7 +293,7 @@ fun BottomBarMain(
                 return if (entry.arguments == null)
                     ""
                 else
-                    entry.arguments!!.getString("author", "")
+                    URLDecoder.decode(entry.arguments!!.getString("author", ""), "utf-8")
             }
             VolumesForAuthorScreen(
                 navController = navController,
@@ -313,7 +316,7 @@ fun BottomBarMain(
                 return if (entry.arguments == null)
                     ""
                 else
-                    entry.arguments!!.getString("author", "")
+                    URLDecoder.decode(entry.arguments!!.getString("author", ""), "utf-8")
             }
 
             TitlesForAuthorScreen(
@@ -335,7 +338,7 @@ fun BottomBarMain(
                 return if (entry.arguments == null)
                     ""
                 else
-                    entry.arguments!!.getString("author", "")
+                    URLDecoder.decode(entry.arguments!!.getString("author", ""), "utf-8")
             }
             TitlesForAuthorScreen(
                 navController = navController,

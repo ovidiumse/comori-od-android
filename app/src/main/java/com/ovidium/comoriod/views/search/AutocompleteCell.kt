@@ -29,12 +29,7 @@ fun AutocompleteCell(hit: Hit, navController: NavController, isDark: Boolean) {
     Column(modifier = Modifier
         .clickable {
             navController.navigate(
-                Screens.Article.withArgs(
-                    URLEncoder.encode(
-                        hit._id,
-                        "utf-8"
-                    )
-                )
+                Screens.Article.withArgs(URLEncoder.encode(hit._id, "utf-8"))
             ) {
                 launchSingleTop = true
             }

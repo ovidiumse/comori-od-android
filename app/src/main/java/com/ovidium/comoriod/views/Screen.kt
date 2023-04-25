@@ -2,6 +2,7 @@ package com.ovidium.comoriod.views
 
 import androidx.annotation.DrawableRes
 import com.ovidium.comoriod.R
+import java.net.URLEncoder
 
 enum class Screens(
     val route: String,
@@ -65,9 +66,7 @@ enum class Screens(
     fun withArgs(vararg args: String): String {
         return buildString {
             append(route)
-            args.forEach { arg ->
-                append("/$arg")
-            }
+            args.forEach { arg -> append("/${arg}") }
         }
     }
 }

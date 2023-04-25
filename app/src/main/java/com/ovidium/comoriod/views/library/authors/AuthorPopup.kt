@@ -28,6 +28,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.articulate
 import com.ovidium.comoriod.views.Screens
+import java.net.URLEncoder
 
 @Composable
 fun AuthorPopup(
@@ -86,7 +87,7 @@ fun AuthorPopup(
                         )
                         if (authorInfo.dob != null)
                             Text(
-                                text = authorInfo.dob + " - " + (authorInfo.dod?: ""),
+                                text = authorInfo.dob + " - " + (authorInfo.dod ?: ""),
                                 color = colors.colorSecondaryText,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Light
@@ -121,9 +122,7 @@ fun AuthorPopup(
                                     .padding(8.dp)
                                     .clickable {
                                         navController.navigate(
-                                            Screens.BooksForAuthor.withArgs(
-                                                authorInfo.name
-                                            )
+                                            Screens.BooksForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
                                         )
                                     }
                             )
@@ -145,9 +144,7 @@ fun AuthorPopup(
                                     .padding(8.dp)
                                     .clickable {
                                         navController.navigate(
-                                            Screens.VolumesForAuthor.withArgs(
-                                                authorInfo.name
-                                            )
+                                            Screens.VolumesForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
                                         )
                                     }
                             )
@@ -167,9 +164,7 @@ fun AuthorPopup(
                                     .padding(8.dp)
                                     .clickable {
                                         navController.navigate(
-                                            Screens.PoemsForAuthor.withArgs(
-                                                authorInfo.name
-                                            )
+                                            Screens.PoemsForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
                                         )
 
                                         libraryModel.getTitles(
@@ -195,9 +190,7 @@ fun AuthorPopup(
                                     .padding(8.dp)
                                     .clickable {
                                         navController.navigate(
-                                            Screens.ArticlesForAuthor.withArgs(
-                                                authorInfo.name
-                                            )
+                                            Screens.ArticlesForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
                                         )
                                         libraryModel.getTitles(
                                             params = mapOf(

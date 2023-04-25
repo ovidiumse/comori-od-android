@@ -40,14 +40,7 @@ fun SearchResultsCell(
         bubbleColor = bubbleColor
     ) {
         navController.navigate(
-            Screens.Article.withArgs(
-                "${
-                    URLEncoder.encode(
-                        hit._id,
-                        "utf-8"
-                    )
-                }?isSearch=true"
-            )
+            Screens.Article.withArgs("${URLEncoder.encode(hit._id, "utf-8")}?isSearch=true")
         ) {
             launchSingleTop = true
         }

@@ -64,7 +64,7 @@ fun TitlesForAuthorList(
                     }
                 }
             }
-            Status.ERROR -> TODO()
+            Status.ERROR -> {}
             Status.LOADING -> item { Text("Loading...") }
         }
     }

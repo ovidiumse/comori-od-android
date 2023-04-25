@@ -97,7 +97,7 @@ fun FavoritesScreen(
                                             bubbleColor = bubbleColor,
                                             onItemClick = {
                                                 navController.navigate(
-                                                    Screens.Article.withArgs(article.id)
+                                                    Screens.Article.withArgs(URLEncoder.encode(article.id, "utf-8"))
                                                 )
                                             },
                                             deleteAction = {

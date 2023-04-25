@@ -86,10 +86,11 @@ fun MarkupsScreen(
                             markups.forEachIndexed { index, markup ->
                                 item(key = markup.id) {
                                     Column(
-                                        modifier = Modifier.padding(horizontal = 12.dp)
+                                        modifier = Modifier
+                                            .padding(horizontal = 12.dp)
                                             .animateItemPlacement(
-                                            animationSpec = tween(durationMillis = 300)
-                                        )
+                                                animationSpec = tween(durationMillis = 300)
+                                            )
                                     ) {
                                         SwipeableMarkupCell(
                                             markup = markup,
@@ -107,7 +108,7 @@ fun MarkupsScreen(
                                                                 markup.articleID,
                                                                 "utf-8"
                                                             )
-                                                        }?markupId=${markup.id}"
+                                                        }?markupId=${URLEncoder.encode(markup.id, "utf-8")}"
                                                     )
                                                 )
                                             })

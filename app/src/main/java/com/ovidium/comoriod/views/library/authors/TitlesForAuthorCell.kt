@@ -56,12 +56,7 @@ fun TitlesForAuthorCell(
             .padding(12.dp)
             .clickable {
                 navController.navigate(
-                    Screens.Article.withArgs(
-                        URLEncoder.encode(
-                            hit._id,
-                            "utf-8"
-                        )
-                    )
+                    Screens.Article.withArgs(URLEncoder.encode(hit._id, "utf-8"))
                 ) {
                     launchSingleTop = true
                 }

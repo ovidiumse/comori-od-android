@@ -26,6 +26,7 @@ import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
+import java.net.URLEncoder
 
 @Composable
 fun ItemCard(
@@ -62,13 +63,13 @@ fun ItemCard(
             .clickable {
                 when (itemType) {
                     ItemCategory.Volume -> {
-                        navController.navigate(Screens.BooksForVolume.withArgs(title))
+                        navController.navigate(Screens.BooksForVolume.withArgs(URLEncoder.encode(title, "utf-8")))
                     }
                     ItemCategory.Book -> {
-                        navController.navigate(Screens.Book.withArgs(title))
+                        navController.navigate(Screens.Book.withArgs(URLEncoder.encode(title, "utf-8")))
                     }
                     ItemCategory.Article -> {
-                        navController.navigate(Screens.Article.withArgs(id))
+                        navController.navigate(Screens.Article.withArgs(URLEncoder.encode(id, "utf-8")))
                     }
                     else -> {}
                 }
