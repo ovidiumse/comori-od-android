@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.getAuthorCoverGradient
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.library.authors.AuthorCard
 
@@ -87,7 +88,7 @@ fun AuthorsCarousel(
                         AuthorCard(
                             dataItem,
                             isLoading,
-                            getVolumeCoverGradient("", isSystemInDarkTheme()),
+                            getAuthorCoverGradient(dataItem.name, isSystemInDarkTheme()),
                             itemSize,
                             marginSize,
                             isDark,

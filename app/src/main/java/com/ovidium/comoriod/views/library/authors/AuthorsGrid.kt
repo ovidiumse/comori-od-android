@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.getAuthorCoverGradient
 import com.ovidium.comoriod.utils.getVolumeCoverGradient
 import com.ovidium.comoriod.views.library.authors.AuthorCard
 import kotlin.math.ceil
@@ -66,7 +67,7 @@ fun AuthorsGrid(
                             AuthorCard(
                                 item,
                                 isLoading,
-                                getVolumeCoverGradient("", isDark = isDark),
+                                getAuthorCoverGradient(item.name, isDark = isDark),
                                 itemSize,
                                 marginSize,
                                 isDark,

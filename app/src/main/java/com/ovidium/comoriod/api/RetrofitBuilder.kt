@@ -11,10 +11,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
-    // const val BASE_URL = "https://api.comori-od.ro/od/"
+    const val BASE_URL = "https://api.comori-od.ro/od/"
     // const val BASE_URL = "https://testapi.comori-od.ro/od/"
     // const val BASE_URL = "https://newapi.comori-od.ro/od/"
-    const val BASE_URL = " https://d50a-109-97-21-5.ngrok-free.app/od/"
+    // const val BASE_URL = "https://d0db-109-97-21-5.ngrok-free.app/od/"
 
     private const val connectTimeout = 60L
     private const val readTimeout = 60L

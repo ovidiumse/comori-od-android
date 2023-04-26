@@ -163,7 +163,7 @@ fun ArticleViewContent(
 
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(
-                                        modifier = Modifier.size(12.dp),
+                                        modifier = Modifier.size(16.dp),
                                         imageVector = ImageVector.vectorResource(id = if (readArticle.count > 1) R.drawable.baseline_done_all_24 else R.drawable.baseline_done_24),
                                         contentDescription = "Read time",
                                         tint = doneColor.copy(alpha = 0.7f)
@@ -184,7 +184,7 @@ fun ArticleViewContent(
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            modifier = Modifier.size(12.dp),
+                            modifier = Modifier.size(16.dp),
                             imageVector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24),
                             contentDescription = "Read time",
                             tint = mutedTextColor.copy(alpha = 0.7f)
