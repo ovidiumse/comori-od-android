@@ -3,6 +3,7 @@ package com.ovidium.comoriod.model
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.MainActivity
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
+import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
@@ -32,8 +34,12 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val volumesData by lazy { dataSource.volumesData }
     val booksData by lazy { dataSource.booksData }
     val recentlyAddedBooksData by lazy { dataSource.recentlyAddedBooksData }
-    val recommendedData by lazy { dataSource.recommendedData }
+    val recommendedData = mutableStateOf<Resource<SnapshotStateList<RecommendedResponseItem>>>(Resource.uninitialized())
     val trendingData by lazy { dataSource.trendingData }
+
+    init {
+        loadRecommended()
+    }
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
@@ -78,6 +84,24 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
                 .collectLatest { response ->
                     handleResponse(offset, response)
                 }
+        }
+    }
+
+    fun loadRecommended() {
+        viewModelScope.launch {
+            dataSource.getRecommended().collectLatest { response ->
+                when(response.status){
+                    Status.SUCCESS -> {
+                        recommendedData.value = Resource.success(mutableStateListOf())
+                        response.data?.forEach { item ->
+                            recommendedData.value.data?.add(item)
+                        }
+                    }
+                    Status.LOADING -> {
+                        recommendedData.value = Resource.loading(null)
+                    }
+                }
+            }
         }
     }
 

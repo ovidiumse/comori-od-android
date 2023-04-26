@@ -2,12 +2,16 @@
 
 package com.ovidium.comoriod.views.article
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -34,18 +38,47 @@ import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.Article
+import com.ovidium.comoriod.data.article.ReadArticle
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.utils.fmtDuration
+import com.ovidium.comoriod.utils.nowUtc
+import com.ovidium.comoriod.utils.toIsoString
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.Instant
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.concurrent.timerTask
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.ExperimentalTime
+
+@Composable
+private fun LazyListState.isAtBottom(): Boolean {
+    return remember(this) {
+        derivedStateOf {
+            val visibleItemsInfo = layoutInfo.visibleItemsInfo
+            if (layoutInfo.totalItemsCount == 0) {
+                false
+            } else {
+                val lastVisibleItem = visibleItemsInfo.last()
+                val viewportHeight = layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset
+
+                (lastVisibleItem.index + 1 == layoutInfo.totalItemsCount &&
+                        lastVisibleItem.offset + lastVisibleItem.size <= viewportHeight)
+            }
+        }
+    }.value
+}
 
 @Composable
 fun ArticleViewContent(
@@ -58,11 +91,15 @@ fun ArticleViewContent(
     currentHighlightIndex: MutableState<Int?>,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
-    markupsModel: MarkupsModel
+    markupsModel: MarkupsModel,
+    readArticlesModel: ReadArticlesModel
 ) {
     val isDark = isSystemInDarkTheme()
 
     val articleModel: ArticleModel = viewModel()
+
+    var readTimePassed by remember { mutableStateOf(false) }
+    var bottomReached by remember { mutableStateOf(false) }
 
     val listState = rememberLazyListState()
     val bibleRefs = articleModel.getBibleRefs(article.id)
@@ -75,6 +112,7 @@ fun ArticleViewContent(
     val coroutineScope = rememberCoroutineScope()
 
     val mutedTextColor = getNamedColor("MutedText", isDark)
+    val doneColor = getNamedColor("doneColor", isDark)
     val textColor = getNamedColor("Text", isDark)
     val bgColor = getNamedColor("Background", isDark)
     val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
@@ -98,6 +136,7 @@ fun ArticleViewContent(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
                     .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
                 state = listState
             ) {
                 item {
@@ -105,13 +144,62 @@ fun ArticleViewContent(
                         text = article.title,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(vertical = 16.dp),
+                        modifier = Modifier.padding(top = 16.dp),
                         color = getNamedColor("OnBackground", isDark)
                     )
                 }
                 item {
-                    ArticleInfoView(article, mutedTextColor)
+                    ArticleInfoView(article, mutedTextColor, readArticlesModel)
                 }
+
+                item {
+                    when (readArticlesModel.readArticles.value.status) {
+                        Status.SUCCESS -> {
+                            val readArticle =
+                                readArticlesModel.readArticles.value.data?.lastOrNull { readArticle -> readArticle.id == article.id }
+                            if (readArticle != null) {
+                                val date = ZonedDateTime.parse(readArticle.timestamp, DateTimeFormatter.ISO_DATE_TIME)
+                                val duration = Duration.between(date.toInstant(), Instant.now())
+
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        modifier = Modifier.size(12.dp),
+                                        imageVector = ImageVector.vectorResource(id = if (readArticle.count > 1) R.drawable.baseline_done_all_24 else R.drawable.baseline_done_24),
+                                        contentDescription = "Read time",
+                                        tint = doneColor.copy(alpha = 0.7f)
+                                    )
+
+                                    Spacer(modifier = Modifier.width(4.dp))
+
+                                    val prefix = if (readArticle.count > 1) "recitit " else "citit "
+                                    Text(prefix + fmtDuration(duration), color = mutedTextColor)
+                                }
+                            }
+                        }
+                        Status.LOADING -> {
+
+                        }
+                        else -> {}
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24),
+                            contentDescription = "Read time",
+                            tint = mutedTextColor.copy(alpha = 0.7f)
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        var durationText = fmtDuration(Duration.ofSeconds(article.read_time.toLong()), "")
+                        if (durationText.isEmpty())
+                            durationText = "< 1 min"
+
+                        Text("$durationText de citit", color = mutedTextColor)
+                    }
+                }
+
                 item {
                     ArticleBodyView(
                         article,
@@ -132,6 +220,7 @@ fun ArticleViewContent(
                 }
             }
         }
+
         if (bibleRefs.isNotEmpty()) {
             BibleRefsPopup(bibleRefs)
         }
@@ -251,6 +340,7 @@ fun ArticleViewContent(
             }
         }
     }
+
     if (showSaveFavoriteDialog) {
         SaveFavoriteDialog(
             articleToSave = article,
@@ -292,8 +382,38 @@ fun ArticleViewContent(
         )
     }
 
+    if (listState.isAtBottom())
+        bottomReached = true
+
+    if (readTimePassed && bottomReached) {
+        readTimePassed = false
+        bottomReached = false
+
+        Log.d("ArticleViewContent", "Registering read article ${article.id}")
+        readArticlesModel.addOrUpdate(
+            ReadArticle(
+                article.author,
+                article.book,
+                1,
+                article.id,
+                article.title.toString(),
+                article.volume,
+                toIsoString(nowUtc())
+            )
+        )
+    }
+
+    LaunchedEffect(article.id) {
+        Log.d("ArticleViewContent", "Reading time: ${article.read_time}")
+        Timer().schedule(timerTask {
+            readTimePassed = true
+            Log.d("ArticleViewContent", "Reading timer fired!")
+        }, article.read_time * 1000L)
+    }
+
     LaunchedEffect(listState) {
         if (scrollOffset.value != 0)
             listState.scrollToItem(2, scrollOffset.value)
     }
 }
+

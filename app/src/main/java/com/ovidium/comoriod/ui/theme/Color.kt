@@ -56,7 +56,8 @@ private val LightNamedColors = mapOf(
     "markupMorn" to Color(0xFF0CE5AB),
     "markupPers" to Color(0xFFC690FF),
     "markupSkye" to Color(0xFF30B5FD),
-    "markupSlate" to Color(0xFFBEBCC0)
+    "markupSlate" to Color(0xFFBEBCC0),
+    "doneColor" to Color(0xFF26C485)
 )
 
 private val DarkNamedColors = mapOf(
@@ -102,7 +103,8 @@ private val DarkNamedColors = mapOf(
     "markupMorn" to Color(0xFF26F7BF),
     "markupPers" to Color(0xFFDFC5FB),
     "markupSkye" to Color(0xFF99DBFF),
-    "markupSlate" to Color(0xFFE0DFE2)
+    "markupSlate" to Color(0xFFE0DFE2),
+    "doneColor" to Color(0xFF26C485)
 )
 
 fun getNamedColor(name: String, isDark: Boolean): Color {

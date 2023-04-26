@@ -24,7 +24,7 @@ class MarkupsModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewMod
             loadMarkups()
         }
 
-        mutableStateOf<Resource<SnapshotStateList<Markup>>>(Resource.loading(null))
+        mutableStateOf<Resource<SnapshotStateList<Markup>>>(Resource.uninitialized())
     }
 
     fun deleteMarkup(id: String) {

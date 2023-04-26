@@ -25,7 +25,7 @@ fun articulate(cnt: Int, many: String, single: String, isShort: Boolean = false)
     }
 }
 
-fun fmtDuration(duration: Duration): String {
+fun fmtDuration(duration: Duration, prefix: String = "acum"): String {
     val durations = listOf(
         Pair(duration.toDays() / 365, Pair("ani", "an")),
         Pair(duration.toDays() / 30, Pair("luni", "lună")),
@@ -37,10 +37,10 @@ fun fmtDuration(duration: Duration): String {
     for ((cnt, units) in durations) {
         val (multiple, single) = units
         if (cnt > 0)
-            return "acum ${articulate(cnt.toInt(), multiple, single)}"
+            return "$prefix ${articulate(cnt.toInt(), multiple, single)}"
     }
 
-    return "acum"
+    return prefix
 }
 
 fun highlightElements(text: String, isDark: Boolean): AnnotatedString {

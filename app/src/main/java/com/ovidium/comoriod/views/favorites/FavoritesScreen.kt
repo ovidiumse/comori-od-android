@@ -29,6 +29,7 @@ import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
 import com.ovidium.comoriod.views.favorites.FavoriteArticleCell
 import com.ovidium.comoriod.views.favorites.SwipeableFavoriteArticleCell
+import java.net.URLEncoder
 
 @Composable
 fun FavoritesScreen(

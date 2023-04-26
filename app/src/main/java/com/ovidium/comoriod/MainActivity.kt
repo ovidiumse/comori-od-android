@@ -117,15 +117,19 @@ fun ComoriOdApp(context: Context) {
             drawerContent = { Drawer(context, scaffoldState.drawerState, navController) },
             scaffoldState = scaffoldState,
         ) {
+            val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
             BottomBarMain(
                 navController = navController,
                 scaffoldState = scaffoldState,
                 jwtUtils = jwtUtils,
                 signInModel = signInModel,
-                libraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel)),
+                libraryModel = libraryModel,
                 favoritesModel = viewModel(factory = FavoritesModelFactory(jwtUtils, signInModel)),
                 searchModel = viewModel(),
-                markupsModel = viewModel(factory = MarkupsModelFactory(jwtUtils, signInModel))
+                markupsModel = viewModel(factory = MarkupsModelFactory(jwtUtils, signInModel)),
+                readArticlesModel = viewModel(
+                    factory = ReadArticlesModelFactory(jwtUtils, signInModel, libraryModel)
+                )
             )
         }
     }
@@ -141,7 +145,8 @@ fun BottomBarMain(
     libraryModel: LibraryModel,
     favoritesModel: FavoritesModel,
     searchModel: SearchModel,
-    markupsModel: MarkupsModel
+    markupsModel: MarkupsModel,
+    readArticlesModel: ReadArticlesModel
 ) {
 
     NavHost(navController, startDestination = Screens.Library.route) {
@@ -203,7 +208,8 @@ fun BottomBarMain(
                 signInModel,
                 favoritesModel,
                 searchModel,
-                markupsModel
+                markupsModel,
+                readArticlesModel
             )
         }
 
@@ -230,6 +236,7 @@ fun BottomBarMain(
                 favoritesModel = favoritesModel,
                 searchModel = searchModel,
                 markupsModel = markupsModel,
+                readArticlesModel = readArticlesModel,
                 navController = navController
             )
         }

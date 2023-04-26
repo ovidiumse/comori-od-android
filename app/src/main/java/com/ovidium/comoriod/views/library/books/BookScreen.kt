@@ -38,6 +38,7 @@ fun BookScreen(
     favoritesModel: FavoritesModel,
     searchModel: SearchModel,
     markupsModel: MarkupsModel,
+    readArticlesModel: ReadArticlesModel,
     navController: NavHostController
 ) {
     val isDark = isSystemInDarkTheme()
@@ -85,12 +86,13 @@ fun BookScreen(
                             signInModel = signInModel,
                             favoritesModel = favoritesModel,
                             searchModel = searchModel,
-                            markupsModel = markupsModel
+                            markupsModel = markupsModel,
+                            readArticlesModel = readArticlesModel
                         )
                     }
                 }
             }
-            Status.ERROR -> TODO()
+            Status.ERROR -> {}
             Status.LOADING -> Text(text = "Loading...")
         }
 
@@ -123,7 +125,8 @@ fun BookScreen(
                     signInModel = signInModel,
                     favoritesModel = favoritesModel,
                     searchModel = searchModel,
-                    markupsModel = markupsModel
+                    markupsModel = markupsModel,
+                    readArticlesModel = readArticlesModel
                 )
             }
         }

@@ -26,5 +26,6 @@ data class Source(
     val title: String,
     val type: String,
     val verses: List<List<ArticleResponseChunk>>,
-    val volume: String
+    val volume: String,
+    val read_time: Int
 )

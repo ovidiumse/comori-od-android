@@ -87,19 +87,15 @@ fun ArticleBodyView(
                 ),
                 modifier = Modifier.fillMaxSize(),
                 onTextLayout = { textLayout ->
-                    val markup =
-                        markups.firstOrNull { markup -> markup.id == markupId }
+                    val markup = markups.firstOrNull { markup -> markup.id == markupId }
                     markup?.let { m ->
                         val rectStart = textLayout.getBoundingBox(m.index)
-                        scrollOffset.value =
-                            (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f)
-                                .toInt()
+                        scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
                     }
                     if (offsetList.isEmpty()) {
                         for (highlight in highlights) {
                             val rectStart = textLayout.getBoundingBox(highlight.start)
-                            val offset =
-                                (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
+                            val offset = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
                             offsetList.add(offset)
                         }
                     }

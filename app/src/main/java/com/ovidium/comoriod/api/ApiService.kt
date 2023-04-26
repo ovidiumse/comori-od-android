@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.api
 
 import com.ovidium.comoriod.data.article.ArticleResponse
+import com.ovidium.comoriod.data.article.ReadArticle
 import com.ovidium.comoriod.data.article.SearchArticleResponse
 import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
@@ -120,4 +121,19 @@ interface ApiService {
         @Body markup: Markup
     ): Markup
 
+    @GET("readarticles")
+    suspend fun getReadArticles(@Header("Authorization") token: String): List<ReadArticle>
+
+    @POST("readarticles")
+    suspend fun addReadArticle(
+        @Header("Authorization") token: String,
+        @Body readArticle: ReadArticle
+    ): ResponseBody
+
+    @PATCH("readarticles/{id}")
+    suspend fun updateReadArticle(
+        @Header("Authorization") token: String,
+        @Path("id") id: String,
+        @Body readArticle: ReadArticle
+    ): ResponseBody
 }

@@ -32,7 +32,8 @@ fun ArticleView(
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     searchModel: SearchModel,
-    markupsModel: MarkupsModel
+    markupsModel: MarkupsModel,
+    readArticlesModel: ReadArticlesModel
 ) {
     val bookModel: BookModel = viewModel()
     val bookData = remember { bookModel.bookData }
@@ -67,7 +68,8 @@ fun ArticleView(
                     currentHighlightIndex.value,
                     isDark = isSystemInDarkTheme()
                 ),
-                currentArticle.bibleRefs
+                currentArticle.bibleRefs,
+                currentArticle.read_time
             )
         }
 
@@ -87,7 +89,8 @@ fun ArticleView(
                     currentHighlightIndex.value,
                     isDark = isSystemInDarkTheme()
                 ),
-                currentArticle._source.bibleRefs
+                currentArticle._source.bibleRefs,
+                currentArticle._source.read_time
             )
         }
 
@@ -115,7 +118,8 @@ fun ArticleView(
                             currentHighlightIndex,
                             signInModel,
                             favoritesModel,
-                            markupsModel
+                            markupsModel,
+                            readArticlesModel
                         )
                     }
                 }

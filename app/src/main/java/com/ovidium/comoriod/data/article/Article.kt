@@ -11,5 +11,6 @@ class Article(
     val type: String,
     val body: AnnotatedString,
     val bibleRefs: Map<String, BibleRef>,
+    val read_time: Int
 ) {
 }

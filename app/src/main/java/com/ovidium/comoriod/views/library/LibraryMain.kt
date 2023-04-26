@@ -36,9 +36,7 @@ fun LibraryMain(
                 }
             }
             item {
-                StateHandler(navController, libraryModel.recommendedData) { data, isLoading ->
-                    RecommendedRow(navController, data, isLoading, isDark)
-                }
+                RecommendedRow(navController, libraryModel.recommendedData, isDark)
             }
             item {
                 StateHandler(navController, libraryModel.trendingData) { data, isLoading ->

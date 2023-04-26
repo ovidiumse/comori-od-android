@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
+import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
@@ -36,12 +37,6 @@ class LibraryDataSource(
 
     val recentlyAddedBooksData by lazy { buildFlow(externalScope) { apiService.getRecentlyAddedBooks() } }
 
-    val recommendedData by lazy {
-        buildFlow(externalScope) {
-            buildToken()?.let { token -> apiService.getRecommended(token) }
-        }
-    }
-
     val trendingData by lazy {
         buildFlow(externalScope) {
             buildToken()?.let { token -> apiService.getTrending(token) }
@@ -55,6 +50,12 @@ class LibraryDataSource(
     ): Flow<Resource<TitlesResponse>> {
         return buildSharedFlow(externalScope) {
             apiService.getTitles(limit, offset, params)
+        }
+    }
+
+    fun getRecommended(): Flow<Resource<RecommendedResponse?>> {
+        return buildSharedFlow(externalScope) {
+            buildToken()?.let { token -> apiService.getRecommended(token) }
         }
     }
 }
