@@ -213,6 +213,7 @@ fun <T> StateHandler(
             "Ceva nu a mers bine!",
             Toast.LENGTH_SHORT
         ).show()
+        Status.UNINITIALIZED -> {}
     }
 }
 

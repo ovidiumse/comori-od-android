@@ -94,6 +94,7 @@ fun BookScreen(
             }
             Status.ERROR -> {}
             Status.LOADING -> Text(text = "Loading...")
+            Status.UNINITIALIZED -> {}
         }
 
         if (showTOCPopup && titles != null) {

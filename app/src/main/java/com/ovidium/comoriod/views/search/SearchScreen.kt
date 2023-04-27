@@ -196,6 +196,7 @@ fun SearchScreen(
                     }
                     Status.LOADING -> {}
                     Status.ERROR -> {}
+                    Status.UNINITIALIZED -> {}
                 }
 
 

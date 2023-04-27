@@ -66,6 +66,7 @@ fun TitlesForAuthorList(
             }
             Status.ERROR -> {}
             Status.LOADING -> item { Text("Loading...") }
+            Status.UNINITIALIZED -> {}
         }
     }
 }

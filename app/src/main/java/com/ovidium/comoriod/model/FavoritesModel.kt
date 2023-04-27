@@ -23,18 +23,18 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewM
         viewModelScope.launch {
             loadFavorites()
         }
-        mutableStateOf<Resource<SnapshotStateList<FavoriteArticle>>>(Resource.loading(null))
+        mutableStateOf<Resource<SnapshotStateList<FavoriteArticle>>>(Resource.uninitialized())
     }
 
     fun isFavorite(id: String): Boolean {
-        return favorites.value.data?.map { fav-> fav.id }?.contains(id) ?: false
+        return favorites.value.data?.map { fav -> fav.id }?.contains(id) ?: false
     }
 
     fun deleteFavoriteArticle(id: String) {
         viewModelScope.launch {
             dataSource.deleteFavoriteArticle(id).collectLatest { response ->
                 if (response.status == Status.SUCCESS)
-                    favorites.value.data?.removeIf { favorite -> favorite.id == id}
+                    favorites.value.data?.removeIf { favorite -> favorite.id == id }
             }
         }
     }
@@ -50,7 +50,7 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewM
 
     private suspend fun loadFavorites() {
         dataSource.getFavoriteArticles().collectLatest { response ->
-            when(response.status) {
+            when (response.status) {
                 Status.SUCCESS -> {
                     favorites.value = Resource.success(mutableStateListOf())
                     response.data?.forEach { favorite ->
@@ -59,6 +59,7 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewM
                 }
                 Status.LOADING -> favorites.value = Resource.loading(null)
                 Status.ERROR -> favorites.value = Resource.error(null, response.message)
+                Status.UNINITIALIZED -> favorites.value = Resource.uninitialized()
             }
         }
     }

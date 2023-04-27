@@ -70,6 +70,7 @@ class SearchModel : ViewModel() {
                 }
                 Status.LOADING -> searchData.value = Resource.loading(null)
                 Status.ERROR -> searchData.value = Resource.error(null, response.message)
+                Status.UNINITIALIZED -> searchData.value = Resource.uninitialized()
             }
         }
 

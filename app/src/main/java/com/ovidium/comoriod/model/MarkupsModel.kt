@@ -56,6 +56,7 @@ class MarkupsModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewMod
                 }
                 Status.LOADING -> markups.value = Resource.loading(null)
                 Status.ERROR -> markups.value = Resource.error(null, response.message)
+                Status.UNINITIALIZED -> markups.value = Resource.uninitialized()
             }
         }
     }

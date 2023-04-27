@@ -46,7 +46,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
         var titles = mutableStateListOf<TitleHit>()
     }
 
-    var titlesData = mutableStateOf<Resource<TitlesData>>(Resource.loading(null))
+    var titlesData = mutableStateOf<Resource<TitlesData>>(Resource.uninitialized())
 
     private fun handleResponse(offset: Int, response: Resource<TitlesResponse>) {
         when (response.status) {
@@ -64,6 +64,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
             }
             Status.LOADING -> titlesData.value = Resource.loading(null)
             Status.ERROR -> titlesData.value = Resource.error(null, response.message)
+            Status.UNINITIALIZED -> titlesData.value = Resource.uninitialized()
         }
     }
 
@@ -100,6 +101,8 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
                     Status.LOADING -> {
                         recommendedData.value = Resource.loading(null)
                     }
+                    Status.ERROR -> recommendedData.value = Resource.error(null, response.message)
+                    Status.UNINITIALIZED -> recommendedData.value = Resource.uninitialized()
                 }
             }
         }

@@ -75,6 +75,7 @@ class ReadArticlesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel, val 
                     }
                     Status.LOADING -> readArticles.value = Resource.loading(null)
                     Status.ERROR -> readArticles.value = Resource.error(null, response.message)
+                    Status.UNINITIALIZED -> readArticles.value = Resource.uninitialized()
                 }
 
             }

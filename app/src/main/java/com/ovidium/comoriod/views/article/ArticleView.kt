@@ -125,6 +125,7 @@ fun ArticleView(
                 }
                 Status.LOADING -> {}
                 Status.ERROR -> {}
+                Status.UNINITIALIZED -> {}
             }
         }
 
