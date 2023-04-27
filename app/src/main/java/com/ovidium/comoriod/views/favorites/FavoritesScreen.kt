@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,14 +8,12 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,20 +23,26 @@ import com.ovidium.comoriod.components.NoContentPlaceholder
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.FavoritesModel
+import com.ovidium.comoriod.model.GoogleSignInModel
+import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
-import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
-import com.ovidium.comoriod.views.favorites.FavoriteArticleCell
 import com.ovidium.comoriod.views.favorites.SwipeableFavoriteArticleCell
 import java.net.URLEncoder
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FavoritesScreen(
     navController: NavController,
     favoritesModel: FavoritesModel,
+    signInModel: GoogleSignInModel,
     scaffoldState: ScaffoldState
 ) {
     val favoritesData = favoritesModel.favorites
+
+    if (favoritesData.value.status == Status.UNINITIALIZED && signInModel.userResource.value.state == UserState.LoggedIn)
+        favoritesModel.loadFavorites()
+
     val tags = favoritesData.value.data?.map { article -> article.tags }?.flatten()?.distinct()
         ?.filter { tag -> tag.isNotEmpty() }
         ?: emptyList()
@@ -49,7 +54,7 @@ fun FavoritesScreen(
     val coroutineScope = rememberCoroutineScope()
     var selectedTag by remember { mutableStateOf("") }
 
-    fun getArticles(): List<FavoriteArticle>? {
+    fun getFavoriteArticles(): List<FavoriteArticle>? {
         // selectedTag may not be in the list of tags after a deletion
         if (!tags.contains(selectedTag))
             selectedTag = ""
@@ -75,7 +80,7 @@ fun FavoritesScreen(
         ) {
             when (favoritesData.value.status) {
                 Status.SUCCESS -> {
-                    val favorites = getArticles()
+                    val favorites = getFavoriteArticles()
                     if (!favorites.isNullOrEmpty()) {
                         TagsRow(
                             tags,
@@ -86,7 +91,8 @@ fun FavoritesScreen(
                             favorites.forEachIndexed { index, article ->
                                 item(key = article.id) {
                                     Column(
-                                        modifier = Modifier.padding(horizontal = 12.dp)
+                                        modifier = Modifier
+                                            .padding(horizontal = 12.dp)
                                             .animateItemPlacement(
                                                 animationSpec = tween(durationMillis = 300)
                                             )

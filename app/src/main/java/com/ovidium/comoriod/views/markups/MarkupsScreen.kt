@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.markups
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -17,18 +18,23 @@ import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.NoContentPlaceholder
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.launchMenu
+import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.MarkupsModel
+import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.TagsRow
 import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
 import java.net.URLEncoder
+import kotlin.math.sign
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MarkupsScreen(
     navController: NavController,
     markupsModel: MarkupsModel,
+    signInModel: GoogleSignInModel,
     scaffoldState: ScaffoldState
 ) {
     val isDark = isSystemInDarkTheme()
@@ -37,6 +43,10 @@ fun MarkupsScreen(
     val bubbleColor = getNamedColor("Bubble", isDark)
 
     val markupsData = markupsModel.markups
+
+    if (markupsData.value.status == Status.UNINITIALIZED && signInModel.userResource.value.state == UserState.LoggedIn)
+        markupsModel.loadMarkups()
+
     val tags =
         markupsData.value.data?.reversed()?.map { markup -> markup.tags }?.flatten()?.distinct()
             ?.filter { tag -> tag.isNotEmpty() }

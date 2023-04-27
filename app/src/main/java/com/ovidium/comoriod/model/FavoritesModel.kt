@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.model
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -19,12 +20,7 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewM
     private val dataSource =
         FavoritesDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 
-    val favorites by lazy {
-        viewModelScope.launch {
-            loadFavorites()
-        }
-        mutableStateOf<Resource<SnapshotStateList<FavoriteArticle>>>(Resource.uninitialized())
-    }
+    val favorites = mutableStateOf<Resource<SnapshotStateList<FavoriteArticle>>>(Resource.uninitialized())
 
     fun isFavorite(id: String): Boolean {
         return favorites.value.data?.map { fav -> fav.id }?.contains(id) ?: false
@@ -48,18 +44,22 @@ class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewM
         }
     }
 
-    private suspend fun loadFavorites() {
-        dataSource.getFavoriteArticles().collectLatest { response ->
-            when (response.status) {
-                Status.SUCCESS -> {
-                    favorites.value = Resource.success(mutableStateListOf())
-                    response.data?.forEach { favorite ->
-                        favorites.value.data?.add(favorite)
+    fun loadFavorites() {
+        Log.d("FavoritesModel", "Loading favorites...")
+
+        viewModelScope.launch {
+            dataSource.getFavoriteArticles().collectLatest { response ->
+                when (response.status) {
+                    Status.SUCCESS -> {
+                        favorites.value = Resource.success(mutableStateListOf())
+                        response.data?.forEach { favorite ->
+                            favorites.value.data?.add(favorite)
+                        }
                     }
+                    Status.LOADING -> favorites.value = Resource.loading(null)
+                    Status.ERROR -> favorites.value = Resource.error(null, response.message)
+                    Status.UNINITIALIZED -> favorites.value = Resource.uninitialized()
                 }
-                Status.LOADING -> favorites.value = Resource.loading(null)
-                Status.ERROR -> favorites.value = Resource.error(null, response.message)
-                Status.UNINITIALIZED -> favorites.value = Resource.uninitialized()
             }
         }
     }

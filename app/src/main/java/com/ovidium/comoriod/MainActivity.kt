@@ -159,11 +159,11 @@ fun BottomBarMain(
         }
 
         composable(Screens.Favorites.route) {
-            FavoritesScreen(navController, favoritesModel, scaffoldState)
+            FavoritesScreen(navController, favoritesModel, signInModel, scaffoldState)
         }
 
         composable(Screens.Markups.route) {
-            MarkupsScreen(navController, markupsModel, scaffoldState)
+            MarkupsScreen(navController, markupsModel, signInModel, scaffoldState)
         }
 
         composable(

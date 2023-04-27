@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.model
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -19,13 +20,7 @@ class MarkupsModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewMod
     private val dataSource =
         MarkupsDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)
 
-    val markups by lazy {
-        viewModelScope.launch {
-            loadMarkups()
-        }
-
-        mutableStateOf<Resource<SnapshotStateList<Markup>>>(Resource.uninitialized())
-    }
+    val markups = mutableStateOf<Resource<SnapshotStateList<Markup>>>(Resource.uninitialized())
 
     fun deleteMarkup(id: String) {
         viewModelScope.launch {
@@ -45,18 +40,22 @@ class MarkupsModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewMod
         }
     }
 
-    private suspend fun loadMarkups() {
-        dataSource.getMarkups().collectLatest { response ->
-            when(response.status) {
-                Status.SUCCESS -> {
-                    markups.value = Resource.success(mutableStateListOf())
-                    response.data?.forEach { markup ->
-                        markups.value.data?.add(markup)
+    fun loadMarkups() {
+        Log.d("MarkupsModel", "Loading markups...")
+
+        viewModelScope.launch {
+            dataSource.getMarkups().collectLatest { response ->
+                when (response.status) {
+                    Status.SUCCESS -> {
+                        markups.value = Resource.success(mutableStateListOf())
+                        response.data?.forEach { markup ->
+                            markups.value.data?.add(markup)
+                        }
                     }
+                    Status.LOADING -> markups.value = Resource.loading(null)
+                    Status.ERROR -> markups.value = Resource.error(null, response.message)
+                    Status.UNINITIALIZED -> markups.value = Resource.uninitialized()
                 }
-                Status.LOADING -> markups.value = Resource.loading(null)
-                Status.ERROR -> markups.value = Resource.error(null, response.message)
-                Status.UNINITIALIZED -> markups.value = Resource.uninitialized()
             }
         }
     }
