@@ -3,6 +3,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -48,25 +50,27 @@ fun SuggestionsView(onItemClick : (String) -> Unit) {
         )
 
         LazyVerticalGrid(
-            cells = GridCells.Adaptive(90.dp),
+            columns = GridCells.Adaptive(90.dp),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(Constants.suggestionsList.shuffled().take(16)) { item ->
-                Card(backgroundColor = surfaceColor, modifier = Modifier.wrapContentWidth()) {
-                    Text(
-                        text = item,
-                        fontSize = 12.sp,
-                        color = textColor,
-                        maxLines = 1,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .clickable { onItemClick(item) }
-                    )
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            content = {
+                val suggestionsList = Constants.suggestionsList.shuffled().take(16)
+                items(suggestionsList.size) { index ->
+                    Card(backgroundColor = surfaceColor, modifier = Modifier.wrapContentWidth()) {
+                        Text(
+                            text = suggestionsList[index],
+                            fontSize = 12.sp,
+                            color = textColor,
+                            maxLines = 1,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .clickable { onItemClick(suggestionsList[index]) }
+                        )
+                    }
                 }
             }
-        }
+        )
     }
 }
 
