@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
-import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ReadArticle
@@ -215,7 +214,8 @@ fun ArticleViewContent(
                         endPos,
                         scrollOffset,
                         bibleRefs,
-                        showHighlightControls
+                        showHighlightControls,
+                        signInModel
                     )
                 }
             }

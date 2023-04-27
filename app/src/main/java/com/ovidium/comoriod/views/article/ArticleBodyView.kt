@@ -18,12 +18,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.text.set
 import androidx.core.text.toSpannable
+import com.ovidium.comoriod.components.ActionCallback
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
+import com.ovidium.comoriod.model.GoogleSignInModel
+import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import kotlin.math.sign
 
 @Composable
 fun ArticleBodyView(
@@ -40,12 +44,20 @@ fun ArticleBodyView(
     endPos: MutableState<Int>,
     scrollOffset: MutableState<Int>,
     bibleRefs: SnapshotStateList<BibleRefVerse>,
-    showHighlightControls: MutableState<Boolean>
+    showHighlightControls: MutableState<Boolean>,
+    signInModel: GoogleSignInModel
 ) {
 
     var selection by remember { mutableStateOf("") }
     var clearSelection by remember { mutableStateOf(false) }
     var scrollTopOffset = 0
+
+    var onHighlight: ActionCallback? = null
+    if (signInModel.userResource.value.state == UserState.LoggedIn)
+        onHighlight = {
+            markupSelection.value = selection
+            clearSelection = true
+        }
 
     with(LocalDensity.current) {
         scrollTopOffset =
@@ -57,10 +69,7 @@ fun ArticleBodyView(
         onCopy = {
             clearSelection = true
         },
-        onHighlight = {
-            markupSelection.value = selection
-            clearSelection = true
-        })
+        onHighlight = onHighlight)
 
     val customTextSelectionColors = TextSelectionColors(
         handleColor = handleColor,
