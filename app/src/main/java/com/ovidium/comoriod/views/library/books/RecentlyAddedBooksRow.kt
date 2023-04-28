@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.recentlyaddedbooks.RecentlyAddedBooksResponse
@@ -13,7 +14,8 @@ fun RecentlyAddedBooksRow(
     navController: NavController,
     response: RecentlyAddedBooksResponse?,
     isLoading: Boolean,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
     fun getAuthorDisplay(item: RecentlyAddedBooksResponseItem): String {
         if (item.authors.size != 1)
@@ -43,5 +45,5 @@ fun RecentlyAddedBooksRow(
 
     val show = isLoading || (items != null && items.isNotEmpty())
     if (show)
-        HorizontalCarousel(navController, "Adăugate recent", items, 2, isLoading)
+        HorizontalCarousel(navController, "Adăugate recent", items, 2, isLoading, modifier = modifier)
 }

@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -51,7 +52,9 @@ fun ItemsGrid(
                 item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth().animateItemPlacement(
+                            animationSpec = tween(durationMillis = 300)
+                        )
                     ) {
                         repeat(itemsByRow) {
                             ItemCard(
@@ -63,7 +66,10 @@ fun ItemsGrid(
                                 itemSize = itemSize,
                                 colors = emptyList(),
                                 marginSize = marginSize,
-                                isDark = isDark
+                                isDark = isDark,
+                                modifier = Modifier.animateItemPlacement(
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                             )
                         }
                     }
@@ -75,7 +81,9 @@ fun ItemsGrid(
                     items(items.chunked(itemsByRow)) { rowItems ->
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().animateItemPlacement(
+                                animationSpec = tween(durationMillis = 300)
+                            )
                         ) {
                             for (item in rowItems) {
                                 ItemCard(
@@ -90,7 +98,10 @@ fun ItemsGrid(
                                     item.gradient,
                                     itemSize,
                                     marginSize,
-                                    isDark
+                                    isDark,
+                                    modifier = Modifier.animateItemPlacement(
+                                        animationSpec = tween(durationMillis = 300)
+                                    )
                                 )
                             }
                         }

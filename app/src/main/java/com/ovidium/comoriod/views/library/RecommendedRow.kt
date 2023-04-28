@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.library
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
@@ -14,9 +15,10 @@ import com.ovidium.comoriod.utils.getVolumeCoverGradient
 fun RecommendedRow(
     navController: NavController,
     response: MutableState<Resource<SnapshotStateList<RecommendedResponseItem>>>,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
-    when(response.value.status) {
+    when (response.value.status) {
         Status.SUCCESS -> {
             val items = response.value.data?.map { item ->
                 DataItem(
@@ -30,11 +32,12 @@ fun RecommendedRow(
                 )
             }
 
-            if (items != null && items.isNotEmpty())
-                HorizontalCarousel(navController, "Recomandate", items, 5, false)
+            if (!items.isNullOrEmpty())
+                HorizontalCarousel(navController, "Recomandate", items, 5, false, modifier = modifier)
         }
+
         Status.ERROR -> {}
-        Status.LOADING -> HorizontalCarousel(navController, "Recomandate", listOf(), 5, true)
+        Status.LOADING -> HorizontalCarousel(navController, "Recomandate", listOf(), 5, true, modifier = modifier)
         else -> {}
     }
 }

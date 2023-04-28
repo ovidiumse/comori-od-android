@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,7 +25,8 @@ fun AuthorsCarousel(
     dataItems: List<Bucket>?,
     estimatedSize: Int,
     isLoading: Boolean,
-    showAuthorAction: (Bucket?) -> Unit
+    showAuthorAction: (Bucket?) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
 
@@ -46,7 +48,7 @@ fun AuthorsCarousel(
 
     Column(
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
             .padding(top = marginSize.dp)
     ) {
@@ -72,7 +74,10 @@ fun AuthorsCarousel(
                             itemSize = itemSize,
                             marginSize = marginSize,
                             isDark = isDark,
-                            showAuthorAction = showAuthorAction
+                            showAuthorAction = showAuthorAction,
+                            modifier = Modifier.animateItemPlacement(
+                                animationSpec = tween(durationMillis = 300)
+                            )
                         )
 
                         if (index == estimatedSize - 1)
@@ -92,7 +97,10 @@ fun AuthorsCarousel(
                             itemSize,
                             marginSize,
                             isDark,
-                            showAuthorAction
+                            showAuthorAction,
+                            modifier = Modifier.animateItemPlacement(
+                                animationSpec = tween(durationMillis = 300)
+                            )
                         )
 
                         if (index == dataItems.lastIndex)

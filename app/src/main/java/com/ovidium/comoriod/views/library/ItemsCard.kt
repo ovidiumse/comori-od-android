@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,7 +14,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,7 +41,8 @@ fun ItemCard(
     colors: List<Color>,
     itemSize: Int,
     marginSize: Int,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val titleAreaSize = itemSize * 0.60
     val authorBarSize = itemSize * 0.18
@@ -52,7 +53,7 @@ fun ItemCard(
     val secondaryBackground = getNamedColor("SecondaryBackground", isDark)
     val secondarySurfaceColor = getNamedColor("SecondarySurface", isDark)
 
-    Card(shape = RoundedCornerShape(12)) {
+    Card(shape = RoundedCornerShape(12), modifier = modifier) {
         var boxModifier = Modifier
             .size(width = itemSize.dp, height = itemSize.dp)
             .placeholder(

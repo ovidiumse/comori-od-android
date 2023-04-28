@@ -45,7 +45,8 @@ fun ArticleBodyView(
     scrollOffset: MutableState<Int>,
     bibleRefs: SnapshotStateList<BibleRefVerse>,
     showHighlightControls: MutableState<Boolean>,
-    signInModel: GoogleSignInModel
+    signInModel: GoogleSignInModel,
+    modifier: Modifier = Modifier
 ) {
 
     var selection by remember { mutableStateOf("") }
@@ -69,7 +70,8 @@ fun ArticleBodyView(
         onCopy = {
             clearSelection = true
         },
-        onHighlight = onHighlight)
+        onHighlight = onHighlight
+    )
 
     val customTextSelectionColors = TextSelectionColors(
         handleColor = handleColor,
@@ -86,7 +88,9 @@ fun ArticleBodyView(
                 selection = article.body.text.subSequence(start, end).toString()
                 startPos.value = start
                 endPos.value = end
-            }) {
+            },
+            modifier = modifier
+        ) {
             ClickableText(
                 text = article.body,
                 style = TextStyle(

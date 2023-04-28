@@ -23,11 +23,11 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun ArticleInfoView(article: Article, mutedTextColor: Color, readArticlesModel: ReadArticlesModel) {
+fun ArticleInfoView(article: Article, mutedTextColor: Color, readArticlesModel: ReadArticlesModel, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start,
-        modifier = Modifier
+        modifier = modifier
             .height(IntrinsicSize.Max)
     ) {
         Divider(

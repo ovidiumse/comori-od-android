@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -22,6 +23,7 @@ fun HorizontalCarousel(
     estimatedSize: Int,
     isLoading: Boolean,
     isLast: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
 
@@ -43,7 +45,7 @@ fun HorizontalCarousel(
 
     Column(
         verticalArrangement = Arrangement.spacedBy(marginSize.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
             .padding(
                 top = marginSize.dp,
@@ -59,7 +61,8 @@ fun HorizontalCarousel(
         )
 
         LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(marginSize.dp)
+            horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
+        modifier = Modifier
         ) {
             if (isLoading)
                 repeat(estimatedSize) { index ->
@@ -76,7 +79,10 @@ fun HorizontalCarousel(
                             colors = emptyList(),
                             itemSize = itemSize,
                             marginSize = marginSize,
-                            isDark = isDark
+                            isDark = isDark,
+                            modifier = Modifier.animateItemPlacement(
+                                animationSpec = tween(durationMillis = 300)
+                            )
                         )
 
                         if (index == estimatedSize - 1)
@@ -101,7 +107,10 @@ fun HorizontalCarousel(
                             dataItem.gradient,
                             itemSize,
                             marginSize,
-                            isDark
+                            isDark,
+                            modifier = Modifier.animateItemPlacement(
+                                animationSpec = tween(durationMillis = 300)
+                            )
                         )
 
                         if (index == dataItems.lastIndex)

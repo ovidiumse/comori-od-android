@@ -1,6 +1,8 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
@@ -32,26 +34,38 @@ fun LibraryMain(
                     navController,
                     libraryModel.recentlyAddedBooksData
                 ) { data, isLoading ->
-                    RecentlyAddedBooksRow(navController, data, isLoading, isDark)
+                    RecentlyAddedBooksRow(
+                        navController, data, isLoading, isDark, modifier = Modifier.animateItemPlacement(
+                            animationSpec = tween(durationMillis = 300)
+                        )
+                    )
                 }
             }
             item {
-                RecommendedRow(navController, libraryModel.recommendedData, isDark)
+                RecommendedRow(navController, libraryModel.recommendedData, isDark, modifier = Modifier.animateItemPlacement(
+                    animationSpec = tween(durationMillis = 300)
+                ))
             }
             item {
                 StateHandler(navController, libraryModel.trendingData) { data, isLoading ->
-                    TrendingRow(navController, data, isLoading, isDark)
+                    TrendingRow(navController, data, isLoading, isDark, modifier = Modifier.animateItemPlacement(
+                        animationSpec = tween(durationMillis = 300)
+                    ))
                 }
             }
         }
         item {
             StateHandler(navController, libraryModel.authorsData) { data, isLoading ->
-                AuthorsRow(navController, data, isLoading, isDark, showAuthorAction)
+                AuthorsRow(navController, data, isLoading, isDark, showAuthorAction, modifier = Modifier.animateItemPlacement(
+                    animationSpec = tween(durationMillis = 300)
+                ))
             }
         }
         item {
             StateHandler(navController, libraryModel.volumesData) { data, isLoading ->
-                VolumesRow(navController, data, isLoading, isDark)
+                VolumesRow(navController, data, isLoading, isDark, modifier = Modifier.animateItemPlacement(
+                    animationSpec = tween(durationMillis = 300)
+                ))
             }
         }
     }

@@ -35,7 +35,8 @@ fun AuthorCard(
     itemSize: Int,
     marginSize: Int,
     isDark: Boolean,
-    showAuthorAction: (Bucket?) -> Unit
+    showAuthorAction: (Bucket?) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val imageAreaSize = itemSize * 0.70
     val authorImageSize = imageAreaSize * 0.80
@@ -43,7 +44,7 @@ fun AuthorCard(
     val secondaryBackground = getNamedColor("SecondaryBackground", isDark)
     val secondarySurface = getNamedColor("SecondarySurface", isDark)
 
-    Card(shape = RoundedCornerShape(12)) {
+    Card(shape = RoundedCornerShape(12), modifier = modifier) {
         var boxModifier = Modifier
             .size(width = itemSize.dp, height = itemSize.dp)
             .placeholder(

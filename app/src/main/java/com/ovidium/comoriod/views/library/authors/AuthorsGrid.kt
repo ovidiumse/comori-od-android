@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,18 +20,13 @@ import kotlin.math.ceil
 
 @Composable
 fun AuthorsGrid(
-    navController: NavController,
-    response: AuthorsResponse?,
-    isLoading: Boolean,
-    isDark: Boolean,
-    showAuthorAction: (Bucket?) -> Unit
+    navController: NavController, response: AuthorsResponse?, isLoading: Boolean, isDark: Boolean, showAuthorAction: (Bucket?) -> Unit
 ) {
 
     val itemMinWidth = 180
     val marginSize = 12
     val itemsByRow = LocalConfiguration.current.screenWidthDp / itemMinWidth
-    val itemSize =
-        (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
+    val itemSize = (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
     val estimatedSize = 2
 
     LazyColumn(
@@ -43,7 +39,12 @@ fun AuthorsGrid(
         if (isLoading) {
             repeat(ceil(estimatedSize.toDouble() / itemsByRow).toInt()) {
                 item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
+                        modifier = Modifier.animateItemPlacement(
+                            animationSpec = tween(durationMillis = 300)
+                        )
+                    ) {
                         repeat(itemsByRow) {
                             AuthorCard(
                                 authorInfo = null,
@@ -52,7 +53,10 @@ fun AuthorsGrid(
                                 colors = emptyList(),
                                 marginSize = marginSize,
                                 isDark = isDark,
-                                showAuthorAction = showAuthorAction
+                                showAuthorAction = showAuthorAction,
+                                modifier = Modifier.animateItemPlacement(
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                             )
                         }
 
@@ -62,7 +66,9 @@ fun AuthorsGrid(
         } else {
             response?.aggregations?.authors?.buckets?.let { buckets ->
                 items(buckets.chunked(itemsByRow)) { rowItems ->
-                    Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(marginSize.dp), modifier = Modifier.animateItemPlacement(
+                        animationSpec = tween(durationMillis = 300)
+                    )) {
                         for (item in rowItems) {
                             AuthorCard(
                                 item,
@@ -71,7 +77,10 @@ fun AuthorsGrid(
                                 itemSize,
                                 marginSize,
                                 isDark,
-                                showAuthorAction = showAuthorAction
+                                showAuthorAction = showAuthorAction,
+                                modifier = Modifier.animateItemPlacement(
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                             )
                         }
                     }

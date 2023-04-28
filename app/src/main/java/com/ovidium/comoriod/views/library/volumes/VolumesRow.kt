@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.library
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.volumes.Bucket
@@ -13,7 +14,8 @@ fun VolumesRow(
     navController: NavController,
     response: VolumesResponse?,
     isLoading: Boolean,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
     fun getAuthorDisplay(bucket: Bucket): String {
         if (bucket.authors.buckets.size != 1)
@@ -45,6 +47,7 @@ fun VolumesRow(
         items,
         estimatedSize = 7,
         isLoading,
-        isLast = true
+        isLast = true,
+        modifier = modifier
     )
 }
