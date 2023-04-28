@@ -4,6 +4,8 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,10 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.pagerTabIndicatorOffset
-import com.google.accompanist.pager.rememberPagerState
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -106,12 +105,12 @@ fun LibraryScreen(
                     text = { Text(tab.toString()) })
             }
         }
-        HorizontalPager(count = TabCategory.values().size, state = pagerState) { tab ->
+        HorizontalPager(pageCount = TabCategory.values().size, state = pagerState) { tab ->
             if (isConnected) {
                 Surface(modifier = Modifier
                     .background(backgroundColor)
                     .graphicsLayer {
-                        val pageOffset = calculateCurrentOffsetForPage(tab).absoluteValue
+                        val pageOffset = (pagerState.currentPage - tab) + pagerState.currentPageOffsetFraction
                         lerp(
                             start = ScaleFactor(0.85f, 0.85f),
                             stop = ScaleFactor(1f, 1f),

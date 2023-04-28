@@ -1,8 +1,10 @@
 package com.ovidium.comoriod.views.library.books
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
@@ -16,9 +18,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.*
@@ -29,6 +29,7 @@ import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.article.ArticleView
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun BookScreen(
     book: String,
@@ -76,7 +77,7 @@ fun BookScreen(
             Status.SUCCESS -> {
                 if (!titles.isNullOrEmpty()) {
                     HorizontalPager(
-                        count = titles.count(),
+                        pageCount = titles.count(),
                         state = pagerState,
                         contentPadding = PaddingValues(end = 16.dp),
                         verticalAlignment = Alignment.Top,
@@ -116,7 +117,7 @@ fun BookScreen(
             Text(text = "Loading...")
         } else {
             HorizontalPager(
-                count = titles.count(),
+                pageCount = titles.count(),
                 state = pagerState,
                 contentPadding = PaddingValues(end = 16.dp),
                 verticalAlignment = Alignment.Top,
