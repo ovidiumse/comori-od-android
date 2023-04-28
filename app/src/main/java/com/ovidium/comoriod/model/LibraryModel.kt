@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.model
 
 import android.content.Context
+import androidx.annotation.Keep
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 
 const val TAG = "AggregationsModel"
 
+@Keep
 class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     ViewModel() {
 

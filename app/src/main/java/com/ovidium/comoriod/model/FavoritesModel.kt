@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.model
 
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -16,6 +17,7 @@ import com.ovidium.comoriod.utils.Status
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@Keep
 class FavoritesModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) : ViewModel() {
     private val dataSource =
         FavoritesDataSource(jwtUtils, RetrofitBuilder.apiService, signInModel, viewModelScope)

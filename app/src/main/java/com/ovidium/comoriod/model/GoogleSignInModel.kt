@@ -3,6 +3,7 @@ package com.ovidium.comoriod.model
 import android.app.Application
 import android.content.Context
 import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.annotation.Keep
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +43,7 @@ data class UserResource(val user: GoogleUserModel?, val state: UserState, val me
     }
 }
 
+@Keep
 class GoogleSignInModel(context: Context) : ViewModel() {
     private val errorMessage = "Ceva nu a mers bine."
 
