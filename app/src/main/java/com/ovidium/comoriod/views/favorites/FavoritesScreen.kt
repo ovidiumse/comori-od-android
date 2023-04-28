@@ -69,7 +69,7 @@ fun FavoritesScreen(
         topBar = {
             AppBar(
                 title = "Favorite",
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) }) {
             }
         }
     ) {

@@ -1,27 +1,17 @@
 package com.ovidium.comoriod
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -69,6 +59,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ComoriOdApp(context: Context) {
     val isDark = isSystemInDarkTheme()
@@ -94,7 +85,7 @@ fun ComoriOdApp(context: Context) {
                     else -> {
                         AppBar(
                             onMenuClicked = {
-                                launchMenu(coroutineScope, scaffoldState)
+                                launchMenu(coroutineScope, scaffoldState.drawerState)
                             },
                             onTitleClicked = {
                                 navController.navigate(Screens.Library.route) {
@@ -359,11 +350,11 @@ fun BottomBarMain(
 }
 
 
-fun launchMenu(coroutineScope: CoroutineScope, scaffoldState: ScaffoldState) {
+fun launchMenu(coroutineScope: CoroutineScope, drawerState: DrawerState) {
     coroutineScope.launch {
-        if (scaffoldState.drawerState.isClosed)
-            scaffoldState.drawerState.open()
+        if (drawerState.isClosed)
+            drawerState.open()
         else
-            scaffoldState.drawerState.close()
+            drawerState.close()
     }
 }

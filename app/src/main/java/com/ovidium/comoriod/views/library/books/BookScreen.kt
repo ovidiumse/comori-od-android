@@ -56,7 +56,7 @@ fun BookScreen(
     Scaffold(
         topBar = {
             AppBar(
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) },
                 onTitleClicked = {
                      navController.navigate(Screens.Library.route) {
                          launchSingleTop = true

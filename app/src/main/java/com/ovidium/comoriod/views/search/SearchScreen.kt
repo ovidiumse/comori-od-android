@@ -1,33 +1,22 @@
 package com.ovidium.comoriod.views.search
 
 import SuggestionsView
-import android.util.Log
-import android.view.WindowInsets
-import android.view.WindowInsets.Type.ime
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowInsetsCompat.Type.ime
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.launchMenu
@@ -38,7 +27,6 @@ import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
 import kotlinx.coroutines.*
-import androidx.core.view.WindowInsetsCompat.Type.ime
 
 @Composable
 fun SearchScreen(
@@ -87,7 +75,7 @@ fun SearchScreen(
     Scaffold(
         topBar = {
             AppBar(
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) },
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) },
                 actions = @Composable {
                     Row {
                         SearchBar(

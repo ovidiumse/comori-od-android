@@ -69,7 +69,7 @@ fun MarkupsScreen(
         topBar = {
             AppBar(
                 title = "Pasaje",
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState) }) {
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) }) {
             }
         }
     ) {

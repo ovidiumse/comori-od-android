@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,7 +22,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -34,7 +37,6 @@ import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -68,6 +70,9 @@ fun Drawer(
         signInModel.silentSignIn(applicationContext)
 
     val coroutineScope = rememberCoroutineScope()
+
+    var signInPending by remember { mutableStateOf(false) }
+    var signOutPending by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -119,7 +124,10 @@ fun Drawer(
                                 )
                             }
                             OutlinedButton(
-                                onClick = { signInModel.signOut(applicationContext) },
+                                onClick = {
+                                    signInModel.signOut(applicationContext)
+                                    signOutPending = true
+                                },
                                 colors = ButtonDefaults.outlinedButtonColors(bubbleColor, textColor),
                                 modifier = Modifier
                                     .padding(top = 3.dp)
@@ -145,13 +153,28 @@ fun Drawer(
                             loading = userResource.state == UserState.Loading,
                             onClicked = {
                                 when (userResource.state) {
-                                    UserState.Error, UserState.NotLoggedIn ->
+                                    UserState.Error, UserState.NotLoggedIn -> {
                                         signInModel.signIn(authLauncher, signInRequestCode)
+                                        signInPending = true
+                                    }
+
                                     else -> {}
                                 }
                             }
                         )
                     }
+                }
+            }
+        }
+
+        LaunchedEffect(userResource.state) {
+            if (signInPending && userResource.state == UserState.LoggedIn) {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+            } else if (signOutPending && userResource.state == UserState.NotLoggedIn) {
+                coroutineScope.launch {
+                    drawerState.close()
                 }
             }
         }
