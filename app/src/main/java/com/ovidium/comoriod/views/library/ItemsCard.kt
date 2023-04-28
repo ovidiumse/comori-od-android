@@ -64,14 +64,20 @@ fun ItemCard(
             .clickable {
                 when (itemType) {
                     ItemCategory.Volume -> {
-                        navController.navigate(Screens.BooksForVolume.withArgs(URLEncoder.encode(title, "utf-8")))
+                        if (title.isNotEmpty())
+                            navController.navigate(Screens.BooksForVolume.withArgs(URLEncoder.encode(title, "utf-8")))
                     }
+
                     ItemCategory.Book -> {
-                        navController.navigate(Screens.Book.withArgs(URLEncoder.encode(title, "utf-8")))
+                        if (title.isNotEmpty())
+                            navController.navigate(Screens.Book.withArgs(URLEncoder.encode(title, "utf-8")))
                     }
+
                     ItemCategory.Article -> {
-                        navController.navigate(Screens.Article.withArgs(URLEncoder.encode(id, "utf-8")))
+                        if (id.isNotEmpty())
+                            navController.navigate(Screens.Article.withArgs(URLEncoder.encode(id, "utf-8")))
                     }
+
                     else -> {}
                 }
             }

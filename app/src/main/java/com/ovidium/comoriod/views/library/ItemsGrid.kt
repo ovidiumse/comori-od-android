@@ -61,7 +61,7 @@ fun ItemsGrid(
                                 navController,
                                 title = "",
                                 id = "",
-                                itemType = ItemCategory.Article,
+                                itemType = ItemCategory.None,
                                 isLoading,
                                 itemSize = itemSize,
                                 colors = emptyList(),
