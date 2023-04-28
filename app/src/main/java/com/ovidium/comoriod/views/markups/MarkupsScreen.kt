@@ -1,7 +1,6 @@
 package com.ovidium.comoriod.views.markups
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -9,9 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.components.AppBar
@@ -25,9 +22,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.TagsRow
-import com.ovidium.comoriod.views.favorites.DeleteFavoriteConfirmationDialog
 import java.net.URLEncoder
-import kotlin.math.sign
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -82,7 +77,7 @@ fun MarkupsScreen(
                 Status.SUCCESS -> {
                     val markups = getMarkups()
 
-                    if (markups == null || markups.isEmpty())
+                    if (markups.isNullOrEmpty())
                         NoContentPlaceholder("Nu ai nici un pasaj favorit")
                     else {
                         TagsRow(

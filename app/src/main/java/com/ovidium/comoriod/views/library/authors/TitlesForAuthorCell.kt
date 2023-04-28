@@ -45,11 +45,12 @@ fun TitlesForAuthorCell(
     navController: NavController,
     bgColor: Color,
     mutedTextColor: Color,
-    bubbleColor: Color
+    bubbleColor: Color,
+    modifier: Modifier = Modifier
 ) {
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(10.dp))
             .background(bgColor)

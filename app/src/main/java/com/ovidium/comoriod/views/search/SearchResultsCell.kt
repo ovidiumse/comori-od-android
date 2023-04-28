@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.search
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.ovidium.comoriod.components.TextCard
 import com.ovidium.comoriod.data.search.Hit
@@ -16,7 +17,8 @@ fun SearchResultsCell(
     index: Int,
     hit: Hit,
     navController: NavController,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val bgColor = getNamedColor("Container", isDark)
     val mutedText = getNamedColor("MutedText", isDark)
@@ -37,7 +39,8 @@ fun SearchResultsCell(
         lines = fmtVerses(hit.highlight?.body.orEmpty(), isDark = isSystemInDarkTheme()),
         subtitleColor = mutedText,
         bgColor = bgColor,
-        bubbleColor = bubbleColor
+        bubbleColor = bubbleColor,
+        modifier = modifier
     ) {
         navController.navigate(
             Screens.Article.withArgs("${URLEncoder.encode(hit._id, "utf-8")}?isSearch=true")

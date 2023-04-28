@@ -40,10 +40,11 @@ fun TextCard(
     subtitleColor: Color,
     bgColor: Color,
     bubbleColor: Color,
+    modifier: Modifier = Modifier,
     onItemClick: () -> Unit
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(shape = RoundedCornerShape(16.dp))
             .background(bgColor)

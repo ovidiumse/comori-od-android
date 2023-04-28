@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.search
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -30,7 +31,9 @@ fun SearchResultsList(
             if (index == 0)
                 Spacer(modifier = Modifier.height(12.dp))
 
-            SearchResultsCell(index, hit = hit, navController = navController, isDark)
+            SearchResultsCell(index, hit = hit, navController = navController, isDark, modifier = Modifier.animateItemPlacement(
+                animationSpec = tween(durationMillis = 300)
+            ))
             Spacer(modifier = Modifier.height(12.dp))
 
             if (index == hits.lastIndex)

@@ -13,6 +13,7 @@ import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.Status
 
 @Composable
 fun LibraryMain(
@@ -22,6 +23,8 @@ fun LibraryMain(
     isDark: Boolean,
     showAuthorAction: (Bucket?) -> Unit
 ) {
+    if (libraryModel.recommendedData.value.status == Status.UNINITIALIZED && signInModel.userResource.value.state == UserState.LoggedIn)
+        libraryModel.loadRecommended()
 
     LazyColumn(
         modifier = Modifier

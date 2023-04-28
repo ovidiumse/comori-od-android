@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library.authors
 
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -52,7 +53,10 @@ fun TitlesForAuthorList(
                                 navController = navController,
                                 bgColor = bgColor,
                                 mutedTextColor = mutedTextColor,
-                                bubbleColor = bubbleColor
+                                bubbleColor = bubbleColor,
+                                modifier = Modifier.animateItemPlacement(
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                             )
 
                             if (index == titles.lastIndex) {
