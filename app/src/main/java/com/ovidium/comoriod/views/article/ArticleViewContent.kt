@@ -118,6 +118,12 @@ fun ArticleViewContent(
     val buttonColor = getNamedColor("PrimarySurface", isDark)
     val handleColor = getNamedColor("HandleColor", isDark)
 
+    if (favoritesModel.favorites.value.status == Status.UNINITIALIZED && signInModel.userResource.value.state == UserState.LoggedIn)
+        favoritesModel.loadFavorites()
+
+    if (markupsModel.markups.value.status == Status.UNINITIALIZED && signInModel.userResource.value.state == UserState.LoggedIn)
+        markupsModel.loadMarkups()
+
     val hasPopup = markupSelection.value.isNotEmpty() || showSaveFavoriteDialog;
     val bgColorState = animateColorAsState(
         targetValue = if (hasPopup) primarySurfaceColor else bgColor,
