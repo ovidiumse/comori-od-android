@@ -17,25 +17,18 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 class SearchDataSource(
-    private val apiService: ApiService,
-    private val externalScope: CoroutineScope
+    private val apiService: ApiService, private val externalScope: CoroutineScope
 ) : DataSource() {
     fun autocomplete(prefix: String): SharedFlow<Resource<AutocompleteResponse>> {
         return buildSharedFlow(externalScope) { apiService.autocomplete(prefix) }
     }
 
     fun search(
-        q: String,
-        limit: Int = 20,
-        offset: Int = 0,
-        params: Map<String, String>
+        q: String, limit: Int = 20, offset: Int = 0, params: Map<String, String>
     ): SharedFlow<Resource<SearchResponse>> {
         return buildSharedFlow(externalScope) {
             apiService.search(
-                q,
-                limit,
-                offset,
-                params
+                q, limit, offset, "|", params
             )
         }
     }
@@ -49,46 +42,34 @@ class SearchDataSource(
     }
 
     fun getTypes(
-        q: String = "",
-        params: Map<String, String> = emptyMap()
+        q: String = "", params: Map<String, String> = emptyMap()
     ): SharedFlow<Resource<TypesResponse>> {
         return buildSharedFlow(externalScope) {
-            apiService.getTypes(
-                q,
-                params.filter { (key, _) -> key != "types" })
+            apiService.getTypes(q, "|", params.filter { (key, _) -> key != "types" })
         }
     }
 
     fun getAuthors(
-        q: String = "",
-        params: Map<String, String> = emptyMap()
+        q: String = "", params: Map<String, String> = emptyMap()
     ): SharedFlow<Resource<AuthorsResponse>> {
         return buildSharedFlow(externalScope) {
-            apiService.getAuthors(
-                q,
-                params.filter { (key, _) -> key != "authors" })
+            apiService.getAuthors(q, "|", params.filter { (key, _) -> key != "authors" })
         }
     }
 
     fun getVolumes(
-        q: String = "",
-        params: Map<String, String> = emptyMap()
+        q: String = "", params: Map<String, String> = emptyMap()
     ): SharedFlow<Resource<VolumesResponse>> {
         return buildSharedFlow(externalScope) {
-            apiService.getVolumes(
-                q,
-                params.filter { (key, _) -> key != "volumes" })
+            apiService.getVolumes(q, "|", params.filter { (key, _) -> key != "volumes" })
         }
     }
 
     fun getBooks(
-        q: String = "",
-        params: Map<String, String> = emptyMap()
+        q: String = "", params: Map<String, String> = emptyMap()
     ): SharedFlow<Resource<BooksResponse>> {
         return buildSharedFlow(externalScope) {
-            apiService.getBooks(
-                q,
-                params.filter { (key, _) -> key != "books" })
+            apiService.getBooks(q, "|", params.filter { (key, _) -> key != "books" })
         }
     }
 }

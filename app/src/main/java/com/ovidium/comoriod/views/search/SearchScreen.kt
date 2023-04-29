@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.search
 
 import SuggestionsView
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
@@ -28,6 +29,7 @@ import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
 import kotlinx.coroutines.*
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SearchScreen(
     navController: NavController,
@@ -64,7 +66,7 @@ fun SearchScreen(
     val bubbleColor = getNamedColor("Bubble", isDark)
 
     fun getParams(): Map<String, String> {
-        return searchParams.map { entry -> Pair(entry.key, entry.value.joinToString()) }
+        return searchParams.map { entry -> Pair(entry.key, entry.value.joinToString("|")) }
             .associate { pair -> pair }
     }
 

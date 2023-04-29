@@ -49,7 +49,7 @@ class LibraryDataSource(
         params: Map<String, String> = emptyMap()
     ): Flow<Resource<TitlesResponse>> {
         return buildSharedFlow(externalScope) {
-            apiService.getTitles(limit, offset, params)
+            apiService.getTitles(limit, offset, "|", params)
         }
     }
 

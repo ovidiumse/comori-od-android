@@ -22,24 +22,28 @@ interface ApiService {
     @GET("types")
     suspend fun getTypes(
         @Query("q") q: String = "",
+        @Query("sep") sep: String = "|",
         @QueryMap params: Map<String, String> = emptyMap()
     ): TypesResponse
 
     @GET("authors")
     suspend fun getAuthors(
         @Query("q") q: String = "",
+        @Query("sep") sep: String = "|",
         @QueryMap params: Map<String, String> = emptyMap()
     ): AuthorsResponse
 
     @GET("volumes")
     suspend fun getVolumes(
         @Query("q") q: String = "",
+        @Query("sep") sep: String = "|",
         @QueryMap params: Map<String, String> = emptyMap()
     ): VolumesResponse
 
     @GET("books")
     suspend fun getBooks(
         @Query("q") q: String = "",
+        @Query("sep") sep: String = "|",
         @QueryMap params: Map<String, String> = emptyMap()
     ): BooksResponse
 
@@ -66,6 +70,7 @@ interface ApiService {
         @Query("q") q: String,
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
+        @Query("sep") sep: String = "|",
         @QueryMap params: Map<String, String> = emptyMap()
     ): SearchResponse
 
@@ -84,6 +89,7 @@ interface ApiService {
     suspend fun getTitles(
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
+        @Query("sep") sep: String = "|",
         @QueryMap params: Map<String, String> = emptyMap()
     ): TitlesResponse
 
