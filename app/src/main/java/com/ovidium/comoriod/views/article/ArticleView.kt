@@ -2,27 +2,29 @@
 
 package com.ovidium.comoriod.views.article
 
+import android.content.Intent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.article.SearchArticleResponse
 import com.ovidium.comoriod.data.markups.Markup
-import com.ovidium.comoriod.data.search.SearchResponse
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.highlightBody
 import com.ovidium.comoriod.utils.parseVerses
 import kotlin.time.ExperimentalTime
+
 
 @Composable
 fun ArticleView(

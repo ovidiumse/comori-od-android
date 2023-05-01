@@ -2,6 +2,7 @@
 
 package com.ovidium.comoriod.views.article
 
+import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.LocalView
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.selection.SelectionContainer
@@ -129,6 +132,15 @@ fun ArticleViewContent(
         targetValue = if (hasPopup) primarySurfaceColor else bgColor,
         animationSpec = tween(durationMillis = 300)
     )
+    val context = LocalContext.current
+
+    fun showSharingSheet() {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, "https://comori-od.ro/article/${article.id}")
+        ContextCompat.startActivity(context, Intent.createChooser(shareIntent, article.title), null)
+    }
+
 
     Box(
         modifier = Modifier
@@ -239,6 +251,19 @@ fun ArticleViewContent(
             val userResourceState = signInModel.userResource
             val userResource = userResourceState.value
             if (userResource.state == UserState.LoggedIn)
+                FloatingActionButton(
+                    onClick = { showSharingSheet() },
+                    modifier = Modifier
+                        .padding(bottom = 16.dp, end = 16.dp),
+                    backgroundColor = buttonColor
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_share_24),
+                        contentDescription = "Share article",
+                        modifier = Modifier.size(35.dp),
+                        tint = Color.Black,
+                    )
+                }
                 FloatingActionButton(
                     onClick = {
                         if (favoritesModel.isFavorite(article.id)) {
