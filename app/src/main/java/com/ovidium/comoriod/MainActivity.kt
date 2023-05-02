@@ -2,6 +2,7 @@ package com.ovidium.comoriod
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.components.AppBar
@@ -342,6 +344,24 @@ fun BottomBarMain(
                 navController = navController,
                 libraryModel = libraryModel,
                 params = mapOf("authors" to getAuthor(), "types" to "articol")
+            )
+        }
+
+        // Open URL
+        composable(
+            route = Screens.Article.route + "/{articleID}",
+            deepLinks = listOf(navDeepLink {
+                uriPattern = "https://comori-od.ro/article/{articleID}"
+            }),
+        ) { backStackEntry ->
+            val articleID = backStackEntry.arguments?.getString("articleID")!!
+            ArticleView(
+                articleID = articleID,
+                signInModel = signInModel,
+                favoritesModel = favoritesModel,
+                searchModel = searchModel,
+                markupsModel = markupsModel,
+                readArticlesModel = readArticlesModel
             )
         }
 
