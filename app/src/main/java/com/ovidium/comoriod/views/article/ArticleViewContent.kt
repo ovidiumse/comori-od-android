@@ -134,6 +134,7 @@ fun ArticleViewContent(
         animationSpec = tween(durationMillis = 300)
     )
     val context = LocalContext.current
+    var expandFloatingMenu by remember { mutableStateOf(false) }
 
     fun showSharingSheet() {
         val shareIntent = Intent(Intent.ACTION_SEND)
@@ -250,9 +251,8 @@ fun ArticleViewContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            val userResourceState = signInModel.userResource
-            val userResource = userResourceState.value
-            if (userResource.state == UserState.LoggedIn)
+
+            if (expandFloatingMenu)
                 FloatingActionButton(
                     onClick = { showSharingSheet() },
                     modifier = Modifier
@@ -263,9 +263,13 @@ fun ArticleViewContent(
                         imageVector = ImageVector.vectorResource(id = R.drawable.baseline_share_24),
                         contentDescription = "Share article",
                         modifier = Modifier.size(35.dp),
-                        tint = Color.Black,
+                        tint = Color.White,
                     )
                 }
+
+            val userResourceState = signInModel.userResource
+            val userResource = userResourceState.value
+            if (expandFloatingMenu && userResource.state == UserState.LoggedIn)
                 FloatingActionButton(
                     onClick = {
                         if (favoritesModel.isFavorite(article.id)) {
@@ -274,7 +278,7 @@ fun ArticleViewContent(
                             showSaveFavoriteDialog = true
                         }
                     },
-                    modifier = Modifier.padding(bottom = 100.dp, end = 16.dp),
+                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
                     backgroundColor = buttonColor
                 ) {
                     if (favoritesModel.isFavorite(article.id)) {
@@ -289,10 +293,26 @@ fun ArticleViewContent(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_favorite_border_24),
                             contentDescription = "Mark as favorite",
                             modifier = Modifier.size(35.dp),
-                            tint = Color.Black,
+                            tint = Color.White,
                         )
                     }
                 }
+
+            FloatingActionButton(
+                onClick = { expandFloatingMenu = !expandFloatingMenu },
+                modifier = Modifier
+                    .padding(bottom = 80.dp, end = 16.dp),
+                backgroundColor = buttonColor
+            ) {
+                Icon(
+                    imageVector = if (expandFloatingMenu) ImageVector.vectorResource(id = R.drawable.baseline_close_48) else ImageVector.vectorResource(id = R.drawable.baseline_more_vert_48),
+                    contentDescription = "More actions",
+                    modifier = Modifier.size(35.dp),
+                    tint = Color.White,
+                )
+            }
+
+
         }
 
         //Highlights

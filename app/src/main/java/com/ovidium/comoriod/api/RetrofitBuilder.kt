@@ -11,8 +11,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitBuilder {
-    const val BASE_URL = "https://api.comori-od.ro/od/"
-    // const val BASE_URL = "https://testapi.comori-od.ro/od/"
+//    const val BASE_URL = "https://api.comori-od.ro/od/"
+     const val BASE_URL = "https://testapi.comori-od.ro/od/"
     // const val BASE_URL = "https://newapi.comori-od.ro/od/"
     // const val BASE_URL = "https://7997-109-97-21-5.ngrok-free.app/od/"
 
