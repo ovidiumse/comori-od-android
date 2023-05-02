@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.selection.SelectionContainer
@@ -137,8 +138,9 @@ fun ArticleViewContent(
     fun showSharingSheet() {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.type = "text/plain"
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "https://comori-od.ro/article/${article.id}")
-        ContextCompat.startActivity(context, Intent.createChooser(shareIntent, article.title), null)
+        val sharingData = article.title.text + "\n" + "https://comori-od.ro/article/${article.id}"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
+        startActivity(context, Intent.createChooser(shareIntent, null), null)
     }
 
 
