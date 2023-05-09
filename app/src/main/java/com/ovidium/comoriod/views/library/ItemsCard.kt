@@ -8,9 +8,14 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -24,6 +29,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
 import com.google.accompanist.placeholder.material.placeholder
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
 import java.net.URLEncoder
@@ -87,10 +93,9 @@ fun ItemCard(
         Box(boxModifier) {
             Column {
                 Row(
-                    modifier = Modifier
-                        .height(titleAreaSize.dp)
+                    modifier = Modifier.height(titleAreaSize.dp)
                 ) {
-                    Text(
+                    AdaptiveText(
                         text = title,
                         color = Color.Black,
                         style = MaterialTheme.typography.h6,
@@ -114,24 +119,29 @@ fun ItemCard(
                         modifier = Modifier.fillMaxHeight()
                     ) {
                         image_url?.let {
+                            Spacer(modifier = Modifier.width(authorImageLeftOffset.dp))
+
                             Image(
                                 painter = rememberAsyncImagePainter(image_url),
                                 contentDescription = "details",
                                 contentScale = ContentScale.FillBounds,
                                 modifier = Modifier
-                                    .offset(x = authorImageLeftOffset.dp)
                                     .requiredSize(authorImageSize.dp)
                                     .clip(RoundedCornerShape(100))
                             )
+
+                            Spacer(modifier = Modifier.width(8.dp))
                         }
 
                         secondary?.let {
-                            Text(
+                            AdaptiveText(
                                 text = secondary,
                                 style = MaterialTheme.typography.caption,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier
-                                    .fillMaxWidth()
+                                    .fillMaxWidth(0.9f)
                                     .align(Alignment.CenterVertically),
                                 color = Color.White
                             )
@@ -141,7 +151,7 @@ fun ItemCard(
 
                 detail?.let {
                     Row(modifier = Modifier.fillMaxHeight()) {
-                        Text(
+                        AdaptiveText(
                             text = detail,
                             style = MaterialTheme.typography.caption,
                             fontWeight = FontWeight.Normal,

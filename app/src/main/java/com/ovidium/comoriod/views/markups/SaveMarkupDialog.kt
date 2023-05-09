@@ -3,6 +3,7 @@ package com.ovidium.comoriod.views.markups
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,13 +15,16 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -44,19 +48,20 @@ fun SaveMarkupDialog(
     val textColor = getNamedColor("Text", isDark)
     val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
 
-    var tags = remember { mutableStateListOf<String>() }
+    val tags = remember { mutableStateListOf<String>() }
     var currentTag by remember { mutableStateOf("") }
     var resetTag by remember { mutableStateOf(false) }
 
     var selectedColor by remember { mutableStateOf("markupMorn") }
-
-    var availableColors = listOf(
+    val availableColors = listOf(
         "markupChoc",
         "markupCrayola",
+        "markupCream",
         "markupMorn",
         "markupPers",
         "markupSkye",
-        "markupSlate"
+        "markupSlate",
+        "markupMauve"
     )
 
     if (resetTag) {
@@ -114,11 +119,17 @@ fun SaveMarkupDialog(
                             resetTag = true
                         }
 
-                        Text(text = "Tag-uri:")
+                        AdaptiveText(
+                            text = "Tag-uri:", style = MaterialTheme.typography.caption, maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .weight(0.25f)
+                        )
 
                         OutlinedTextField(
                             value = currentTag,
                             onValueChange = { text -> currentTag = text },
+
                             maxLines = 1,
                             singleLine = true,
                             colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -134,7 +145,7 @@ fun SaveMarkupDialog(
                                 }
                             ),
                             shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.weight(0.85f)
+                            modifier = Modifier.weight(0.60f)
                         )
 
                         Button(
@@ -149,21 +160,22 @@ fun SaveMarkupDialog(
                             enabled = currentTag.isNotEmpty(),
                             modifier = Modifier.weight(0.15f)
                         ) {
-                            Text(text = "+")
+                            Text(text = "+", textAlign = TextAlign.Center)
                         }
                     }
                 }
 
                 item {
-                    Row(
+                    LazyRow(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier
                             .background(primarySurfaceColor, shape = RoundedCornerShape(16.dp))
                             .padding(8.dp)
                             .fillMaxWidth()
                     ) {
-                        availableColors.forEach { color ->
+                        items(availableColors.size) { idx ->
+                            val color = availableColors[idx]
                             Box(
                                 modifier = Modifier
                                     .border(

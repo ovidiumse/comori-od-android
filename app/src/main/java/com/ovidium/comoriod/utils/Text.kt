@@ -4,13 +4,16 @@ package com.ovidium.comoriod.utils
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
+import androidx.core.graphics.ColorUtils
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
+import com.ovidium.comoriod.ui.theme.getColorsForMarkup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import java.time.Duration
 
@@ -158,11 +161,13 @@ fun parseVerses(
             append(buildVerse(verse))
 
         for (markup in markups) {
+            val (textColor, bgColor) = getColorsForMarkup(markup.bgColor)
+
             println("Markup: ${markup.index}..<${markup.index + markup.length}")
             addStyle(
                 SpanStyle(
-                    color = if (isDark) Color.White else Color.Black,
-                    background = getNamedColor(markup.bgColor, isDark).copy(alpha=0.4f)
+                    color = textColor,
+                    background = bgColor
                 ),
                 start = markup.index,
                 end = markup.index + markup.length

@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.markups.Markup
+import com.ovidium.comoriod.ui.theme.getColorsForMarkup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtDuration
 import java.time.Duration
@@ -149,11 +151,12 @@ fun MarkupCell(
                 }
             }
             Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Row(
+                LazyRow(
                     modifier = Modifier.weight(7f),
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
-                    tags.forEach { tag ->
+                    items(tags.size) { idx ->
+                        val tag = tags[idx]
                         TagBubble(
                             tag = tag,
                             textColor = textColor,
@@ -161,6 +164,8 @@ fun MarkupCell(
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 if (!timestamp.isNullOrEmpty()) {
                     val date = ZonedDateTime.parse(timestamp, DateTimeFormatter.ISO_DATE_TIME)
@@ -180,7 +185,7 @@ fun MarkupCell(
             ) {
                 Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)) {
                     Text(
-                        text = "${author} - ${title}",
+                        text = "$author - $title",
                         color = textColor,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,

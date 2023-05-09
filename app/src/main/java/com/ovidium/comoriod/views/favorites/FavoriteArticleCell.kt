@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -23,10 +25,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.markups.Markup
@@ -53,8 +57,9 @@ fun FavoriteArticleCell(
     onItemClick: () -> Unit,
 ) {
     val containerColor = getNamedColor("Container", isDark)
-    var bubbleColor = getNamedColor("Bubble", isDark)
+    val bubbleColor = getNamedColor("Bubble", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
+    val mutedTextColor = getNamedColor("MutedText", isDark)
 
     Card(
         shape = RoundedCornerShape(10.dp),
@@ -73,30 +78,51 @@ fun FavoriteArticleCell(
                     .padding(horizontal = 12.dp)
                     .padding(top = 12.dp)
             ) {
-                Text(
+                AdaptiveText(
                     text = title,
-                    style = MaterialTheme.typography.h6,
+                    style = MaterialTheme.typography.body1,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
-                    color = textColor,
+                    color = textColor
                 )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
+                        modifier = Modifier.size(14.dp),
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
-                        contentDescription = "Menu",
-                        tint = textColor.copy(alpha = 0.5f),
-                        modifier = Modifier.size(16.dp)
+                        contentDescription = "Book icon",
+                        tint = mutedTextColor
                     )
-                    Text(
-                        text = "${author} - ${book}",
+                    Spacer(modifier = Modifier.width(5.dp))
+                    AdaptiveText(
+                        text = book,
                         style = MaterialTheme.typography.caption,
-                        color = textColor.copy(alpha = 0.7f),
-                        modifier = Modifier
-                            .padding(start = 8.dp)
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = mutedTextColor
                     )
+                }
 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(14.dp),
+                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_author),
+                        contentDescription = "Author icon",
+                        tint = mutedTextColor
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                    AdaptiveText(
+                        text = author,
+                        style = MaterialTheme.typography.caption,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = mutedTextColor
+                    )
                 }
             }
 
@@ -204,11 +230,12 @@ fun FavoriteCellInfo(timestamp: String?, tags: List<String>, bubbleColor: Color,
                 if (tags.isEmpty()) {
                     Spacer(modifier = Modifier.weight(7f))
                 } else {
-                    Row(
+                    LazyRow(
                         modifier = Modifier.weight(7f),
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        tags.forEach { tag ->
+                        items(tags.size) {idx ->
+                            val tag = tags[idx]
                             TagBubble(
                                 tag = tag,
                                 textColor = textColor,
@@ -217,6 +244,8 @@ fun FavoriteCellInfo(timestamp: String?, tags: List<String>, bubbleColor: Color,
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
 
                 if (!timestamp.isNullOrEmpty()) {
                     val date = ZonedDateTime.parse(timestamp, DateTimeFormatter.ISO_DATE_TIME)

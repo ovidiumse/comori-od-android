@@ -41,7 +41,7 @@ fun GoogleButton(
                 tint = Color.Unspecified
             )
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = if (loading) loadingText else text)
+            AdaptiveText(text = if (loading) loadingText else text, maxLines = 1)
             if (loading) {
                 Spacer(modifier = Modifier.width(16.dp))
                 CircularProgressIndicator(

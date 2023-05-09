@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +53,10 @@ fun SearchBar(
     val showClearButton: MutableState<Boolean> = remember { mutableStateOf(false) }
     var isFocused by remember { mutableStateOf(false) };
 
+    val captionStyle = MaterialTheme.typography.caption
+    var searchTextStyle by remember { mutableStateOf(captionStyle) }
+    var searchTextStyleReady by remember { mutableStateOf(false) }
+
     OutlinedTextField(
         modifier = Modifier
             .height(52.dp)
@@ -65,7 +71,22 @@ fun SearchBar(
             onSearchTextChanged(newFieldValue)
         },
         placeholder = {
-            Text(text = placeholderText)
+            Text(
+                text = placeholderText,
+                modifier = Modifier.drawWithContent {
+                    if (searchTextStyleReady)
+                        drawContent()
+                },
+                style = searchTextStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Clip,
+                onTextLayout = { textLayoutResult ->
+                    if (textLayoutResult.didOverflowHeight)
+                        searchTextStyle = searchTextStyle.copy(fontSize = searchTextStyle.fontSize * 0.9)
+                    else
+                        searchTextStyleReady = true
+                }
+            )
         },
         colors = TextFieldDefaults.outlinedTextFieldColors(
             backgroundColor = getNamedColor("Background", isDark),
@@ -73,6 +94,7 @@ fun SearchBar(
             cursorColor = getNamedColor("MutedText", isDark),
             focusedBorderColor = getNamedColor("Border", isDark),
         ),
+        textStyle = searchTextStyle,
         trailingIcon = {
             AnimatedVisibility(
                 visible = showClearButton.value,
@@ -96,8 +118,9 @@ fun SearchBar(
     )
 
     LaunchedEffect(Unit) {
-        if (isFocused || shouldFocus)
+        if (isFocused || shouldFocus) {
             focusRequester.requestFocus()
+        }
     }
 
     DisposableEffect(LocalLifecycleOwner.current) {

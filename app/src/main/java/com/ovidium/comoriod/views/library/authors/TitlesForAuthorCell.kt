@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -65,14 +66,16 @@ fun TitlesForAuthorCell(
     ) {
         TitlesForAuthorTitleView(hit, index, mutedTextColor)
         Row(
-            modifier = Modifier.wrapContentSize(Alignment.Center),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
+            Column(modifier = Modifier.weight(0.7f)) {
                 TitlesForAuthorBookView(hit, mutedTextColor)
                 TitlesForAuthorAuthorView(hit, mutedTextColor)
             }
-            TitlesForAuthorTypeView(hit, mutedTextColor, bubbleColor)
+            Column(modifier = Modifier.weight(0.3f)) {
+                TitlesForAuthorTypeView(hit, mutedTextColor, bubbleColor)
+            }
         }
     }
 }
@@ -87,7 +90,7 @@ fun TitlesForAuthorTitleView(hit: TitleHit, index: Int, mutedTextColor: Color) {
             .wrapContentWidth(align = Alignment.Start),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
+        AdaptiveText(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = mutedTextColor)) {
                     append("${index + 1}.  ")
@@ -97,6 +100,7 @@ fun TitlesForAuthorTitleView(hit: TitleHit, index: Int, mutedTextColor: Color) {
                     append(hit._source.title)
                 }
             },
+            maxLines = 3,
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Left
         )
@@ -116,9 +120,10 @@ fun TitlesForAuthorBookView(hit: TitleHit, mutedTextColor: Color) {
             tint = mutedTextColor.copy(alpha = 0.7f)
         )
         Spacer(modifier = Modifier.width(5.dp))
-        Text(
+        AdaptiveText(
             text = hit._source.book,
             style = MaterialTheme.typography.subtitle2,
+            maxLines = 1,
             color = mutedTextColor,
             modifier = Modifier
         )
@@ -138,9 +143,10 @@ fun TitlesForAuthorAuthorView(hit: TitleHit, mutedTextColor: Color) {
             tint = mutedTextColor.copy(alpha = 0.7f)
         )
         Spacer(modifier = Modifier.width(5.dp))
-        Text(
+        AdaptiveText(
             text = hit._source.author,
             style = MaterialTheme.typography.subtitle2,
+            maxLines = 1,
             color = mutedTextColor,
             modifier = Modifier
         )

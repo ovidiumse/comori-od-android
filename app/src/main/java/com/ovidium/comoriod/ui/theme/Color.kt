@@ -1,6 +1,9 @@
 package com.ovidium.comoriod.ui.theme
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.ColorUtils
 
 object colors {
     val colorPrimary = Color(0xFF08569B)
@@ -51,12 +54,15 @@ private val LightNamedColors = mapOf(
     "SecondarySurface" to Color(0xFF7F8796),
     "Bubble" to Color(0xFFD6DAE4),
     //Markup colors
-    "markupChoc" to Color(0xFFF39453),
-    "markupCrayola" to Color(0xFFFDD05D),
-    "markupMorn" to Color(0xFF0CE5AB),
-    "markupPers" to Color(0xFFC690FF),
-    "markupSkye" to Color(0xFF30B5FD),
-    "markupSlate" to Color(0xFFBEBCC0),
+    "markupChoc" to Color(0xFFFCA49E),
+    "markupCrayola" to Color(0xFFFDD291),
+    "markupCream" to Color(0xFFF8FC9C),
+    "markupMorn" to Color(0xFFB2FDA2),
+    "markupPers" to Color(0xFFFFC6FF),
+    "markupSkye" to Color(0xFF9BF6FF),
+    "markupSlate" to Color(0xFFACCBFF),
+    "markupMauve" to Color(0xFFCAC1FD),
+
     "doneColor" to Color(0xFF26C485)
 )
 
@@ -84,8 +90,8 @@ private val DarkNamedColors = mapOf(
     "HandleColor" to Color(0xff58a6ff),
     "PopupContainer" to Color(0xFFDEDEDE),
     "InvertedText" to Color(0xFF313131),
-    "Text" to Color(0xffc9d1d9),
-    "MutedText" to Color(0xff8b949e),
+    "Text" to Color(0xFFD7DCE2),
+    "MutedText" to Color(0xFFA7B0B9),
     "CardButton" to Color(0xFFA6CBDD),
     "HeaderText" to Color(0xfff0f6fc),
     "HeaderBar" to Color(0xff161b22),
@@ -98,18 +104,31 @@ private val DarkNamedColors = mapOf(
     "SecondarySurface" to Color(0xFF707D99),
     "Bubble" to Color(0xff383F4D),
     //Markup colors
-    "markupChoc" to Color(0xFFF1DBCC),
-    "markupCrayola" to Color(0xFFFAE6B3),
-    "markupMorn" to Color(0xFF26F7BF),
-    "markupPers" to Color(0xFFDFC5FB),
-    "markupSkye" to Color(0xFF99DBFF),
-    "markupSlate" to Color(0xFFE0DFE2),
+    "markupChoc" to Color(0xFFFDC1C1),
+    "markupCrayola" to Color(0xFFFFD6A5),
+    "markupCream" to Color(0xFFFAF3B3),
+    "markupMorn" to Color(0xFFAFFF9E),
+    "markupPers" to Color(0xFFFFC6FF),
+    "markupSkye" to Color(0xFF9BF6FF),
+    "markupSlate" to Color(0xFFACCBFF),
+    "markupMauve" to Color(0xFFCAC1FD),
+
     "doneColor" to Color(0xFF26C485)
 )
 
 fun getNamedColor(name: String, isDark: Boolean): Color {
+    Log.d("Color", "Getting color named ${name}")
+
     return when(isDark) {
         true -> DarkNamedColors
         false -> LightNamedColors
     }[name]!!
+}
+
+fun getColorsForMarkup(name: String): Pair<Color, Color> {
+    val markupColor = getNamedColor(name, false)
+    val textColor = Color(ColorUtils.blendARGB(markupColor.toArgb(), Color.Black.toArgb(), 0.9f))
+    val bgColor = Color(ColorUtils.blendARGB(markupColor.toArgb(), Color.White.toArgb(), 0.6f))
+
+    return Pair(textColor, bgColor)
 }

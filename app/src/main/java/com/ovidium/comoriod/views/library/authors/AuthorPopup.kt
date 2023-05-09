@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -105,101 +106,109 @@ fun AuthorPopup(
                                 .padding(bottom = 24.dp)
                         )
 
-                    Row {
+                    LazyRow {
                         val bookCnt = getBooksCnt(authorInfo)
                         if (bookCnt > 0) {
-                            Text(
-                                text = fmtBooksNumber(bookCnt),
-                                color = colors.colorSecondaryText,
-                                fontSize = 11.sp,
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .background(
-                                        getNamedColor("CardButton", isDark = isDark),
-                                        RoundedCornerShape(50)
-                                    )
-                                    .padding(8.dp)
-                                    .clickable {
-                                        navController.navigate(
-                                            Screens.BooksForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
+                            item {
+                                Text(
+                                    text = fmtBooksNumber(bookCnt),
+                                    color = colors.colorSecondaryText,
+                                    fontSize = 11.sp,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .background(
+                                            getNamedColor("CardButton", isDark = isDark),
+                                            RoundedCornerShape(50)
                                         )
-                                    }
-                            )
+                                        .padding(8.dp)
+                                        .clickable {
+                                            navController.navigate(
+                                                Screens.BooksForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
+                                            )
+                                        }
+                                )
+                            }
                         }
 
                         val volumeCnt = getVolumesCnt(authorInfo)
                         if (volumeCnt > 0) {
-                            Text(
-                                text = fmtVolumesNumber(volumeCnt),
-                                color = colors.colorSecondaryText,
-                                fontSize = 11.sp,
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .background(
-                                        getNamedColor("CardButton", isDark = isDark),
-                                        RoundedCornerShape(50)
-                                    )
-                                    .padding(8.dp)
-                                    .clickable {
-                                        navController.navigate(
-                                            Screens.VolumesForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
+                            item {
+                                Text(
+                                    text = fmtVolumesNumber(volumeCnt),
+                                    color = colors.colorSecondaryText,
+                                    fontSize = 11.sp,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .background(
+                                            getNamedColor("CardButton", isDark = isDark),
+                                            RoundedCornerShape(50)
                                         )
-                                    }
-                            )
+                                        .padding(8.dp)
+                                        .clickable {
+                                            navController.navigate(
+                                                Screens.VolumesForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
+                                            )
+                                        }
+                                )
+                            }
                         }
                         if (getPoemsCnt(authorInfo) > 0) {
-                            Text(
-                                text = getPoemsNumber(authorInfo),
-                                color = colors.colorSecondaryText,
-                                fontSize = 11.sp,
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .background(
-                                        getNamedColor("CardButton", isDark = isDark),
-                                        RoundedCornerShape(50)
-                                    )
-                                    .padding(8.dp)
-                                    .clickable {
-                                        navController.navigate(
-                                            Screens.PoemsForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
+                            item {
+                                Text(
+                                    text = getPoemsNumber(authorInfo),
+                                    color = colors.colorSecondaryText,
+                                    fontSize = 11.sp,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .background(
+                                            getNamedColor("CardButton", isDark = isDark),
+                                            RoundedCornerShape(50)
                                         )
-
-                                        libraryModel.getTitles(
-                                            params = mapOf(
-                                                "authors" to authorInfo.name,
-                                                "types" to "poezie"
+                                        .padding(8.dp)
+                                        .clickable {
+                                            navController.navigate(
+                                                Screens.PoemsForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
                                             )
-                                        )
-                                    }
-                            )
+
+                                            libraryModel.getTitles(
+                                                params = mapOf(
+                                                    "authors" to authorInfo.name,
+                                                    "types" to "poezie"
+                                                )
+                                            )
+                                        }
+                                )
+                            }
                         }
                         if (getArticlesCnt(authorInfo) > 0) {
-                            Text(
-                                text = getArticlesNumber(authorInfo),
-                                color = colors.colorSecondaryText,
-                                fontSize = 11.sp,
-                                maxLines = 1,
-                                modifier = Modifier
-                                    .background(
-                                        getNamedColor("CardButton", isDark = isDark),
-                                        RoundedCornerShape(50)
-                                    )
-                                    .padding(8.dp)
-                                    .clickable {
-                                        navController.navigate(
-                                            Screens.ArticlesForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
+                            item {
+                                Text(
+                                    text = getArticlesNumber(authorInfo),
+                                    color = colors.colorSecondaryText,
+                                    fontSize = 11.sp,
+                                    maxLines = 1,
+                                    modifier = Modifier
+                                        .background(
+                                            getNamedColor("CardButton", isDark = isDark),
+                                            RoundedCornerShape(50)
                                         )
-                                        libraryModel.getTitles(
-                                            params = mapOf(
-                                                "authors" to authorInfo.name,
-                                                "types" to "articol"
+                                        .padding(8.dp)
+                                        .clickable {
+                                            navController.navigate(
+                                                Screens.ArticlesForAuthor.withArgs(URLEncoder.encode(authorInfo.name, "utf-8"))
                                             )
-                                        )
-                                    }
-                            )
+                                            libraryModel.getTitles(
+                                                params = mapOf(
+                                                    "authors" to authorInfo.name,
+                                                    "types" to "articol"
+                                                )
+                                            )
+                                        }
+                                )
+                            }
                         }
                     }
                 }

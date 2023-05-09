@@ -14,16 +14,19 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.ui.theme.Shapes
@@ -43,7 +46,7 @@ fun SaveFavoriteDialog(
     val textColor = getNamedColor("Text", isDark)
     val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
 
-    var tags = remember { mutableStateListOf<String>() }
+    val tags = remember { mutableStateListOf<String>() }
     var currentTag by remember { mutableStateOf("") }
     var resetTag by remember { mutableStateOf(false) }
 
@@ -96,7 +99,12 @@ fun SaveFavoriteDialog(
                         resetTag = true
                     }
 
-                    Text(text = "Tag-uri:")
+                    AdaptiveText(
+                        text = "Tag-uri:", style = MaterialTheme.typography.caption, maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .weight(0.25f)
+                    )
 
                     OutlinedTextField(
                         value = currentTag,
@@ -116,7 +124,7 @@ fun SaveFavoriteDialog(
                             }
                         ),
                         shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.weight(0.85f)
+                        modifier = Modifier.weight(0.60f)
                     )
 
                     Button(
@@ -131,7 +139,7 @@ fun SaveFavoriteDialog(
                         enabled = currentTag.isNotEmpty(),
                         modifier = Modifier.weight(0.15f)
                     ) {
-                        Text(text = "+")
+                        Text(text = "+", textAlign = TextAlign.Center)
                     }
                 }
 
@@ -168,9 +176,11 @@ fun SaveFavoriteTopBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = 12.dp)
     ) {
-        Text(
+        AdaptiveText(
             text = "Salvare articol favorit",
             style = MaterialTheme.typography.h6,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .fillMaxWidth()

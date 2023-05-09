@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -27,6 +28,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -61,7 +64,6 @@ fun Drawer(
     val userResource = userResourceState.value
 
     val surfaceColor = getNamedColor("PrimarySurface", isDark)
-    val secondarySurface = getNamedColor("SecondarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
     val headerColor = getNamedColor("HeaderBar", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
@@ -109,6 +111,9 @@ fun Drawer(
                         .height(if (userResource.state == UserState.LoggedIn) 80.dp else 82.dp)
                         .clip(RoundedCornerShape(100))
                 )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
@@ -116,11 +121,14 @@ fun Drawer(
                     if (userResource.state == UserState.LoggedIn)
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             userResource.user?.displayName?.let { name ->
-                                Text(
-                                    name,
+                                AdaptiveText(
+                                    text = name,
                                     color = textColor,
-                                    fontSize = MaterialTheme.typography.h6.fontSize,
-                                    fontWeight = FontWeight.Bold
+                                    style = MaterialTheme.typography.h6,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                             OutlinedButton(
@@ -132,9 +140,12 @@ fun Drawer(
                                 modifier = Modifier
                                     .padding(top = 3.dp)
                             ) {
-                                Text(
-                                    "Deloghează-te",
-                                    color = textColor
+                                AdaptiveText(
+                                    text = "Deloghează-te",
+                                    color = textColor,
+                                    style = MaterialTheme.typography.caption,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
                                 )
                             }
                         }

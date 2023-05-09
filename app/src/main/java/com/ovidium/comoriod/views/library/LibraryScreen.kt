@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -19,6 +20,7 @@ import androidx.compose.ui.layout.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -81,6 +83,10 @@ fun LibraryScreen(
     val coroutineScope = rememberCoroutineScope()
     val authorInfo = remember { mutableStateOf<Bucket?>(null) }
 
+    val body1Style = MaterialTheme.typography.body1
+    var tabTextStyle by remember { mutableStateOf(body1Style) }
+    var tabTextStyleReady by remember { mutableStateOf(false) }
+
     Column(modifier = Modifier.blur(if (authorInfo.value != null) 16.dp else 0.dp)) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
@@ -102,7 +108,21 @@ fun LibraryScreen(
                 Tab(
                     selected = pagerState.currentPage == index,
                     onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                    text = { Text(tab.toString()) })
+                    text = {
+                        Text(
+                            modifier = Modifier.drawWithContent { if (tabTextStyleReady) drawContent() },
+                            text = tab.toString(),
+                            style = tabTextStyle,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            onTextLayout = {textLayoutResult ->
+                                if (textLayoutResult.hasVisualOverflow)
+                                    tabTextStyle = tabTextStyle.copy(fontSize = tabTextStyle.fontSize * 0.9)
+                                else
+                                    tabTextStyleReady = true
+                            }
+                        )
+                    })
             }
         }
         HorizontalPager(pageCount = TabCategory.values().size, state = pagerState) { tab ->
@@ -133,6 +153,7 @@ fun LibraryScreen(
                             libraryModel,
                             isDark
                         ) { bucket -> authorInfo.value = bucket }
+
                         TabCategory.Autori -> StateHandler(
                             navController,
                             libraryModel.authorsData
@@ -144,12 +165,14 @@ fun LibraryScreen(
                                 isDark
                             ) { bucket -> authorInfo.value = bucket }
                         }
+
                         TabCategory.Volume -> StateHandler(
                             navController,
                             libraryModel.volumesData
                         ) { data, isLoading ->
                             VolumesGrid(navController, data, isLoading, isDark)
                         }
+
                         TabCategory.Cărți -> StateHandler(
                             navController,
                             libraryModel.booksData
@@ -207,11 +230,13 @@ fun <T> StateHandler(
             response.data,
             response.status == Status.LOADING
         )
+
         Status.ERROR -> Toast.makeText(
             LocalContext.current,
             "Ceva nu a mers bine!",
             Toast.LENGTH_SHORT
         ).show()
+
         Status.UNINITIALIZED -> {}
     }
 }

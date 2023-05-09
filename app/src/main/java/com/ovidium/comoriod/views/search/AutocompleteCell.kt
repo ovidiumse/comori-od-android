@@ -7,14 +7,21 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.autocomplete.Hit
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.Screens
@@ -34,28 +41,53 @@ fun AutocompleteCell(hit: Hit, navController: NavController, isDark: Boolean) {
                 launchSingleTop = true
             }
         }) {
-        Text(
+        AdaptiveText(
             text = hit._source.title,
             style = MaterialTheme.typography.body1,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold,
             color = textColor
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(top=2.dp)
-        ) {
-            Icon(
-                modifier = Modifier.size(12.dp),
-                imageVector = ImageVector.vectorResource(id = R.drawable.ic_book),
-                contentDescription = "Book icon",
-                tint = mutedTextColor.copy(alpha=0.7f)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
-            Text(
-                text = "${hit._source.author} - ${hit._source.book}",
-                style = MaterialTheme.typography.subtitle2,
-                color = mutedTextColor
-            )
+
+        Column {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.size(14.dp),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_outline_menu_book_24),
+                    contentDescription = "Book icon",
+                    tint = mutedTextColor
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                AdaptiveText(
+                    text = hit._source.book,
+                    style = MaterialTheme.typography.caption,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = mutedTextColor
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.size(14.dp),
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_author),
+                    contentDescription = "Author icon",
+                    tint = mutedTextColor
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = hit._source.author,
+                    style = MaterialTheme.typography.caption,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = mutedTextColor
+                )
+            }
         }
 
         Divider(
