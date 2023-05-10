@@ -26,6 +26,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.components.AppBar
+import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.search.filter.SearchFilterPopup
 import kotlinx.coroutines.*
 
@@ -78,8 +79,15 @@ fun SearchScreen(
         topBar = {
             AppBar(
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) },
+                onTitleClicked = {
+                    navController.navigate(Screens.Library.route) {
+                        launchSingleTop = true
+                    }
+                },
                 actions = @Composable {
                     Row {
+                        Spacer(modifier = Modifier.width(8.dp))
+
                         SearchBar(
                             modifier = Modifier.weight(if (hasSearchResults) 0.9f else 1f),
                             searchText = searchTextFieldValue,

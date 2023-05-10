@@ -69,6 +69,11 @@ fun FavoritesScreen(
         topBar = {
             AppBar(
                 title = "Favorite",
+                onTitleClicked = {
+                    navController.navigate(Screens.Library.route) {
+                        launchSingleTop = true
+                    }
+                },
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) }) {
             }
         }

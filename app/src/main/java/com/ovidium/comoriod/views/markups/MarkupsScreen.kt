@@ -64,6 +64,11 @@ fun MarkupsScreen(
         topBar = {
             AppBar(
                 title = "Pasaje",
+                onTitleClicked = {
+                    navController.navigate(Screens.Library.route) {
+                        launchSingleTop = true
+                    }
+                },
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) }) {
             }
         }
