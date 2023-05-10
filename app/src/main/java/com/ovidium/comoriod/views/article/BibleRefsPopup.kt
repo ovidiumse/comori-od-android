@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.data.article.BibleRefVerse
+import com.ovidium.comoriod.ui.theme.SourceSerifPro
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.formatBibleRefs
 
@@ -42,15 +43,18 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
                 modifier = Modifier.padding(16.dp)
             ) {
                 itemsIndexed(bibleRefs) { idx, item ->
+                    if (idx > 0)
+                        Spacer(modifier = Modifier.height(8.dp))
+
                     Text(
                         text = formatBibleRefs(item, isDark = isDark),
                         style = TextStyle(
-                            color = getNamedColor("InvertedText", isDark = isDark),
+                            color = getNamedColor("Text", !isDark),
+                            fontFamily = SourceSerifPro,
                             fontSize = 18.sp,
                             lineHeight = 22.sp,
                             fontWeight = FontWeight.Light
-                        ),
-                        modifier = Modifier.padding(top = (if (idx != 0) 10.dp else 0.dp))
+                        )
                     )
                 }
             }

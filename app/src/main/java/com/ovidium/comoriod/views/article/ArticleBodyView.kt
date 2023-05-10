@@ -1,6 +1,5 @@
 package com.ovidium.comoriod.views.article
 
-import android.text.SpannableString
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -16,8 +15,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.text.set
-import androidx.core.text.toSpannable
 import com.ovidium.comoriod.components.ActionCallback
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
@@ -26,9 +23,7 @@ import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
-import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.ui.theme.textFonts
-import kotlin.math.sign
+import com.ovidium.comoriod.ui.theme.SourceSerifPro
 
 @Composable
 fun ArticleBodyView(
@@ -95,7 +90,7 @@ fun ArticleBodyView(
             ClickableText(
                 text = article.body,
                 style = TextStyle(
-                    fontFamily = textFonts,
+                    fontFamily = SourceSerifPro,
                     color = textColor,
                     fontSize = 18.sp,
                     lineHeight = 25.sp

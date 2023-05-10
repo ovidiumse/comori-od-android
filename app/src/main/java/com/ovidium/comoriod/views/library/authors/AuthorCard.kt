@@ -48,6 +48,7 @@ fun AuthorCard(
     val imageAreaSize = itemSize * 0.70
     val authorImageSize = imageAreaSize * 0.80
 
+    val darkBarColor = getNamedColor("DarkBar", isDark)
     val secondaryBackground = getNamedColor("SecondaryBackground", isDark)
     val secondarySurface = getNamedColor("SecondarySurface", isDark)
 
@@ -80,7 +81,7 @@ fun AuthorCard(
                     Spacer(modifier = Modifier.height(10.dp))
                     AdaptiveText(
                         text = authorInfo?.name ?: "",
-                        color = Color.Black,
+                        color = darkBarColor,
                         style = MaterialTheme.typography.h6,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,

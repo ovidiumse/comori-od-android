@@ -97,7 +97,7 @@ fun ItemCard(
                 ) {
                     AdaptiveText(
                         text = title,
-                        color = Color.Black,
+                        color = darkBarColor,
                         style = MaterialTheme.typography.h6,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,
