@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
@@ -62,8 +63,10 @@ fun SearchFilterPopup(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Spacer(modifier = Modifier.weight(0.33f))
-                    Text(
+                    AdaptiveText(
                         text = "Filtrează",
+                        minFontSize = 14.sp,
+                        maxFontSize = 28.sp,
                         style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.weight(0.33f)
@@ -117,8 +120,10 @@ fun SearchFilterPopup(
                         onClick = onSaveAction,
                         backgroundColor = buttonColor
                     ) {
-                        Text(
+                        AdaptiveText(
                             text = "Aplică",
+                            minFontSize = 8.sp,
+                            maxFontSize = 20.sp,
                             style = MaterialTheme.typography.button,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color.White
