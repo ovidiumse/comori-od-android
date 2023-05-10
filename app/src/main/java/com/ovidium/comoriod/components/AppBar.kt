@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -41,8 +42,10 @@ fun AppBar(
         title = {
             Spacer(modifier = Modifier.width(8.dp))
 
-            Text(
+            AdaptiveText(
                 text = title ?: stringResource(id = R.string.app_title),
+                minFontSize = 8.sp,
+                maxFontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = headerText,
                 modifier = Modifier.clickable(onClick = onTitleClicked)

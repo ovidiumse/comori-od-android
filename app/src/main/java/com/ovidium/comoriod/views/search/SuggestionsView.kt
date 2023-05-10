@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -46,8 +47,10 @@ fun SuggestionsView(onItemClick: (String) -> Unit) {
             .background(backgroundColor)
             .fillMaxSize()
     ) {
-        Text(
+        AdaptiveText(
             text = "Sugestii:",
+            minFontSize = 14.sp,
+            maxFontSize = 28.sp,
             style = MaterialTheme.typography.h6,
             fontWeight = FontWeight.Bold,
             color = mutedTextColor,

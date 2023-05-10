@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.colors
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import org.w3c.dom.Text
 
 
 @Composable
@@ -56,6 +57,7 @@ fun SearchBar(
     val captionStyle = MaterialTheme.typography.caption
     var searchTextStyle by remember { mutableStateOf(captionStyle) }
     var searchTextStyleReady by remember { mutableStateOf(false) }
+    val emptyText = TextFieldValue("")
 
     OutlinedTextField(
         modifier = Modifier
@@ -66,7 +68,7 @@ fun SearchBar(
             }
             .focusRequester(focusRequester)
             .then(modifier),
-        value = searchText,
+        value = if (searchTextStyleReady) searchText else emptyText,
         onValueChange = { newFieldValue ->
             onSearchTextChanged(newFieldValue)
         },

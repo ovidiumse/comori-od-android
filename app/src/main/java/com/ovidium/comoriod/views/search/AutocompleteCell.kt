@@ -19,6 +19,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.AdaptiveText
@@ -43,6 +44,8 @@ fun AutocompleteCell(hit: Hit, navController: NavController, isDark: Boolean) {
         }) {
         AdaptiveText(
             text = hit._source.title,
+            minFontSize = 11.2.sp,
+            maxFontSize = 30.sp,
             style = MaterialTheme.typography.body1,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
@@ -63,6 +66,8 @@ fun AutocompleteCell(hit: Hit, navController: NavController, isDark: Boolean) {
                 Spacer(modifier = Modifier.width(5.dp))
                 AdaptiveText(
                     text = hit._source.book,
+                    minFontSize = 8.sp,
+                    maxFontSize = 16.sp,
                     style = MaterialTheme.typography.caption,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -80,8 +85,10 @@ fun AutocompleteCell(hit: Hit, navController: NavController, isDark: Boolean) {
                     tint = mutedTextColor
                 )
                 Spacer(modifier = Modifier.width(5.dp))
-                Text(
+                AdaptiveText(
                     text = hit._source.author,
+                    minFontSize = 8.sp,
+                    maxFontSize = 16.sp,
                     style = MaterialTheme.typography.caption,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

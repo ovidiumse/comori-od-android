@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.ovidium.comoriod.components.AdaptiveText
@@ -31,12 +32,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun SaveMarkupDialog(
-    articleToSave: Article,
-    selection: String,
-    startPos: Int,
-    endPos: Int,
-    onSaveAction: (Markup) -> Unit,
-    onExitAction: () -> Unit
+    articleToSave: Article, selection: String, startPos: Int, endPos: Int, onSaveAction: (Markup) -> Unit, onExitAction: () -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -54,14 +50,7 @@ fun SaveMarkupDialog(
 
     var selectedColor by remember { mutableStateOf("markupMorn") }
     val availableColors = listOf(
-        "markupChoc",
-        "markupCrayola",
-        "markupCream",
-        "markupMorn",
-        "markupPers",
-        "markupSkye",
-        "markupSlate",
-        "markupMauve"
+        "markupChoc", "markupCrayola", "markupCream", "markupMorn", "markupPers", "markupSkye", "markupSlate", "markupMauve"
     )
 
     if (resetTag) {
@@ -70,21 +59,17 @@ fun SaveMarkupDialog(
     }
 
     Dialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        onDismissRequest = onExitAction
+        properties = DialogProperties(usePlatformDefaultWidth = false), onDismissRequest = onExitAction
     ) {
         Box(
             Modifier
                 .width(screenWidth)
                 .background(
-                    bgColor,
-                    RoundedCornerShape(16.dp)
+                    bgColor, RoundedCornerShape(16.dp)
                 )
         ) {
             LazyColumn(
-                state = listState,
-                modifier = Modifier.padding(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                state = listState, modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 item {
                     SaveMarkupTopBar(onExitAction = onExitAction)
@@ -114,16 +99,18 @@ fun SaveMarkupDialog(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         fun addTag(tag: String) {
-                            if (tag.isNotEmpty())
-                                tags.add(tag)
+                            if (tag.isNotEmpty()) tags.add(tag)
                             resetTag = true
                         }
 
                         AdaptiveText(
-                            text = "Tag-uri:", style = MaterialTheme.typography.caption, maxLines = 1,
+                            text = "Tag-uri:",
+                            minFontSize = 8.sp,
+                            maxFontSize = 16.sp,
+                            style = MaterialTheme.typography.caption,
+                            maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier
-                                .weight(0.25f)
+                            modifier = Modifier.weight(0.25f)
                         )
 
                         OutlinedTextField(
@@ -139,11 +126,9 @@ fun SaveMarkupDialog(
                                 focusedBorderColor = getNamedColor("Border", isDark)
                             ),
                             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    addTag(currentTag.trim().lowercase())
-                                }
-                            ),
+                            keyboardActions = KeyboardActions(onDone = {
+                                addTag(currentTag.trim().lowercase())
+                            }),
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.weight(0.60f)
                         )
@@ -151,14 +136,11 @@ fun SaveMarkupDialog(
                         Button(
                             onClick = {
                                 addTag(currentTag.trim().lowercase())
-                            },
-                            colors = ButtonDefaults.buttonColors(
+                            }, colors = ButtonDefaults.buttonColors(
                                 backgroundColor = getNamedColor("Link", isDark),
                                 disabledBackgroundColor = primarySurfaceColor,
                                 contentColor = Color.White
-                            ),
-                            enabled = currentTag.isNotEmpty(),
-                            modifier = Modifier.weight(0.15f)
+                            ), enabled = currentTag.isNotEmpty(), modifier = Modifier.weight(0.15f)
                         ) {
                             Text(text = "+", textAlign = TextAlign.Center)
                         }
@@ -168,7 +150,7 @@ fun SaveMarkupDialog(
                 item {
                     LazyRow(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .background(primarySurfaceColor, shape = RoundedCornerShape(16.dp))
                             .padding(8.dp)
@@ -176,32 +158,27 @@ fun SaveMarkupDialog(
                     ) {
                         items(availableColors.size) { idx ->
                             val color = availableColors[idx]
-                            Box(
-                                modifier = Modifier
-                                    .border(
-                                        BorderStroke(
-                                            2.dp,
-                                            if (selectedColor == color) textColor else Color.Transparent
-                                        ), CircleShape
-                                    )
-                                    .background(
-                                        getNamedColor(color, isDark),
-                                        shape = CircleShape
-                                    )
-                                    .padding(8.dp)
-                                    .size(20.dp)
-                                    .clickable {
-                                        selectedColor = color
-                                    }
-                            )
+                            Box(modifier = Modifier
+                                .border(
+                                    BorderStroke(
+                                        2.dp, if (selectedColor == color) textColor else Color.Transparent
+                                    ), CircleShape
+                                )
+                                .background(
+                                    getNamedColor(color, isDark), shape = CircleShape
+                                )
+                                .padding(8.dp)
+                                .size(20.dp)
+                                .clickable {
+                                    selectedColor = color
+                                })
                         }
                     }
                 }
 
                 item {
                     Row(
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
                     ) {
                         Button(
                             onClick = {
@@ -220,12 +197,9 @@ fun SaveMarkupDialog(
                                         tags = tags
                                     )
                                 )
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = getNamedColor("Link", isDark),
-                                contentColor = Color.White
-                            ),
-                            modifier = Modifier.defaultMinSize(minWidth = 120.dp)
+                            }, colors = ButtonDefaults.buttonColors(
+                                backgroundColor = getNamedColor("Link", isDark), contentColor = Color.White
+                            ), modifier = Modifier.defaultMinSize(minWidth = 120.dp)
                         ) {
                             Text(text = "Salvează")
                         }
@@ -245,8 +219,7 @@ fun SaveMarkupTopBar(
     val textColor = getNamedColor("Text", isDark)
 
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 12.dp)
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 12.dp)
     ) {
         Text(
             text = "Salvare pasaj",

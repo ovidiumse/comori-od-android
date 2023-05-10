@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.fade
@@ -81,6 +82,8 @@ fun AuthorCard(
                     Spacer(modifier = Modifier.height(10.dp))
                     AdaptiveText(
                         text = authorInfo?.name ?: "",
+                        minFontSize = 14.sp,
+                        maxFontSize = 28.sp,
                         color = darkBarColor,
                         style = MaterialTheme.typography.h6,
                         maxLines = 2,

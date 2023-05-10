@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.AdaptiveText
@@ -80,6 +81,8 @@ fun FavoriteArticleCell(
             ) {
                 AdaptiveText(
                     text = title,
+                    minFontSize = 11.2.sp,
+                    maxFontSize = 22.sp,
                     style = MaterialTheme.typography.body1,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis,
@@ -99,6 +102,8 @@ fun FavoriteArticleCell(
                     Spacer(modifier = Modifier.width(5.dp))
                     AdaptiveText(
                         text = book,
+                        minFontSize = 8.sp,
+                        maxFontSize = 16.sp,
                         style = MaterialTheme.typography.caption,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -118,6 +123,8 @@ fun FavoriteArticleCell(
                     Spacer(modifier = Modifier.width(5.dp))
                     AdaptiveText(
                         text = author,
+                        minFontSize = 8.sp,
+                        maxFontSize = 16.sp,
                         style = MaterialTheme.typography.caption,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -234,7 +241,7 @@ fun FavoriteCellInfo(timestamp: String?, tags: List<String>, bubbleColor: Color,
                         modifier = Modifier.weight(7f),
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        items(tags.size) {idx ->
+                        items(tags.size) { idx ->
                             val tag = tags[idx]
                             TagBubble(
                                 tag = tag,

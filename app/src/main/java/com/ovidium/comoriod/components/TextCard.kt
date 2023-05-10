@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
@@ -75,16 +76,18 @@ fun TextCard(
                         append(title)
                     }
                 },
+                minFontSize = 14.sp,
+                maxFontSize = 34.sp,
                 style = MaterialTheme.typography.h6,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Left
             )
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentSize(Alignment.Center)
                 .padding(horizontal = 12.dp, vertical = 5.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -101,6 +104,8 @@ fun TextCard(
                     Spacer(modifier = Modifier.width(5.dp))
                     AdaptiveText(
                         text = book,
+                        minFontSize = 8.sp,
+                        maxFontSize = 16.sp,
                         style = MaterialTheme.typography.caption,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -120,6 +125,8 @@ fun TextCard(
                     Spacer(modifier = Modifier.width(5.dp))
                     AdaptiveText(
                         text = author,
+                        minFontSize = 8.sp,
+                        maxFontSize = 16.sp,
                         style = MaterialTheme.typography.caption,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -131,6 +138,7 @@ fun TextCard(
             Spacer(modifier = Modifier.width(8.dp))
 
             Column(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.End,
             ) {
                 TagBubble(tag = type, textColor = subtitleColor, bubbleColor = bubbleColor)

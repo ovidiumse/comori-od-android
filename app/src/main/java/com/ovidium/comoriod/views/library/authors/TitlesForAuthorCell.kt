@@ -100,6 +100,8 @@ fun TitlesForAuthorTitleView(hit: TitleHit, index: Int, mutedTextColor: Color) {
                     append(hit._source.title)
                 }
             },
+            minFontSize = 14.sp,
+            maxFontSize = 28.sp,
             maxLines = 3,
             style = MaterialTheme.typography.h6,
             textAlign = TextAlign.Left
@@ -122,6 +124,8 @@ fun TitlesForAuthorBookView(hit: TitleHit, mutedTextColor: Color) {
         Spacer(modifier = Modifier.width(5.dp))
         AdaptiveText(
             text = hit._source.book,
+            minFontSize = 9.8.sp,
+            maxFontSize = 20.sp,
             style = MaterialTheme.typography.subtitle2,
             maxLines = 1,
             color = mutedTextColor,
@@ -145,6 +149,8 @@ fun TitlesForAuthorAuthorView(hit: TitleHit, mutedTextColor: Color) {
         Spacer(modifier = Modifier.width(5.dp))
         AdaptiveText(
             text = hit._source.author,
+            minFontSize = 9.8.sp,
+            maxFontSize = 20.sp,
             style = MaterialTheme.typography.subtitle2,
             maxLines = 1,
             color = mutedTextColor,

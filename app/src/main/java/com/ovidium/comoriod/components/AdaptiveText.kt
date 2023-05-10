@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 
 fun areWordsTruncated(textLayoutResult: TextLayoutResult): Boolean {
     var truncatesWords = false
@@ -36,9 +38,12 @@ fun areWordsTruncated(textLayoutResult: TextLayoutResult): Boolean {
 
     return truncatesWords
 }
+
 @Composable
 fun AdaptiveText(
     text: String,
+    minFontSize: TextUnit,
+    maxFontSize: TextUnit = 48.sp,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
@@ -59,6 +64,19 @@ fun AdaptiveText(
     var textStyle by remember { mutableStateOf(style) }
     var textStyleReady by remember { mutableStateOf(false) }
 
+    val fontSizeUpdateRatio = 0.9
+    val fontScale = LocalDensity.current.fontScale
+
+    Log.d("AdaptiveText", "$text is now ${textStyle.fontSize} at $fontScale scale")
+
+    fun isDriftAllowed(): Boolean {
+        return (textStyle.fontSize * fontSizeUpdateRatio * fontScale) > minFontSize
+    }
+
+    fun isFontTooBig(): Boolean {
+        return (textStyle.fontSize * fontScale) > maxFontSize
+    }
+
     Text(
         text,
         modifier.drawWithContent { if (textStyleReady) drawContent() },
@@ -76,8 +94,8 @@ fun AdaptiveText(
         maxLines,
         minLines,
         onTextLayout = { textLayoutResult ->
-            if (areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow)
-                textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.9)
+            if (isDriftAllowed() && (areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow || isFontTooBig()))
+                textStyle = textStyle.copy(fontSize = textStyle.fontSize * fontSizeUpdateRatio)
             else
                 textStyleReady = true
 
@@ -90,6 +108,8 @@ fun AdaptiveText(
 @Composable
 fun AdaptiveText(
     text: AnnotatedString,
+    minFontSize: TextUnit,
+    maxFontSize: TextUnit = 48.sp,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,
     fontSize: TextUnit = TextUnit.Unspecified,
@@ -111,6 +131,19 @@ fun AdaptiveText(
     var textStyle by remember { mutableStateOf(style) }
     var textStyleReady by remember { mutableStateOf(false) }
 
+    val fontSizeUpdateRatio = 0.9
+    val fontScale = LocalDensity.current.fontScale
+
+    Log.d("AdaptiveText", "$text is now ${textStyle.fontSize} at $fontScale scale")
+
+    fun isDriftAllowed(): Boolean {
+        return (textStyle.fontSize * fontSizeUpdateRatio * fontScale) > minFontSize
+    }
+
+    fun isFontTooBig(): Boolean {
+        return (textStyle.fontSize * fontScale) > maxFontSize
+    }
+
     Text(
         text,
         modifier.drawWithContent { if (textStyleReady) drawContent() },
@@ -129,8 +162,8 @@ fun AdaptiveText(
         minLines,
         inlineContent,
         onTextLayout = { textLayoutResult ->
-            if (areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow)
-                textStyle = textStyle.copy(fontSize = textStyle.fontSize * 0.9)
+            if (isDriftAllowed() && (areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow || isFontTooBig()))
+                textStyle = textStyle.copy(fontSize = textStyle.fontSize * fontSizeUpdateRatio)
             else
                 textStyleReady = true
 

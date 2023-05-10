@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +36,7 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .background(
-                    getNamedColor("PopupContainer", isDark = isDark),
+                    getNamedColor("PrimarySurface", !isDark),
                     RoundedCornerShape(16.dp)
                 )
         ) {
@@ -49,7 +50,7 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
                     Text(
                         text = formatBibleRefs(item, isDark = isDark),
                         style = TextStyle(
-                            color = getNamedColor("Text", !isDark),
+                            color = if (isDark) Color.Black else Color.White,
                             fontFamily = SourceSerifPro,
                             fontSize = 18.sp,
                             lineHeight = 22.sp,

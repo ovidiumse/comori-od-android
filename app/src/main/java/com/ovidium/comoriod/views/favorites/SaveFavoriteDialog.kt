@@ -34,9 +34,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun SaveFavoriteDialog(
-    articleToSave: Article,
-    onSaveAction: (List<String>) -> Unit,
-    onExitAction: () -> Unit
+    articleToSave: Article, onSaveAction: (List<String>) -> Unit, onExitAction: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
@@ -56,20 +54,17 @@ fun SaveFavoriteDialog(
     }
 
     Dialog(
-        properties = DialogProperties(usePlatformDefaultWidth = false),
-        onDismissRequest = onExitAction
+        properties = DialogProperties(usePlatformDefaultWidth = false), onDismissRequest = onExitAction
     ) {
         Box(
             Modifier
                 .width(screenWidth)
                 .background(
-                    bgColor,
-                    RoundedCornerShape(16.dp)
+                    bgColor, RoundedCornerShape(16.dp)
                 )
         ) {
             Column(
-                modifier = Modifier
-                    .padding(12.dp),
+                modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -94,16 +89,18 @@ fun SaveFavoriteDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     fun addTag(tag: String) {
-                        if (tag.isNotEmpty())
-                            tags.add(tag)
+                        if (tag.isNotEmpty()) tags.add(tag)
                         resetTag = true
                     }
 
                     AdaptiveText(
-                        text = "Tag-uri:", style = MaterialTheme.typography.caption, maxLines = 1,
+                        text = "Tag-uri:",
+                        style = MaterialTheme.typography.caption,
+                        minFontSize = 8.sp,
+                        maxFontSize = 16.sp,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier
-                            .weight(0.25f)
+                        modifier = Modifier.weight(0.25f)
                     )
 
                     OutlinedTextField(
@@ -118,11 +115,9 @@ fun SaveFavoriteDialog(
                             focusedBorderColor = getNamedColor("Border", isDark)
                         ),
                         keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                addTag(currentTag.trim().lowercase())
-                            }
-                        ),
+                        keyboardActions = KeyboardActions(onDone = {
+                            addTag(currentTag.trim().lowercase())
+                        }),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.weight(0.60f)
                     )
@@ -130,14 +125,11 @@ fun SaveFavoriteDialog(
                     Button(
                         onClick = {
                             addTag(currentTag.trim().lowercase())
-                        },
-                        colors = ButtonDefaults.buttonColors(
+                        }, colors = ButtonDefaults.buttonColors(
                             backgroundColor = getNamedColor("Link", isDark),
                             disabledBackgroundColor = primarySurfaceColor,
                             contentColor = Color.White
-                        ),
-                        enabled = currentTag.isNotEmpty(),
-                        modifier = Modifier.weight(0.15f)
+                        ), enabled = currentTag.isNotEmpty(), modifier = Modifier.weight(0.15f)
                     ) {
                         Text(text = "+", textAlign = TextAlign.Center)
                     }
@@ -150,12 +142,9 @@ fun SaveFavoriteDialog(
                         } else {
                             onSaveAction(emptyList())
                         }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = getNamedColor("Link", isDark),
-                        contentColor = Color.White
-                    ),
-                    modifier = Modifier.defaultMinSize(minWidth = 120.dp)
+                    }, colors = ButtonDefaults.buttonColors(
+                        backgroundColor = getNamedColor("Link", isDark), contentColor = Color.White
+                    ), modifier = Modifier.defaultMinSize(minWidth = 120.dp)
                 ) {
                     Text(text = "Salvează")
                 }
@@ -173,11 +162,12 @@ fun SaveFavoriteTopBar(
     val textColor = getNamedColor("Text", isDark)
 
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 12.dp)
+        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 12.dp)
     ) {
         AdaptiveText(
             text = "Salvare articol favorit",
+            minFontSize = 14.sp,
+            maxFontSize = 28.sp,
             style = MaterialTheme.typography.h6,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

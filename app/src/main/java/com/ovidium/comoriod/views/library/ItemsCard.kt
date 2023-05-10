@@ -97,6 +97,8 @@ fun ItemCard(
                 ) {
                     AdaptiveText(
                         text = title,
+                        minFontSize = 14.sp,
+                        maxFontSize = 28.sp,
                         color = darkBarColor,
                         style = MaterialTheme.typography.h6,
                         maxLines = 3,
@@ -136,6 +138,8 @@ fun ItemCard(
                         secondary?.let {
                             AdaptiveText(
                                 text = secondary,
+                                minFontSize = 8.sp,
+                                maxFontSize = 16.sp,
                                 style = MaterialTheme.typography.caption,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
@@ -153,6 +157,8 @@ fun ItemCard(
                     Row(modifier = Modifier.fillMaxHeight()) {
                         AdaptiveText(
                             text = detail,
+                            minFontSize = 8.sp,
+                            maxFontSize = 16.sp,
                             style = MaterialTheme.typography.caption,
                             fontWeight = FontWeight.Normal,
                             letterSpacing = 0.5.sp,

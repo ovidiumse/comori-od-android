@@ -4,6 +4,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.MaterialTheme
@@ -13,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.authors.Bucket
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.getAuthorCoverGradient
@@ -52,8 +55,10 @@ fun AuthorsCarousel(
             .fillMaxHeight()
             .padding(top = marginSize.dp)
     ) {
-        Text(
+        AdaptiveText(
             title,
+            minFontSize = 16.8.sp,
+            maxFontSize = 30.sp,
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold,
             color = getNamedColor("OnBackground", isDark),

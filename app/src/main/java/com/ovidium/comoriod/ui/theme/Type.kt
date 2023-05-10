@@ -31,6 +31,7 @@ val Montserrat = FontFamily(
 val SourceSerifPro = FontFamily(
     Font(R.font.sourceserifpro_regular),
     Font(R.font.sourceserifpro_bold, weight = FontWeight.Bold),
+    Font(R.font.sourceserifpro_semibold, weight = FontWeight.SemiBold),
     Font(R.font.sourceserifpro_light, weight = FontWeight.Light),
     Font(R.font.sourceserifpro_extralight, weight = FontWeight.Thin),
     Font(R.font.sourceserifpro_italic, weight = FontWeight.Normal, style = FontStyle.Italic),
@@ -81,7 +82,6 @@ val Typography = Typography(
     ),
 
     subtitle1 = TextStyle(
-        // fontFamily = FontFamily.SansSerif,
         fontFamily = Montserrat,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
@@ -89,7 +89,6 @@ val Typography = Typography(
     ),
 
     subtitle2 = TextStyle(
-        // fontFamily = FontFamily.SansSerif,
         fontFamily = Montserrat,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,

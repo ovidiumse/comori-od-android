@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ReadArticle
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
@@ -132,8 +133,10 @@ fun ArticleViewContent(
                 state = listState
             ) {
                 item {
-                    Text(
+                    AdaptiveText(
                         text = article.title,
+                        minFontSize = 24.sp,
+                        maxFontSize = 38.sp,
                         fontFamily = SourceSansPro,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,

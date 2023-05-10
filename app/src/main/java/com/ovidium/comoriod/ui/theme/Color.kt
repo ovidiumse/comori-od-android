@@ -117,7 +117,7 @@ private val DarkNamedColors = mapOf(
 )
 
 fun getNamedColor(name: String, isDark: Boolean): Color {
-    Log.d("Color", "Getting color named ${name}")
+    Log.d("Color", "Getting color named $name")
 
     return when(isDark) {
         true -> DarkNamedColors

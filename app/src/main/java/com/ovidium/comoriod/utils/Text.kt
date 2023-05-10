@@ -205,7 +205,7 @@ fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
         withStyle(
             style = SpanStyle(
                 color = getNamedColor("BibleRefBlue", isDark = isDark),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.SemiBold
             ),
         ) {
             append(item.name)

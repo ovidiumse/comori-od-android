@@ -15,7 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.articulate
 import kotlin.math.ceil
@@ -33,8 +35,7 @@ fun ItemsGrid(
     val itemMinWidth = 180
     val marginSize = 12
     val itemsByRow = LocalConfiguration.current.screenWidthDp / itemMinWidth
-    val itemSize =
-        (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
+    val itemSize = (LocalConfiguration.current.screenWidthDp - (itemsByRow + 1) * marginSize) / itemsByRow
 
     val backgroundColor = getNamedColor("Background", isDark)
     val borderColor = getNamedColor("Border", isDark)
@@ -52,9 +53,11 @@ fun ItemsGrid(
                 item {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
-                        modifier = Modifier.fillMaxWidth().animateItemPlacement(
-                            animationSpec = tween(durationMillis = 300)
-                        )
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItemPlacement(
+                                animationSpec = tween(durationMillis = 300)
+                            )
                     ) {
                         repeat(itemsByRow) {
                             ItemCard(
@@ -81,9 +84,11 @@ fun ItemsGrid(
                     items(items.chunked(itemsByRow)) { rowItems ->
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
-                            modifier = Modifier.fillMaxWidth().animateItemPlacement(
-                                animationSpec = tween(durationMillis = 300)
-                            )
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .animateItemPlacement(
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                         ) {
                             for (item in rowItems) {
                                 ItemCard(
@@ -126,12 +131,13 @@ fun ItemsGrid(
                                     .wrapContentWidth()
                                     .border(1.dp, borderColor, shape)
                             ) {
-                                Text(
+                                AdaptiveText(
                                     group.toString() + " - " + articulate(
-                                        items.size,
-                                        names.second,
-                                        names.first
+                                        items.size, names.second, names.first
                                     ),
+                                    minFontSize = 14.sp,
+                                    maxFontSize = 28.sp,
+                                    maxLines = 1,
                                     style = MaterialTheme.typography.h6,
                                     color = textColor,
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
@@ -141,8 +147,7 @@ fun ItemsGrid(
 
                         renderItems(items)
                     }
-                } else
-                    renderItems(items)
+                } else renderItems(items)
             }
         }
     }

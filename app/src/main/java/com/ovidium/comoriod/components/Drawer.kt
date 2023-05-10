@@ -31,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -123,6 +124,7 @@ fun Drawer(
                             userResource.user?.displayName?.let { name ->
                                 AdaptiveText(
                                     text = name,
+                                    minFontSize = 14.sp,
                                     color = textColor,
                                     style = MaterialTheme.typography.h6,
                                     maxLines = 2,
@@ -142,6 +144,7 @@ fun Drawer(
                             ) {
                                 AdaptiveText(
                                     text = "Deloghează-te",
+                                    minFontSize = 8.sp,
                                     color = textColor,
                                     style = MaterialTheme.typography.caption,
                                     maxLines = 1,

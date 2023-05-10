@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
@@ -52,17 +54,20 @@ fun HorizontalCarousel(
                 bottom = if (isLast) marginSize.dp else 0.dp
             )
     ) {
-        Text(
+        AdaptiveText(
             name,
+            minFontSize = 16.8.sp,
+            maxFontSize = 30.sp,
             style = MaterialTheme.typography.h5,
             fontWeight = FontWeight.Bold,
             color = getNamedColor("OnBackground", isDark),
-            modifier = Modifier.padding(start = marginSize.dp)
+            modifier = Modifier
+                .padding(start = marginSize.dp)
         )
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(marginSize.dp),
-        modifier = Modifier
+            modifier = Modifier
         ) {
             if (isLoading)
                 repeat(estimatedSize) { index ->

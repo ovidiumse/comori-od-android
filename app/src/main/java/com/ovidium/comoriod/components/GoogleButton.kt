@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.R
 
 @Composable
@@ -41,7 +42,7 @@ fun GoogleButton(
                 tint = Color.Unspecified
             )
             Spacer(modifier = Modifier.width(8.dp))
-            AdaptiveText(text = if (loading) loadingText else text, maxLines = 1)
+            AdaptiveText(text = if (loading) loadingText else text, minFontSize = 8.sp, maxLines = 1)
             if (loading) {
                 Spacer(modifier = Modifier.width(16.dp))
                 CircularProgressIndicator(
