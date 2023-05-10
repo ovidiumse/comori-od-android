@@ -42,6 +42,7 @@ import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.ui.theme.headingFonts
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.fmtDuration
 import com.ovidium.comoriod.utils.nowUtc
@@ -147,6 +148,7 @@ fun ArticleViewContent(
                 item {
                     Text(
                         text = article.title,
+                        fontFamily = headingFonts,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 16.dp),

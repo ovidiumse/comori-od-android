@@ -27,6 +27,7 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.ui.theme.textFonts
 import kotlin.math.sign
 
 @Composable
@@ -94,6 +95,7 @@ fun ArticleBodyView(
             ClickableText(
                 text = article.body,
                 style = TextStyle(
+                    fontFamily = textFonts,
                     color = textColor,
                     fontSize = 18.sp,
                     lineHeight = 25.sp
