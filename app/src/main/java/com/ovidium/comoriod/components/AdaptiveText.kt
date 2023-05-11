@@ -61,13 +61,17 @@ fun AdaptiveText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
+    var initialFontSize by remember { mutableStateOf(fontSize) }
     var textStyle by remember { mutableStateOf(style) }
     var textStyleReady by remember { mutableStateOf(false) }
 
+    if (initialFontSize != TextUnit.Unspecified) {
+        textStyle = textStyle.copy(fontSize = initialFontSize)
+        initialFontSize = TextUnit.Unspecified
+    }
+
     val fontSizeUpdateRatio = 0.9
     val fontScale = LocalDensity.current.fontScale
-
-    // Log.d("AdaptiveText", "$text is now ${textStyle.fontSize} at $fontScale scale")
 
     fun isDriftAllowed(): Boolean {
         return (textStyle.fontSize * fontSizeUpdateRatio * fontScale) > minFontSize
@@ -77,9 +81,13 @@ fun AdaptiveText(
         return (textStyle.fontSize * fontScale) > maxFontSize
     }
 
+    Log.d("AdaptiveText", "$text entered now with ${textStyle.fontSize} and $textStyleReady")
+
     Text(
         text,
-        modifier.drawWithContent { if (textStyleReady) drawContent() },
+        modifier.drawWithContent {
+            if (textStyleReady) drawContent()
+        },
         color,
         fontSize,
         fontStyle,
@@ -94,10 +102,11 @@ fun AdaptiveText(
         maxLines,
         minLines,
         onTextLayout = { textLayoutResult ->
-            if ((areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow || isFontTooBig()) && isDriftAllowed())
-                textStyle = textStyle.copy(fontSize = textStyle.fontSize * fontSizeUpdateRatio)
-            else
+            if ((textLayoutResult.hasVisualOverflow || isFontTooBig() || areWordsTruncated(textLayoutResult)) && isDriftAllowed()) textStyle =
+                textStyle.copy(fontSize = textStyle.fontSize * fontSizeUpdateRatio)
+            else {
                 textStyleReady = true
+            }
 
             onTextLayout(textLayoutResult)
         },
@@ -128,13 +137,19 @@ fun AdaptiveText(
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
+    var initialFontSize by remember { mutableStateOf(fontSize) }
     var textStyle by remember { mutableStateOf(style) }
     var textStyleReady by remember { mutableStateOf(false) }
+
+    if (initialFontSize != TextUnit.Unspecified) {
+        textStyle = textStyle.copy(fontSize = initialFontSize)
+        initialFontSize = TextUnit.Unspecified
+    }
 
     val fontSizeUpdateRatio = 0.9
     val fontScale = LocalDensity.current.fontScale
 
-    Log.d("AdaptiveText", "$text is now ${textStyle.fontSize} at $fontScale scale")
+    Log.d("AdaptiveText", "$text entered now with ${textStyle.fontSize} and $textStyleReady")
 
     fun isDriftAllowed(): Boolean {
         return (textStyle.fontSize * fontSizeUpdateRatio * fontScale) > minFontSize
@@ -146,9 +161,11 @@ fun AdaptiveText(
 
     Text(
         text,
-        modifier.drawWithContent { if (textStyleReady) drawContent() },
+        modifier.drawWithContent {
+            if (textStyleReady) drawContent()
+        },
         color,
-        fontSize,
+        TextUnit.Unspecified,
         fontStyle,
         fontWeight,
         fontFamily,
@@ -162,10 +179,11 @@ fun AdaptiveText(
         minLines,
         inlineContent,
         onTextLayout = { textLayoutResult ->
-            if (isDriftAllowed() && (areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow || isFontTooBig()))
+            if ((textLayoutResult.hasVisualOverflow || isFontTooBig() || areWordsTruncated(textLayoutResult)) && isDriftAllowed()) {
                 textStyle = textStyle.copy(fontSize = textStyle.fontSize * fontSizeUpdateRatio)
-            else
+            } else {
                 textStyleReady = true
+            }
 
             onTextLayout(textLayoutResult)
         },
