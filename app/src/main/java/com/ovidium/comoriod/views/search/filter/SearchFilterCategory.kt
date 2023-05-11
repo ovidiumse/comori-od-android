@@ -19,8 +19,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.model.SearchModel
+import com.ovidium.comoriod.ui.theme.NotoSans
 import com.ovidium.comoriod.ui.theme.Shapes
-import com.ovidium.comoriod.ui.theme.SourceSansPro
 import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
@@ -80,7 +80,7 @@ fun FilterCategoryView(
                 Text(
                     text = item.key,
                     style = TextStyle(
-                        fontFamily = SourceSansPro,
+                        fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Light
                     ),
@@ -95,7 +95,7 @@ fun FilterCategoryView(
                     text = item.doc_count.toString(),
                     textAlign = TextAlign.End,
                     style = TextStyle(
-                        fontFamily = SourceSansPro,
+                        fontFamily = NotoSans,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Light
                     ),

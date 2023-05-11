@@ -23,7 +23,7 @@ import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
-import com.ovidium.comoriod.ui.theme.SourceSerifPro
+import com.ovidium.comoriod.ui.theme.NotoSans
 
 @Composable
 fun ArticleBodyView(
@@ -90,7 +90,7 @@ fun ArticleBodyView(
             ClickableText(
                 text = article.body,
                 style = TextStyle(
-                    fontFamily = SourceSerifPro,
+                    fontFamily = NotoSans,
                     color = textColor,
                     fontSize = 18.sp,
                     lineHeight = 25.sp

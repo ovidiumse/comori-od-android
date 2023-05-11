@@ -83,16 +83,16 @@ fun SaveFavoriteDialog(
 
                 }
 
+                fun addTag(tag: String) {
+                    if (tag.isNotEmpty()) tags.add(tag)
+                    resetTag = true
+                }
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    fun addTag(tag: String) {
-                        if (tag.isNotEmpty()) tags.add(tag)
-                        resetTag = true
-                    }
-
                     AdaptiveText(
                         text = "Tag-uri:",
                         style = MaterialTheme.typography.caption,
@@ -137,6 +137,7 @@ fun SaveFavoriteDialog(
 
                 Button(
                     onClick = {
+                        addTag(currentTag.trim().lowercase())
                         if (tags.isNotEmpty()) {
                             onSaveAction(tags)
                         } else {

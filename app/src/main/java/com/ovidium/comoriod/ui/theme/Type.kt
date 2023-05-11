@@ -9,15 +9,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.R
 
-val SourceSansPro = FontFamily(
-    Font(R.font.sourcesanspro_regular),
-    Font(R.font.sourcesanspro_bold, weight = FontWeight.Bold),
-    Font(R.font.sourcesanspro_light, weight = FontWeight.Light),
-    Font(R.font.sourcesanspro_extralight, weight = FontWeight.Thin),
-    Font(R.font.sourcesanspro_italic, weight = FontWeight.Normal, style = FontStyle.Italic),
-    Font(R.font.sourcesanspro_bolditalic, weight = FontWeight.Bold, style = FontStyle.Italic)
-)
-
 val Montserrat = FontFamily(
     Font(R.font.montserrat_regular),
     Font(R.font.montserrat_bold, weight = FontWeight.Bold),
@@ -28,14 +19,14 @@ val Montserrat = FontFamily(
     Font(R.font.montserrat_bolditalic, weight = FontWeight.Bold, style = FontStyle.Italic)
 )
 
-val SourceSerifPro = FontFamily(
-    Font(R.font.sourceserifpro_regular),
-    Font(R.font.sourceserifpro_bold, weight = FontWeight.Bold),
-    Font(R.font.sourceserifpro_semibold, weight = FontWeight.SemiBold),
-    Font(R.font.sourceserifpro_light, weight = FontWeight.Light),
-    Font(R.font.sourceserifpro_extralight, weight = FontWeight.Thin),
-    Font(R.font.sourceserifpro_italic, weight = FontWeight.Normal, style = FontStyle.Italic),
-    Font(R.font.sourceserifpro_blackitalic, weight = FontWeight.Bold, style = FontStyle.Italic)
+val NotoSans = FontFamily(
+    Font(R.font.notosans_regular),
+    Font(R.font.notosans_bold, weight = FontWeight.Bold),
+    Font(R.font.notosans_semibold, weight = FontWeight.SemiBold),
+    Font(R.font.notosans_light, weight = FontWeight.Light),
+    Font(R.font.notosans_extralight, weight = FontWeight.Thin),
+    Font(R.font.notosans_italic, weight = FontWeight.Normal, style = FontStyle.Italic),
+    Font(R.font.notosans_blackitalic, weight = FontWeight.Bold, style = FontStyle.Italic)
 )
 
 // Set of Material typography styles to start with
@@ -96,14 +87,14 @@ val Typography = Typography(
     ),
 
     body1 = TextStyle(
-        fontFamily = SourceSerifPro,
+        fontFamily = NotoSans,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         letterSpacing = 0.5.sp
     ),
 
     body2 = TextStyle(
-        fontFamily = SourceSerifPro,
+        fontFamily = NotoSans,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         letterSpacing = 0.25.sp
