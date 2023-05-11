@@ -67,7 +67,7 @@ fun AdaptiveText(
     val fontSizeUpdateRatio = 0.9
     val fontScale = LocalDensity.current.fontScale
 
-    Log.d("AdaptiveText", "$text is now ${textStyle.fontSize} at $fontScale scale")
+    // Log.d("AdaptiveText", "$text is now ${textStyle.fontSize} at $fontScale scale")
 
     fun isDriftAllowed(): Boolean {
         return (textStyle.fontSize * fontSizeUpdateRatio * fontScale) > minFontSize
@@ -94,7 +94,7 @@ fun AdaptiveText(
         maxLines,
         minLines,
         onTextLayout = { textLayoutResult ->
-            if (isDriftAllowed() && (areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow || isFontTooBig()))
+            if ((areWordsTruncated(textLayoutResult) || textLayoutResult.hasVisualOverflow || isFontTooBig()) && isDriftAllowed())
                 textStyle = textStyle.copy(fontSize = textStyle.fontSize * fontSizeUpdateRatio)
             else
                 textStyleReady = true

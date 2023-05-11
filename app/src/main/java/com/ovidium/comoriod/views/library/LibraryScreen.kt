@@ -125,7 +125,7 @@ fun LibraryScreen(
                     })
             }
         }
-        HorizontalPager(pageCount = TabCategory.values().size, state = pagerState) { tab ->
+        HorizontalPager(pageCount = TabCategory.values().size, state = pagerState, beyondBoundsPageCount = 2) { tab ->
             if (isConnected) {
                 Surface(modifier = Modifier
                     .background(backgroundColor)
