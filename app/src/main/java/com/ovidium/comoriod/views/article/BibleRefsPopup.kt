@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import com.ovidium.comoriod.data.article.BibleRefVerse
-import com.ovidium.comoriod.ui.theme.SourceSerifPro
+import com.ovidium.comoriod.ui.theme.NotoSans
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.formatBibleRefs
 
@@ -51,7 +51,7 @@ fun BibleRefsPopup(bibleRefs: List<BibleRefVerse>) {
                         text = formatBibleRefs(item, isDark = isDark),
                         style = TextStyle(
                             color = if (isDark) Color.Black else Color.White,
-                            fontFamily = SourceSerifPro,
+                            fontFamily = NotoSans,
                             fontSize = 18.sp,
                             lineHeight = 22.sp,
                             fontWeight = FontWeight.Light
