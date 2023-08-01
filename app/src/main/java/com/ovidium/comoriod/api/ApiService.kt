@@ -53,13 +53,13 @@ interface ApiService {
     @GET("recommended")
     suspend fun getRecommended(
         @Header("Authorization") token: String,
-        @Query("limit") limit: Int = 5
+        @Query("limit") limit: Int = 10
     ): RecommendedResponse
 
     @GET("trendingarticles")
     suspend fun getTrending(
         @Header("Authorization") token: String,
-        @Query("limit") limit: Int = 5
+        @Query("limit") limit: Int = 10
     ): TrendingResponse
 
     @GET("titles/completion")

@@ -66,6 +66,7 @@ fun ComoriOdApp(context: Context) {
 
     val signInModel: GoogleSignInModel = viewModel(factory = GoogleSignInModelFactory(context))
     val jwtUtils = JWTUtils()
+    val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
 
     ComoriODTheme {
 
@@ -108,7 +109,6 @@ fun ComoriOdApp(context: Context) {
             drawerContent = { Drawer(context, scaffoldState.drawerState, navController) },
             scaffoldState = scaffoldState,
         ) {
-            val libraryModel: LibraryModel = viewModel(factory = LibraryModelFactory(jwtUtils, signInModel))
             BottomBarMain(
                 navController = navController,
                 scaffoldState = scaffoldState,

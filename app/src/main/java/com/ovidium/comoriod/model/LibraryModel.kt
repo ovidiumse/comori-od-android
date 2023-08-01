@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.model
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,10 +39,6 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val recentlyAddedBooksData by lazy { dataSource.recentlyAddedBooksData }
     val recommendedData = mutableStateOf<Resource<SnapshotStateList<RecommendedResponseItem>>>(Resource.uninitialized())
     val trendingData by lazy { dataSource.trendingData }
-
-    init {
-        loadRecommended()
-    }
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
@@ -91,6 +88,9 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     }
 
     fun loadRecommended() {
+        Log.d("LibraryModel", "Loading recommended articles...")
+        recommendedData.value = Resource.loading(null)
+
         viewModelScope.launch {
             dataSource.getRecommended().collectLatest { response ->
                 when(response.status){
@@ -116,8 +116,9 @@ class LibraryModelFactory(
     private val jwtUtils: JWTUtils,
     private val signInModel: GoogleSignInModel
 ) : ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return modelClass.getConstructor(JWTUtils::class.java, GoogleSignInModel::class.java)
-            .newInstance(jwtUtils, signInModel)
+            .newInstance(jwtUtils, signInModel) as T
     }
 }
