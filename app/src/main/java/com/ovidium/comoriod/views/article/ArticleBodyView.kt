@@ -37,6 +37,8 @@ fun ArticleBodyView(
     highlights: SnapshotStateList<TextRange>,
     offsetList: SnapshotStateList<Int>,
     currentHighlightIndex: MutableState<Int?>,
+    receivedMarkupIndex: Int,
+    receivedMarkupLength: Int,
     markupId: String?,
     textColor: Color,
     handleColor: Color,
@@ -99,8 +101,12 @@ fun ArticleBodyView(
                     lineHeight = 25.sp
                 ),
                 modifier = Modifier.fillMaxSize(),
-                onTextLayout = { textLayout ->
+                onTextLayout = { textLayout -> // TODO: if we did received a markup we need to show a selection
                     val markup = markups.firstOrNull { markup -> markup.id == markupId }
+                    if (receivedMarkupLength != 0) {
+                        val rectStart = textLayout.getBoundingBox(receivedMarkupIndex)
+                        scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
+                    }
                     markup?.let { m ->
                         val rectStart = textLayout.getBoundingBox(m.index)
                         scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()

@@ -198,6 +198,8 @@ fun BottomBarMain(
                 getArticleID(),
                 getMarkupId(),
                 isSearch(),
+                0,
+                0,
                 signInModel,
                 favoritesModel,
                 searchModel,
@@ -349,14 +351,18 @@ fun BottomBarMain(
 
         // Open URL
         composable(
-            route = Screens.Article.route + "/{articleID}",
+            route = Screens.Article.route + "/{articleID}?index={index}&length={length}",
             deepLinks = listOf(navDeepLink {
-                uriPattern = "https://comori-od.ro/article/{articleID}"
+                uriPattern = "https://comori-od.ro/article/{articleID}?index={index}&length={length}"
             }),
         ) { backStackEntry ->
             val articleID = backStackEntry.arguments?.getString("articleID")!!
+            val index = backStackEntry.arguments?.getString("index")
+            val length = backStackEntry.arguments?.getString("length")
             ArticleView(
                 articleID = articleID,
+                receivedMarkupIndex = index?.toInt() ?: 0,
+                receivedMarkupLength = length?.toInt() ?: 0,
                 signInModel = signInModel,
                 favoritesModel = favoritesModel,
                 searchModel = searchModel,

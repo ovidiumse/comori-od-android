@@ -85,7 +85,7 @@ fun MarkupCell(
     fun showSharingSheet() {
         val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.type = "text/plain"
-        val sharingData = "“" + textSelection + "”" + "\n" + "https://comori-od.ro/article/${articleID}?index=${index}&length=${length}"
+        val sharingData = "“" + textSelection + "”" + "\n" + "${author} - ${book}" + "\n" + "https://comori-od.ro/article/${articleID}?index=${index}&length=${length}"
         shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
         ContextCompat.startActivity(context, Intent.createChooser(shareIntent, null), null)
     }
