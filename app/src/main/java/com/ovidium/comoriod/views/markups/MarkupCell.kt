@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.markups
 
+import android.content.Intent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -14,6 +15,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
@@ -45,10 +49,13 @@ import java.time.format.DateTimeFormatter
 fun MarkupCell(
     modifier: Modifier = Modifier,
     textSelection: String,
+    index: Int,
+    length: Int,
     markupColor: String,
     timestamp: String?,
     author: String,
     title: String,
+    articleID: String,
     book: String,
     tags: List<String>,
     isDark: Boolean,
@@ -73,6 +80,17 @@ fun MarkupCell(
 
     val rotationDegreeState by animateFloatAsState(targetValue = if (expandedState) 180f else 0f)
 
+    val context = LocalContext.current
+
+    fun showSharingSheet() {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        val sharingData = "“" + textSelection + "”" + "\n" + "https://comori-od.ro/article/${articleID}?index=${index}&length=${length}"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
+        ContextCompat.startActivity(context, Intent.createChooser(shareIntent, null), null)
+    }
+
+
     Card(
         modifier = modifier
             .animateContentSize(
@@ -88,8 +106,8 @@ fun MarkupCell(
         Column {
             Row(
                 modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .padding(top = 8.dp)
+                    .padding(horizontal = 8.dp)
+                    .padding(top = 8.dp)
             ) {
                 Box(
                     modifier = Modifier
@@ -122,7 +140,7 @@ fun MarkupCell(
                     modifier = Modifier
                         .weight(12.4f)
                         .onSizeChanged { size ->
-                                expandedTextHeight = with(localDensity) { size.height.toDp() }
+                            expandedTextHeight = with(localDensity) { size.height.toDp() }
                         }
                 )
                 if (textOverflowingState) {
@@ -174,17 +192,25 @@ fun MarkupCell(
                 }
             }
             Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .background(primarySurfaceColor)
                     .fillMaxWidth()
             ) {
-                Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)) {
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 5.dp)
+                        .fillMaxWidth(0.8f)
+                ) {
                     Text(
                         text = "${author} - ${title}",
                         color = textColor,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.caption
+                        style = MaterialTheme.typography.caption,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = book,
@@ -193,6 +219,17 @@ fun MarkupCell(
                         style = MaterialTheme.typography.caption
                     )
                 }
+                IconButton(
+                    onClick = { showSharingSheet() },
+                    modifier = Modifier
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Share,
+                        contentDescription = "Share markup",
+                        tint = textColor
+                    )
+                }
+
             }
         }
     }
@@ -270,10 +307,13 @@ fun SwipeableMarkupCell(
                             boxHeight = layoutCoordinates.size.height
                         },
                     textSelection = markup.selection,
+                    index = markup.index,
+                    length = markup.length,
                     markupColor = markup.bgColor,
                     timestamp = markup.timestamp,
                     title = markup.title,
                     author = markup.author,
+                    articleID = markup.articleID,
                     book = markup.book,
                     tags = markup.tags,
                     isDark = isDark,
