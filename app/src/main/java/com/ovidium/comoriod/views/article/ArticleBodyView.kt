@@ -1,10 +1,11 @@
 package com.ovidium.comoriod.views.article
 
-import android.text.SpannableString
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.Colors
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
@@ -16,8 +17,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.text.set
-import androidx.core.text.toSpannable
 import com.ovidium.comoriod.components.ActionCallback
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
@@ -27,7 +26,6 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import kotlin.math.sign
 
 @Composable
 fun ArticleBodyView(
@@ -54,6 +52,7 @@ fun ArticleBodyView(
     var selection by remember { mutableStateOf("") }
     var clearSelection by remember { mutableStateOf(false) }
     var scrollTopOffset = 0
+    val isDark = isSystemInDarkTheme()
 
     var onHighlight: ActionCallback? = null
     if (signInModel.userResource.value.state == UserState.LoggedIn)
@@ -80,6 +79,18 @@ fun ArticleBodyView(
         backgroundColor = handleColor.copy(alpha = 0.3f)
     )
 
+    fun renderWithOptions(): AnnotatedString {
+        val builder = AnnotatedString.Builder() // builder to attach metadata(link)
+        builder.append(article.body) // load current text into the builder
+        val markupStyle = SpanStyle(
+            color = getNamedColor("InvertedText", isDark = isDark),
+            background = getNamedColor("markupSkye", isDark = isDark)
+        )
+        builder.addStyle(markupStyle, receivedMarkupIndex, receivedMarkupIndex + receivedMarkupLength)
+        return builder.toAnnotatedString()
+    }
+
+
     CompositionLocalProvider(
         LocalTextToolbar provides textToolbar,
         LocalTextSelectionColors provides customTextSelectionColors
@@ -94,7 +105,7 @@ fun ArticleBodyView(
             modifier = modifier
         ) {
             ClickableText(
-                text = article.body,
+                text = renderWithOptions(),
                 style = TextStyle(
                     color = textColor,
                     fontSize = 18.sp,
@@ -106,6 +117,7 @@ fun ArticleBodyView(
                     if (receivedMarkupLength != 0) {
                         val rectStart = textLayout.getBoundingBox(receivedMarkupIndex)
                         scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
+
                     }
                     markup?.let { m ->
                         val rectStart = textLayout.getBoundingBox(m.index)
