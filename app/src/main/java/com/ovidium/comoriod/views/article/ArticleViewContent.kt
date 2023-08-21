@@ -6,14 +6,18 @@ import android.content.Intent
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.material.*
@@ -22,6 +26,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
@@ -55,6 +60,7 @@ import com.ovidium.comoriod.views.markups.SaveMarkupDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.Instant
@@ -146,6 +152,7 @@ fun ArticleViewContent(
         startActivity(context, Intent.createChooser(shareIntent, null), null)
     }
 
+    var expanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -396,6 +403,52 @@ fun ArticleViewContent(
                 }
             }
         }
+
+        Column(
+            modifier = Modifier
+                .background(Color.LightGray, shape = RoundedCornerShape(20.dp))
+                .animateContentSize()
+                .height(if (expanded) 100.dp else 0.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Vrei sa îl salvezi?",
+                color = getNamedColor("InvertedText", isDark = isDark),
+                modifier = Modifier
+                    .padding(12.dp)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+            ) {
+                Button(
+                    onClick = {
+                        expanded = false
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                ) {
+                    Text("Anulează")
+                }
+                Button(
+                    onClick = {
+                        markupSelection.value = article.body.text.slice(receivedMarkupIndex..receivedMarkupIndex + receivedMarkupLength) //"Ceva de proba"
+                        expanded = false
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                ) {
+                    Text("Salvează")
+                }
+            }
+        }
+
     }
 
     if (showSaveFavoriteDialog) {
@@ -471,6 +524,13 @@ fun ArticleViewContent(
     LaunchedEffect(listState) {
         if (scrollOffset.value != 0)
             listState.scrollToItem(2, scrollOffset.value)
+    }
+
+    LaunchedEffect(receivedMarkupLength) {
+        if (receivedMarkupLength != 0) {
+            delay(2500L)
+            expanded = true
+        }
     }
 }
 

@@ -80,8 +80,8 @@ fun ArticleBodyView(
     )
 
     fun renderWithOptions(): AnnotatedString {
-        val builder = AnnotatedString.Builder() // builder to attach metadata(link)
-        builder.append(article.body) // load current text into the builder
+        val builder = AnnotatedString.Builder()
+        builder.append(article.body)
         val markupStyle = SpanStyle(
             color = getNamedColor("InvertedText", isDark = isDark),
             background = getNamedColor("markupSkye", isDark = isDark)
@@ -112,7 +112,7 @@ fun ArticleBodyView(
                     lineHeight = 25.sp
                 ),
                 modifier = Modifier.fillMaxSize(),
-                onTextLayout = { textLayout -> // TODO: if we did received a markup we need to show a selection
+                onTextLayout = { textLayout ->
                     val markup = markups.firstOrNull { markup -> markup.id == markupId }
                     if (receivedMarkupLength != 0) {
                         val rectStart = textLayout.getBoundingBox(receivedMarkupIndex)
