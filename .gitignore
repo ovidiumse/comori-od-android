@@ -19,3 +19,5 @@ local.properties
 props.private
 .idea/deploymentTargetDropDown.xml
 props.rar
+/app/r8-usage.txt
+/app/release/
