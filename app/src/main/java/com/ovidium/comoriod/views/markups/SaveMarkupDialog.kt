@@ -79,10 +79,13 @@ fun SaveMarkupDialog(
                     Row() {
                         MarkupCell(
                             textSelection = selection,
+                            index = 0,
+                            length = 0,
                             markupColor = selectedColor,
                             timestamp = null,
                             author = articleToSave.author,
                             title = articleToSave.title.text,
+                            articleID = articleToSave.id,
                             book = articleToSave.book,
                             tags = tags,
                             isDark = isDark

@@ -1,9 +1,11 @@
 package com.ovidium.comoriod.views.article
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.Colors
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.NotoSans
+import com.ovidium.comoriod.ui.theme.getNamedColor
 
 @Composable
 fun ArticleBodyView(
@@ -33,6 +36,8 @@ fun ArticleBodyView(
     highlights: SnapshotStateList<TextRange>,
     offsetList: SnapshotStateList<Int>,
     currentHighlightIndex: MutableState<Int?>,
+    receivedMarkupIndex: Int,
+    receivedMarkupLength: Int,
     markupId: String?,
     textColor: Color,
     handleColor: Color,
@@ -48,6 +53,7 @@ fun ArticleBodyView(
     var selection by remember { mutableStateOf("") }
     var clearSelection by remember { mutableStateOf(false) }
     var scrollTopOffset = 0
+    val isDark = isSystemInDarkTheme()
 
     var onHighlight: ActionCallback? = null
     if (signInModel.userResource.value.state == UserState.LoggedIn)
@@ -74,6 +80,18 @@ fun ArticleBodyView(
         backgroundColor = handleColor.copy(alpha = 0.3f)
     )
 
+    fun renderWithOptions(): AnnotatedString {
+        val builder = AnnotatedString.Builder()
+        builder.append(article.body)
+        val markupStyle = SpanStyle(
+            color = getNamedColor("InvertedText", isDark = isDark),
+            background = getNamedColor("markupSkye", isDark = isDark)
+        )
+        builder.addStyle(markupStyle, receivedMarkupIndex, receivedMarkupIndex + receivedMarkupLength)
+        return builder.toAnnotatedString()
+    }
+
+
     CompositionLocalProvider(
         LocalTextToolbar provides textToolbar,
         LocalTextSelectionColors provides customTextSelectionColors
@@ -88,7 +106,7 @@ fun ArticleBodyView(
             modifier = modifier
         ) {
             ClickableText(
-                text = article.body,
+                text = renderWithOptions(),
                 style = TextStyle(
                     fontFamily = NotoSans,
                     color = textColor,
@@ -98,6 +116,11 @@ fun ArticleBodyView(
                 modifier = Modifier.fillMaxSize(),
                 onTextLayout = { textLayout ->
                     val markup = markups.firstOrNull { markup -> markup.id == markupId }
+                    if (receivedMarkupLength != 0) {
+                        val rectStart = textLayout.getBoundingBox(receivedMarkupIndex)
+                        scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
+
+                    }
                     markup?.let { m ->
                         val rectStart = textLayout.getBoundingBox(m.index)
                         scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()

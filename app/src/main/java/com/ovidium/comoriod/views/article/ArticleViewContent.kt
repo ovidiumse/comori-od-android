@@ -2,8 +2,10 @@
 
 package com.ovidium.comoriod.views.article
 
+import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -19,12 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.AdaptiveText
@@ -41,6 +45,7 @@ import com.ovidium.comoriod.utils.nowUtc
 import com.ovidium.comoriod.utils.toIsoString
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.Instant
@@ -77,6 +82,8 @@ fun ArticleViewContent(
     highlights: SnapshotStateList<TextRange>,
     offsetList: SnapshotStateList<Int>,
     currentHighlightIndex: MutableState<Int?>,
+    receivedMarkupIndex: Int,
+    receivedMarkupLength: Int,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel,
@@ -118,6 +125,18 @@ fun ArticleViewContent(
         targetValue = if (hasPopup) primarySurfaceColor else bgColor,
         animationSpec = tween(durationMillis = 300)
     )
+    val context = LocalContext.current
+    var expandFloatingMenu by remember { mutableStateOf(false) }
+
+    fun showSharingSheet() {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "text/plain"
+        val sharingData = article.title.text + "\n" + "https://comori-od.ro/article/${article.id}"
+        shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
+        startActivity(context, Intent.createChooser(shareIntent, null), null)
+    }
+
+    var expanded by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -205,6 +224,8 @@ fun ArticleViewContent(
                         highlights,
                         offsetList,
                         currentHighlightIndex,
+                        receivedMarkupIndex,
+                        receivedMarkupLength,
                         markupId,
                         textColor,
                         handleColor,
@@ -228,9 +249,25 @@ fun ArticleViewContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
+            if (expandFloatingMenu)
+                FloatingActionButton(
+                    onClick = { showSharingSheet() },
+                    modifier = Modifier
+                        .padding(bottom = 16.dp, end = 16.dp),
+                    backgroundColor = buttonColor
+                ) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_share_24),
+                        contentDescription = "Share article",
+                        modifier = Modifier.size(35.dp),
+                        tint = Color.White,
+                    )
+                }
+
             val userResourceState = signInModel.userResource
             val userResource = userResourceState.value
-            if (userResource.state == UserState.LoggedIn)
+            if (expandFloatingMenu && userResource.state == UserState.LoggedIn)
                 FloatingActionButton(
                     onClick = {
                         if (favoritesModel.isFavorite(article.id)) {
@@ -239,7 +276,7 @@ fun ArticleViewContent(
                             showSaveFavoriteDialog = true
                         }
                     },
-                    modifier = Modifier.padding(bottom = 100.dp, end = 16.dp),
+                    modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
                     backgroundColor = buttonColor
                 ) {
                     if (favoritesModel.isFavorite(article.id)) {
@@ -254,10 +291,26 @@ fun ArticleViewContent(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_favorite_border_24),
                             contentDescription = "Mark as favorite",
                             modifier = Modifier.size(35.dp),
-                            tint = Color.Black,
+                            tint = Color.White,
                         )
                     }
                 }
+
+            FloatingActionButton(
+                onClick = { expandFloatingMenu = !expandFloatingMenu },
+                modifier = Modifier
+                    .padding(bottom = 80.dp, end = 16.dp),
+                backgroundColor = buttonColor
+            ) {
+                Icon(
+                    imageVector = if (expandFloatingMenu) ImageVector.vectorResource(id = R.drawable.baseline_close_48) else ImageVector.vectorResource(id = R.drawable.baseline_more_vert_48),
+                    contentDescription = "More actions",
+                    modifier = Modifier.size(35.dp),
+                    tint = Color.White,
+                )
+            }
+
+
         }
 
         //Highlights
@@ -337,6 +390,52 @@ fun ArticleViewContent(
                 }
             }
         }
+
+        Column(
+            modifier = Modifier
+                .background(Color.LightGray, shape = RoundedCornerShape(20.dp))
+                .animateContentSize()
+                .height(if (expanded) 100.dp else 0.dp)
+                .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Vrei sa îl salvezi?",
+                color = getNamedColor("InvertedText", isDark = isDark),
+                modifier = Modifier
+                    .padding(12.dp)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+            ) {
+                Button(
+                    onClick = {
+                        expanded = false
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                ) {
+                    Text("Anulează")
+                }
+                Button(
+                    onClick = {
+                        markupSelection.value = article.body.text.slice(receivedMarkupIndex..receivedMarkupIndex + receivedMarkupLength) //"Ceva de proba"
+                        expanded = false
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
+                    modifier = Modifier
+                        .padding(start = 16.dp, end = 16.dp)
+                ) {
+                    Text("Salvează")
+                }
+            }
+        }
+
     }
 
     if (showSaveFavoriteDialog) {
@@ -412,6 +511,13 @@ fun ArticleViewContent(
     LaunchedEffect(listState) {
         if (scrollOffset.value != 0)
             listState.scrollToItem(2, scrollOffset.value)
+    }
+
+    LaunchedEffect(receivedMarkupLength) {
+        if (receivedMarkupLength != 0) {
+            delay(2500L)
+            expanded = true
+        }
     }
 }
 

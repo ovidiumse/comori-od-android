@@ -84,6 +84,8 @@ fun BookScreen(
                     ) { pageIdx ->
                         ArticleView(
                             articleID = titles.map { it._id }[pageIdx],
+                            receivedMarkupIndex = 0,
+                            receivedMarkupLength = 0,
                             signInModel = signInModel,
                             favoritesModel = favoritesModel,
                             searchModel = searchModel,
@@ -124,6 +126,8 @@ fun BookScreen(
             ) { pageIdx ->
                 ArticleView(
                     articleID = titles.map { it._id }[pageIdx],
+                    receivedMarkupIndex = 0,
+                    receivedMarkupLength = 0,
                     signInModel = signInModel,
                     favoritesModel = favoritesModel,
                     searchModel = searchModel,
