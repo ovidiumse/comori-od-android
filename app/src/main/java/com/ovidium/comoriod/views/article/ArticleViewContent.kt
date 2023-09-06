@@ -22,12 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.R
@@ -391,48 +393,74 @@ fun ArticleViewContent(
             }
         }
 
-        Column(
-            modifier = Modifier
-                .background(Color.LightGray, shape = RoundedCornerShape(20.dp))
-                .animateContentSize()
-                .height(if (expanded) 100.dp else 0.dp)
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+        Popup(
+            alignment = Alignment.BottomCenter,
         ) {
-            Text(
-                text = "Vrei sa îl salvezi?",
-                color = getNamedColor("InvertedText", isDark = isDark),
+            val configuration = LocalConfiguration.current
+            val screenHeight = configuration.screenHeightDp.dp
+            Box(
                 modifier = Modifier
-                    .padding(12.dp)
-            )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .padding(bottom = 12.dp)
+                    .fillMaxWidth()
+                    .animateContentSize()
+                    .height(if (expanded) screenHeight / 6 else 0.dp)
+                    .background(
+                        getNamedColor("Background", isDark),
+                        RoundedCornerShape(16.dp)
+                    )
             ) {
-                Button(
-                    onClick = {
-                        expanded = false
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
+
+                Column(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
+                        .wrapContentHeight()
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("Anulează")
+                    Text(
+                        text = "Vrei sa îl salvezi?",
+                        color = getNamedColor("Text", isDark = isDark),
+                        modifier = Modifier
+                            .padding(12.dp)
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .padding(bottom = 12.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                expanded = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = getNamedColor("Link", isDark),
+                                disabledBackgroundColor = primarySurfaceColor,
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp)
+                        ) {
+                            Text("Anulează")
+                        }
+                        Button(
+                            onClick = {
+                                markupSelection.value =
+                                    article.body.text.slice(receivedMarkupIndex..receivedMarkupIndex + receivedMarkupLength) //"Ceva de proba"
+                                expanded = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = getNamedColor("Link", isDark),
+                                disabledBackgroundColor = primarySurfaceColor,
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 16.dp)
+                        ) {
+                            Text("Salvează")
+                        }
+                    }
                 }
-                Button(
-                    onClick = {
-                        markupSelection.value = article.body.text.slice(receivedMarkupIndex..receivedMarkupIndex + receivedMarkupLength) //"Ceva de proba"
-                        expanded = false
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.DarkGray),
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp)
-                ) {
-                    Text("Salvează")
-                }
+
             }
         }
 
