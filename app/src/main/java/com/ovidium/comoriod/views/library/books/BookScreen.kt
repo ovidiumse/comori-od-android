@@ -82,10 +82,13 @@ fun BookScreen(
                         contentPadding = PaddingValues(end = 16.dp),
                         verticalAlignment = Alignment.Top,
                     ) { pageIdx ->
+                        val markupIndexState = remember { mutableStateOf(0) }
+                        val markupLengthState = remember { mutableStateOf(0) }
+
                         ArticleView(
                             articleID = titles.map { it._id }[pageIdx],
-                            receivedMarkupIndex = 0,
-                            receivedMarkupLength = 0,
+                            receivedMarkupIndex = markupIndexState,
+                            receivedMarkupLength = markupLengthState,
                             signInModel = signInModel,
                             favoritesModel = favoritesModel,
                             searchModel = searchModel,
@@ -124,10 +127,13 @@ fun BookScreen(
                 contentPadding = PaddingValues(end = 16.dp),
                 verticalAlignment = Alignment.Top,
             ) { pageIdx ->
+                val markupIndexState = remember { mutableStateOf(0) }
+                val markupLengthState = remember { mutableStateOf(0) }
+
                 ArticleView(
                     articleID = titles.map { it._id }[pageIdx],
-                    receivedMarkupIndex = 0,
-                    receivedMarkupLength = 0,
+                    receivedMarkupIndex = markupIndexState,
+                    receivedMarkupLength = markupLengthState,
                     signInModel = signInModel,
                     favoritesModel = favoritesModel,
                     searchModel = searchModel,

@@ -101,10 +101,6 @@ fun fmtVerses(verses: List<String>, isDark: Boolean): List<AnnotatedString> {
     return verses.map { verse -> highlightElements(verse, isDark = isDark) }
 }
 
-/*fun fmtVerses(verses: List<String>, isDark: Boolean): AnnotatedString {
-    return highlightElements(verses.joinToString(separator = "\n"), isDark = isDark)
-}*/
-
 fun parseVerses(
     verses: List<List<ArticleResponseChunk>>,
     markups: List<Markup>,
@@ -113,7 +109,6 @@ fun parseVerses(
     isDark: Boolean
 ): AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)
-    val markupTextColor = getNamedColor("HeaderText", isDark)
 
     fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
@@ -136,7 +131,7 @@ fun parseVerses(
                 }
                 "bible-ref" -> {
                     withAnnotation(tag = "URL", annotation = chunk.ref!!) {
-                        withStyle(style = SpanStyle(color = linkColor)) {
+                        withStyle(buildStyle(chunk.style)) {
                             append(highlightBody(chunk.text, isDark))
                         }
                     }
@@ -195,6 +190,22 @@ fun parseVerses(
                     end = hl.end
                 )
             }
+        }
+
+        var currentIndex = 0
+        for (verse in verses) {
+            for (chunk in verse) {
+                when(chunk.type) {
+                    "bible-ref" -> {
+                        addStyle(SpanStyle(color = linkColor), currentIndex, currentIndex + chunk.text.length)
+                    }
+                }
+
+                currentIndex += chunk.text.length
+            }
+
+            // this is to handle newline and empty verses
+            currentIndex += 1
         }
     }
 }

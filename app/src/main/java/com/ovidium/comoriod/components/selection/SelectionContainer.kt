@@ -31,6 +31,7 @@ fun SelectionContainer(
     onSelectionChange: (Int, Int) -> Unit,
     content: @Composable () -> Unit
 ) {
+
     var selection by remember { mutableStateOf<Selection?>(null) }
     if (clearSelection)
         selection = null

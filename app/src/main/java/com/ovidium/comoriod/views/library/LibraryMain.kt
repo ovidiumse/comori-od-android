@@ -31,19 +31,20 @@ fun LibraryMain(
             .fillMaxSize()
             .background(color = getNamedColor("Background", isDark))
     ) {
-        if (signInModel.userResource.value.state == UserState.LoggedIn) {
-            item {
-                StateHandler(
-                    navController,
-                    libraryModel.recentlyAddedBooksData
-                ) { data, isLoading ->
-                    RecentlyAddedBooksRow(
-                        navController, data, isLoading, isDark, modifier = Modifier.animateItemPlacement(
-                            animationSpec = tween(durationMillis = 300)
-                        )
+        item {
+            StateHandler(
+                navController,
+                libraryModel.recentlyAddedBooksData
+            ) { data, isLoading ->
+                RecentlyAddedBooksRow(
+                    navController, data, isLoading, isDark, modifier = Modifier.animateItemPlacement(
+                        animationSpec = tween(durationMillis = 300)
                     )
-                }
+                )
             }
+        }
+
+        if (signInModel.userResource.value.state == UserState.LoggedIn) {
             item {
                 RecommendedRow(navController, libraryModel.recommendedData, isDark, modifier = Modifier.animateItemPlacement(
                     animationSpec = tween(durationMillis = 300)

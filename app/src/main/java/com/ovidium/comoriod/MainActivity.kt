@@ -194,12 +194,15 @@ fun BottomBarMain(
                     ?.let { isSearch -> URLDecoder.decode(isSearch, "utf-8") }
             }
 
+            val markupIndexState = remember { mutableStateOf(0) }
+            val markupLengthState = remember { mutableStateOf(0) }
+
             ArticleView(
                 getArticleID(),
                 getMarkupId(),
                 isSearch(),
-                0,
-                0,
+                markupIndexState,
+                markupLengthState,
                 signInModel,
                 favoritesModel,
                 searchModel,
@@ -357,12 +360,16 @@ fun BottomBarMain(
             }),
         ) { backStackEntry ->
             val articleID = backStackEntry.arguments?.getString("articleID")!!
-            val index = backStackEntry.arguments?.getString("index")
-            val length = backStackEntry.arguments?.getString("length")
+            val index = (backStackEntry.arguments?.getString("index"))?.toInt()
+            val length = (backStackEntry.arguments?.getString("length"))?.toInt()
+
+            var indexState = remember { mutableStateOf( index?: 0 ) }
+            var lengthState = remember { mutableStateOf( length?: 0) }
+
             ArticleView(
                 articleID = articleID,
-                receivedMarkupIndex = index?.toInt() ?: 0,
-                receivedMarkupLength = length?.toInt() ?: 0,
+                receivedMarkupIndex = indexState,
+                receivedMarkupLength = lengthState,
                 signInModel = signInModel,
                 favoritesModel = favoritesModel,
                 searchModel = searchModel,

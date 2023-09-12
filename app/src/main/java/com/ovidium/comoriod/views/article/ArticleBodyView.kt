@@ -36,8 +36,8 @@ fun ArticleBodyView(
     highlights: SnapshotStateList<TextRange>,
     offsetList: SnapshotStateList<Int>,
     currentHighlightIndex: MutableState<Int?>,
-    receivedMarkupIndex: Int,
-    receivedMarkupLength: Int,
+    receivedMarkupIndex: MutableState<Int>,
+    receivedMarkupLength: MutableState<Int>,
     markupId: String?,
     textColor: Color,
     handleColor: Color,
@@ -47,6 +47,7 @@ fun ArticleBodyView(
     bibleRefs: SnapshotStateList<BibleRefVerse>,
     showHighlightControls: MutableState<Boolean>,
     signInModel: GoogleSignInModel,
+    onTextClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -81,16 +82,19 @@ fun ArticleBodyView(
     )
 
     fun renderWithOptions(): AnnotatedString {
-        val builder = AnnotatedString.Builder()
-        builder.append(article.body)
-        val markupStyle = SpanStyle(
-            color = getNamedColor("InvertedText", isDark = isDark),
-            background = getNamedColor("markupSkye", isDark = isDark)
-        )
-        builder.addStyle(markupStyle, receivedMarkupIndex, receivedMarkupIndex + receivedMarkupLength)
-        return builder.toAnnotatedString()
-    }
+        return if (receivedMarkupLength.value != 0) {
+            val markupSelectionStyle = SpanStyle(
+                background = handleColor.copy(alpha = 0.3f)
+            )
 
+            buildAnnotatedString {
+                append(article.body)
+                addStyle(markupSelectionStyle, receivedMarkupIndex.value, receivedMarkupIndex.value + receivedMarkupLength.value)
+            }
+        } else {
+            article.body
+        }
+    }
 
     CompositionLocalProvider(
         LocalTextToolbar provides textToolbar,
@@ -116,15 +120,15 @@ fun ArticleBodyView(
                 modifier = Modifier.fillMaxSize(),
                 onTextLayout = { textLayout ->
                     val markup = markups.firstOrNull { markup -> markup.id == markupId }
-                    if (receivedMarkupLength != 0) {
-                        val rectStart = textLayout.getBoundingBox(receivedMarkupIndex)
+                    if (markup != null) {
+                        val rectStart = textLayout.getBoundingBox(markup.index)
                         scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
+                    }
+                    else if (receivedMarkupLength.value != 0) {
+                        val rectStart = textLayout.getBoundingBox(receivedMarkupIndex.value)
+                        scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
+                    }
 
-                    }
-                    markup?.let { m ->
-                        val rectStart = textLayout.getBoundingBox(m.index)
-                        scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
-                    }
                     if (offsetList.isEmpty()) {
                         for (highlight in highlights) {
                             val rectStart = textLayout.getBoundingBox(highlight.start)
@@ -147,6 +151,7 @@ fun ArticleBodyView(
                 clearSelection = true
                 textToolbar.hide()
                 if (bibleRefs.isEmpty()) {
+                    onTextClick()
                     showHighlightControls.value = showHighlightControls.value.not()
                     if (showHighlightControls.value) {
                         val hlAnnotations =

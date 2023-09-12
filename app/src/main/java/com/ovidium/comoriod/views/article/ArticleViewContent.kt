@@ -26,6 +26,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,8 +86,8 @@ fun ArticleViewContent(
     highlights: SnapshotStateList<TextRange>,
     offsetList: SnapshotStateList<Int>,
     currentHighlightIndex: MutableState<Int?>,
-    receivedMarkupIndex: Int,
-    receivedMarkupLength: Int,
+    receivedMarkupIndex: MutableState<Int>,
+    receivedMarkupLength: MutableState<Int>,
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel,
@@ -138,7 +140,7 @@ fun ArticleViewContent(
         startActivity(context, Intent.createChooser(shareIntent, null), null)
     }
 
-    var expanded by remember { mutableStateOf(false) }
+    var showSavingSharedMarkupPopup by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -194,9 +196,11 @@ fun ArticleViewContent(
                                 }
                             }
                         }
+
                         Status.LOADING -> {
 
                         }
+
                         else -> {}
                     }
 
@@ -205,7 +209,7 @@ fun ArticleViewContent(
                             modifier = Modifier.size(16.dp),
                             imageVector = ImageVector.vectorResource(id = R.drawable.baseline_access_time_24),
                             contentDescription = "Read time",
-                            tint = mutedTextColor.copy(alpha = 0.7f)
+                            tint = textColor.copy(alpha = 0.7f)
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
@@ -236,7 +240,13 @@ fun ArticleViewContent(
                         scrollOffset,
                         bibleRefs,
                         showHighlightControls,
-                        signInModel
+                        signInModel,
+                        onTextClick = {
+                            expandFloatingMenu = false
+                            showSavingSharedMarkupPopup = false
+                            receivedMarkupIndex.value = 0
+                            receivedMarkupLength.value = 0
+                        }
                     )
                 }
             }
@@ -251,24 +261,24 @@ fun ArticleViewContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            val userResourceState = signInModel.userResource
+            val userResource = userResourceState.value
 
-            if (expandFloatingMenu)
+            if (expandFloatingMenu || userResource.state != UserState.LoggedIn)
                 FloatingActionButton(
                     onClick = { showSharingSheet() },
                     modifier = Modifier
                         .padding(bottom = 16.dp, end = 16.dp),
-                    backgroundColor = buttonColor
+                    backgroundColor = buttonColor,
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.baseline_share_24),
                         contentDescription = "Share article",
                         modifier = Modifier.size(35.dp),
-                        tint = Color.White,
+                        tint = textColor.copy(alpha = 0.7f),
                     )
                 }
 
-            val userResourceState = signInModel.userResource
-            val userResource = userResourceState.value
             if (expandFloatingMenu && userResource.state == UserState.LoggedIn)
                 FloatingActionButton(
                     onClick = {
@@ -279,37 +289,41 @@ fun ArticleViewContent(
                         }
                     },
                     modifier = Modifier.padding(bottom = 16.dp, end = 16.dp),
-                    backgroundColor = buttonColor
+                    backgroundColor = buttonColor,
                 ) {
                     if (favoritesModel.isFavorite(article.id)) {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_favorite_24),
                             contentDescription = "Remove from favorites",
                             modifier = Modifier.size(35.dp),
-                            tint = Color.Red,
+                            tint = Color.Red.copy(alpha = 0.7f),
                         )
                     } else {
                         Icon(
                             imageVector = ImageVector.vectorResource(id = R.drawable.ic_baseline_favorite_border_24),
                             contentDescription = "Mark as favorite",
                             modifier = Modifier.size(35.dp),
-                            tint = Color.White,
+                            tint = textColor.copy(alpha = 0.7f)
                         )
                     }
                 }
 
-            FloatingActionButton(
-                onClick = { expandFloatingMenu = !expandFloatingMenu },
-                modifier = Modifier
-                    .padding(bottom = 80.dp, end = 16.dp),
-                backgroundColor = buttonColor
-            ) {
-                Icon(
-                    imageVector = if (expandFloatingMenu) ImageVector.vectorResource(id = R.drawable.baseline_close_48) else ImageVector.vectorResource(id = R.drawable.baseline_more_vert_48),
-                    contentDescription = "More actions",
-                    modifier = Modifier.size(35.dp),
-                    tint = Color.White,
-                )
+            if (userResource.state == UserState.LoggedIn) {
+                FloatingActionButton(
+                    onClick = { expandFloatingMenu = !expandFloatingMenu },
+                    modifier = Modifier
+                        .padding(bottom = 80.dp, end = 16.dp),
+                    backgroundColor = buttonColor,
+                ) {
+                    Icon(
+                        imageVector = if (expandFloatingMenu) ImageVector.vectorResource(id = R.drawable.baseline_close_48) else ImageVector.vectorResource(
+                            id = R.drawable.baseline_more_vert_48
+                        ),
+                        contentDescription = "More actions",
+                        modifier = Modifier.size(35.dp),
+                        tint = textColor.copy(alpha = 0.7f)
+                    )
+                }
             }
 
 
@@ -349,12 +363,12 @@ fun ArticleViewContent(
                         }
                     },
                     modifier = Modifier.padding(end = 16.dp, bottom = 16.dp),
-                    backgroundColor = getNamedColor("SecondarySurface", isDark)
+                    backgroundColor = buttonColor,
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_up),
                         contentDescription = "Up",
-                        tint = getNamedColor("Container", isDark)
+                        tint = textColor.copy(alpha = 0.7f)
                     )
                 }
                 FloatingActionButton(
@@ -382,88 +396,98 @@ fun ArticleViewContent(
                         }
                     },
                     modifier = Modifier.padding(end = 16.dp, top = 16.dp),
-                    backgroundColor = getNamedColor("SecondarySurface", isDark)
+                    backgroundColor = buttonColor,
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down),
                         contentDescription = "Down",
-                        tint = getNamedColor("Container", isDark)
+                        tint = textColor.copy(alpha = 0.7f)
                     )
                 }
             }
         }
 
-        Popup(
-            alignment = Alignment.BottomCenter,
-        ) {
-            val configuration = LocalConfiguration.current
-            val screenHeight = configuration.screenHeightDp.dp
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .animateContentSize()
-                    .height(if (expanded) screenHeight / 6 else 0.dp)
-                    .background(
-                        getNamedColor("Background", isDark),
-                        RoundedCornerShape(16.dp)
-                    )
+        if (showSavingSharedMarkupPopup) {
+            Popup(
+                alignment = Alignment.BottomCenter,
             ) {
-
-                Column(
+                val configuration = LocalConfiguration.current
+                val screenHeight = configuration.screenHeightDp.dp
+                Box(
                     modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = screenHeight / 4)
                         .wrapContentHeight()
-                        .fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .animateContentSize()
+                        .background(
+                            getNamedColor("PrimarySurface", !isDark),
+                            RoundedCornerShape(16.dp)
+                        )
                 ) {
-                    Text(
-                        text = "Vrei sa îl salvezi?",
-                        color = getNamedColor("Text", isDark = isDark),
+
+                    Column(
                         modifier = Modifier
-                            .padding(12.dp)
-                    )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .padding(bottom = 12.dp)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Button(
-                            onClick = {
-                                expanded = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = getNamedColor("Link", isDark),
-                                disabledBackgroundColor = primarySurfaceColor,
-                                contentColor = Color.White
+                        Text(
+                            text = "Vrei să salvezi citatul?",
+                            color = getNamedColor("Text", !isDark),
+                            style = TextStyle(
+                                color = if (isDark) Color.Black else Color.White,
+                                fontFamily = NotoSans,
+                                fontSize = 18.sp,
+                                lineHeight = 22.sp,
+                                fontWeight = FontWeight.Bold
                             ),
                             modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp)
-                        ) {
-                            Text("Anulează")
-                        }
-                        Button(
-                            onClick = {
-                                markupSelection.value =
-                                    article.body.text.slice(receivedMarkupIndex..receivedMarkupIndex + receivedMarkupLength) //"Ceva de proba"
-                                expanded = false
-                            },
-                            colors = ButtonDefaults.buttonColors(
-                                backgroundColor = getNamedColor("Link", isDark),
-                                disabledBackgroundColor = primarySurfaceColor,
-                                contentColor = Color.White
-                            ),
+                                .padding(12.dp)
+                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp)
+                                .padding(bottom = 12.dp)
                         ) {
-                            Text("Salvează")
+                            Button(
+                                onClick = {
+                                    showSavingSharedMarkupPopup = false
+                                    receivedMarkupIndex.value = 0
+                                    receivedMarkupLength.value = 0
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = getNamedColor("Link", isDark),
+                                    disabledBackgroundColor = primarySurfaceColor,
+                                    contentColor = Color.White
+                                ),
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp)
+                            ) {
+                                Text("Anulează")
+                            }
+                            Button(
+                                onClick = {
+                                    markupSelection.value =
+                                        article.body.text.slice(receivedMarkupIndex.value..(receivedMarkupIndex.value + receivedMarkupLength.value)) //"Ceva de proba"
+                                    showSavingSharedMarkupPopup = false
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = getNamedColor("Link", isDark),
+                                    disabledBackgroundColor = primarySurfaceColor,
+                                    contentColor = Color.White
+                                ),
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp)
+                            ) {
+                                Text("Salvează")
+                            }
                         }
                     }
-                }
 
+                }
             }
         }
-
     }
 
     if (showSaveFavoriteDialog) {
@@ -541,10 +565,10 @@ fun ArticleViewContent(
             listState.scrollToItem(2, scrollOffset.value)
     }
 
-    LaunchedEffect(receivedMarkupLength) {
-        if (receivedMarkupLength != 0) {
-            delay(2500L)
-            expanded = true
+    LaunchedEffect(receivedMarkupLength.value) {
+        delay(2500L)
+        if (receivedMarkupLength.value > 0) {
+            showSavingSharedMarkupPopup = true
         }
     }
 }
