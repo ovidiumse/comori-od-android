@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.article
 
+import android.content.Intent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
@@ -11,12 +12,14 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalTextToolbar
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.ovidium.comoriod.components.ActionCallback
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
@@ -56,6 +59,8 @@ fun ArticleBodyView(
     var scrollTopOffset = 0
     val isDark = isSystemInDarkTheme()
 
+    val context = LocalContext.current
+
     var onHighlight: ActionCallback? = null
     if (signInModel.userResource.value.state == UserState.LoggedIn)
         onHighlight = {
@@ -73,7 +78,14 @@ fun ArticleBodyView(
         onCopy = {
             clearSelection = true
         },
-        onHighlight = onHighlight
+        onHighlight = onHighlight,
+        onShare = {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            val sharingData = "“" + selection + "”" + "\n" + "${article.author} - ${article.book}" + "\n" + "https://comori-od.ro/article/${article.id}?index=${startPos.value}&length=${endPos.value - startPos.value}"
+            shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
+            ContextCompat.startActivity(context, Intent.createChooser(shareIntent, null), null)
+        }
     )
 
     val customTextSelectionColors = TextSelectionColors(

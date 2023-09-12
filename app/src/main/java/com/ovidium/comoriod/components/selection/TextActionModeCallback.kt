@@ -12,6 +12,7 @@ internal const val MENU_ITEM_PASTE = 1
 internal const val MENU_ITEM_CUT = 2
 internal const val MENU_ITEM_SELECT_ALL = 3
 internal const val MENU_ITEM_HIGHLIGHT = 4
+internal const val MENU_ITEM_SHARE = 5
 
 class TextActionModeCallback(
     var rect: Rect = Rect.Zero,
@@ -20,6 +21,7 @@ class TextActionModeCallback(
     var onCutRequested: ActionCallback? = null,
     var onSelectAllRequested: ActionCallback? = null,
     var onHighlight: ActionCallback? = null,
+    var onShare: ActionCallback? = null
 ) {
     fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
         requireNotNull(menu)
@@ -50,6 +52,11 @@ class TextActionModeCallback(
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
         }
 
+        onShare?.let {
+            menu.add(0, MENU_ITEM_SHARE, 5, "Partajează")
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+        }
+
         return true
     }
 
@@ -64,6 +71,7 @@ class TextActionModeCallback(
             MENU_ITEM_CUT -> onCutRequested?.invoke()
             MENU_ITEM_SELECT_ALL -> onSelectAllRequested?.invoke()
             MENU_ITEM_HIGHLIGHT -> onHighlight?.invoke()
+            MENU_ITEM_SHARE -> onShare?.invoke()
             else -> return false
         }
         mode?.finish()

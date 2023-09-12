@@ -16,7 +16,8 @@ typealias ActionCallback = () -> Unit
 class CustomTextToolbar(
     private val view: View,
     private val onCopy: ActionCallback? = null,
-    private val onHighlight: ActionCallback? = null
+    private val onHighlight: ActionCallback? = null,
+    private val onShare: ActionCallback? = null
 ) :
     TextToolbar {
 
@@ -41,6 +42,7 @@ class CustomTextToolbar(
         textActionModeCallback.onPasteRequested = onPasteRequested
         textActionModeCallback.onSelectAllRequested = onSelectAllRequested
         textActionModeCallback.onHighlight = onHighlight
+        textActionModeCallback.onShare = onShare
 
         if (actionMode == null) {
             status = TextToolbarStatus.Shown
