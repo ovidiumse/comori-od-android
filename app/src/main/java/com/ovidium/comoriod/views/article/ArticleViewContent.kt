@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.common.GooglePlayServicesUtil
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.article.Article
@@ -141,6 +142,8 @@ fun ArticleViewContent(
     }
 
     var showSavingSharedMarkupPopup by remember { mutableStateOf(false) }
+    val userResourceState = signInModel.userResource
+    val userResource = userResourceState.value
 
     Box(
         modifier = Modifier
@@ -261,9 +264,6 @@ fun ArticleViewContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            val userResourceState = signInModel.userResource
-            val userResource = userResourceState.value
-
             if (expandFloatingMenu || userResource.state != UserState.LoggedIn)
                 FloatingActionButton(
                     onClick = { showSharingSheet() },
@@ -407,7 +407,7 @@ fun ArticleViewContent(
             }
         }
 
-        if (showSavingSharedMarkupPopup) {
+        if (showSavingSharedMarkupPopup && userResource.state == UserState.LoggedIn) {
             Popup(
                 alignment = Alignment.BottomCenter,
             ) {
