@@ -110,7 +110,8 @@ fun parseVerses(
 ): AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)
 
-    fun buildChunk(chunk: ArticleResponseChunk): AnnotatedString {
+    val bibleRefsRanges = ArrayList<Pair<Int, Int>>();
+    fun buildChunk(index: Int, chunk: ArticleResponseChunk): AnnotatedString {
         fun buildStyle(styles: List<String>): SpanStyle {
             var style = SpanStyle(letterSpacing = 0.3.sp)
             for (s in styles) {
@@ -132,6 +133,7 @@ fun parseVerses(
                 "bible-ref" -> {
                     withAnnotation(tag = "URL", annotation = chunk.ref!!) {
                         withStyle(buildStyle(chunk.style)) {
+                            bibleRefsRanges.add(Pair(index + this.length, index + chunk.text.length))
                             append(highlightBody(chunk.text, isDark))
                         }
                     }
@@ -140,10 +142,10 @@ fun parseVerses(
         }
     }
 
-    fun buildVerse(verse: List<ArticleResponseChunk>): AnnotatedString {
+    fun buildVerse(index: Int, verse: List<ArticleResponseChunk>): AnnotatedString {
         return buildAnnotatedString {
             for (chunk in verse)
-                append(buildChunk(chunk))
+                append(buildChunk(index + this.length, chunk))
 
             append('\n')
         }
@@ -153,7 +155,7 @@ fun parseVerses(
         val highlightColor = getNamedColor("Highlight", isDark)
         val activeHighlightColor = getNamedColor("ActiveHighlight", isDark)
         for (verse in verses)
-            append(buildVerse(verse))
+            append(buildVerse(this.length, verse))
 
         for (markup in markups) {
             val (textColor, bgColor) = getColorsForMarkup(markup.bgColor)
@@ -192,21 +194,8 @@ fun parseVerses(
             }
         }
 
-        var currentIndex = 0
-        for (verse in verses) {
-            for (chunk in verse) {
-                when(chunk.type) {
-                    "bible-ref" -> {
-                        addStyle(SpanStyle(color = linkColor), currentIndex, currentIndex + chunk.text.length)
-                    }
-                }
-
-                currentIndex += chunk.text.length
-            }
-
-            // this is to handle newline and empty verses
-            currentIndex += 1
-        }
+        for (range in bibleRefsRanges)
+            addStyle(SpanStyle(color = linkColor), range.first, range.second)
     }
 }
 

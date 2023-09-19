@@ -47,6 +47,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.fmtDuration
 import com.ovidium.comoriod.utils.nowUtc
+import com.ovidium.comoriod.utils.shareArticle
 import com.ovidium.comoriod.utils.toIsoString
 import com.ovidium.comoriod.views.favorites.SaveFavoriteDialog
 import com.ovidium.comoriod.views.markups.SaveMarkupDialog
@@ -134,11 +135,7 @@ fun ArticleViewContent(
     var expandFloatingMenu by remember { mutableStateOf(false) }
 
     fun showSharingSheet() {
-        val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.type = "text/plain"
-        val sharingData = article.title.text + "\n" + "https://comori-od.ro/article/${article.id}"
-        shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
-        startActivity(context, Intent.createChooser(shareIntent, null), null)
+        shareArticle(context, article)
     }
 
     var showSavingSharedMarkupPopup by remember { mutableStateOf(false) }
@@ -407,6 +404,11 @@ fun ArticleViewContent(
             }
         }
 
+        val isReceivedMarkupOverlapping = markups.any { m ->
+            m.index >= receivedMarkupIndex.value && m.index <= receivedMarkupIndex.value + receivedMarkupLength.value ||
+                    m.index + m.length >= receivedMarkupIndex.value && m.index + m.length <= receivedMarkupIndex.value + receivedMarkupLength.value
+        }
+
         if (showSavingSharedMarkupPopup && userResource.state == UserState.LoggedIn) {
             Popup(
                 alignment = Alignment.BottomCenter,
@@ -431,8 +433,12 @@ fun ArticleViewContent(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        var text = "Vrei să salvezi citatul?"
+                        if (isReceivedMarkupOverlapping)
+                            text = "Pasajul primit se suprapune cu un altul pe care l-ai salvat deja.\nVrei să îl salvezi oricum?"
+
                         Text(
-                            text = "Vrei să salvezi citatul?",
+                            text = text,
                             color = getNamedColor("Text", !isDark),
                             style = TextStyle(
                                 color = if (isDark) Color.Black else Color.White,
@@ -470,7 +476,11 @@ fun ArticleViewContent(
                                 onClick = {
                                     markupSelection.value =
                                         article.body.text.slice(receivedMarkupIndex.value..(receivedMarkupIndex.value + receivedMarkupLength.value)) //"Ceva de proba"
+                                    startPos.value = receivedMarkupIndex.value
+                                    endPos.value = receivedMarkupIndex.value + receivedMarkupLength.value
                                     showSavingSharedMarkupPopup = false
+                                    receivedMarkupIndex.value = 0
+                                    receivedMarkupLength.value = 0
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = getNamedColor("Link", isDark),

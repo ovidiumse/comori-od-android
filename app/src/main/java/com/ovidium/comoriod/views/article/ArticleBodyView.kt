@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.ovidium.comoriod.components.ActionCallback
 import com.ovidium.comoriod.components.CustomTextToolbar
 import com.ovidium.comoriod.components.selection.SelectionContainer
@@ -29,7 +28,7 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.NotoSans
-import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.shareSelection
 
 @Composable
 fun ArticleBodyView(
@@ -80,11 +79,15 @@ fun ArticleBodyView(
         },
         onHighlight = onHighlight,
         onShare = {
-            val shareIntent = Intent(Intent.ACTION_SEND)
-            shareIntent.type = "text/plain"
-            val sharingData = "“" + selection + "”" + "\n" + "${article.author} - ${article.book}" + "\n" + "https://comori-od.ro/article/${article.id}?index=${startPos.value}&length=${endPos.value - startPos.value}"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
-            ContextCompat.startActivity(context, Intent.createChooser(shareIntent, null), null)
+            shareSelection(
+                context = context,
+                author = article.author,
+                book = article.book,
+                articleId = article.id,
+                selection = selection,
+                index = startPos.value,
+                length = endPos.value - startPos.value
+            )
         }
     )
 
@@ -135,8 +138,7 @@ fun ArticleBodyView(
                     if (markup != null) {
                         val rectStart = textLayout.getBoundingBox(markup.index)
                         scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
-                    }
-                    else if (receivedMarkupLength.value != 0) {
+                    } else if (receivedMarkupLength.value != 0) {
                         val rectStart = textLayout.getBoundingBox(receivedMarkupIndex.value)
                         scrollOffset.value = (rectStart.topLeft.y - scrollTopOffset).coerceAtLeast(0f).toInt()
                     }

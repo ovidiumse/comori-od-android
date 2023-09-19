@@ -35,12 +35,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.markups.Markup
-import com.ovidium.comoriod.ui.theme.getColorsForMarkup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtDuration
+import com.ovidium.comoriod.utils.shareSelection
 import java.time.Duration
 import java.time.Instant
 import java.time.ZonedDateTime
@@ -81,17 +80,11 @@ fun MarkupCell(
         textState = textSelection.trim()
 
     val rotationDegreeState by animateFloatAsState(targetValue = if (expandedState) 180f else 0f)
-
     val context = LocalContext.current
 
     fun showSharingSheet() {
-        val shareIntent = Intent(Intent.ACTION_SEND)
-        shareIntent.type = "text/plain"
-        val sharingData = "“" + textSelection + "”" + "\n" + "${author} - ${book}" + "\n" + "https://comori-od.ro/article/${articleID}?index=${index}&length=${length}"
-        shareIntent.putExtra(Intent.EXTRA_TEXT, sharingData)
-        ContextCompat.startActivity(context, Intent.createChooser(shareIntent, null), null)
+        shareSelection(context = context, author = author, book = book, articleId = articleID, selection = textSelection, index = index, length = length)
     }
-
 
     Card(
         modifier = modifier
