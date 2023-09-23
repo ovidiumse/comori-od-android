@@ -48,22 +48,30 @@ import java.net.URLDecoder
 
 class MainActivity : ComponentActivity() {
 
+    var navController: NavHostController? = null;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         RetrofitBuilder.appContext = applicationContext
         setContent {
-            ComoriOdApp(applicationContext)
+            navController = rememberNavController()
+            ComoriOdApp(applicationContext, navController!!)
             val systemUiController = rememberSystemUiController()
             systemUiController.setSystemBarsColor(getNamedColor("HeaderBar", isSystemInDarkTheme()))
         }
 
     }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navController?.handleDeepLink(intent)
+    }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun ComoriOdApp(context: Context) {
+fun ComoriOdApp(context: Context, navController: NavHostController) {
     val isDark = isSystemInDarkTheme()
 
     val signInModel: GoogleSignInModel = viewModel(factory = GoogleSignInModelFactory(context))
@@ -72,7 +80,6 @@ fun ComoriOdApp(context: Context) {
 
     ComoriODTheme {
 
-        val navController = rememberNavController()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
         val coroutineScope = rememberCoroutineScope()
         val navBackStackEntry by navController.currentBackStackEntryAsState()

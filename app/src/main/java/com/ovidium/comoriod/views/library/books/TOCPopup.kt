@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library.books
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -39,6 +40,7 @@ import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.normalize
 import com.ovidium.comoriod.views.search.SearchBar
 import kotlin.text.substring
+import kotlin.time.measureTime
 
 @Composable
 fun TOCPopup(
@@ -68,6 +70,8 @@ fun TOCPopup(
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp
         val screenWidth = configuration.screenWidthDp.dp
+
+        val showNumbers = !titles.any { hit -> hit._source.title.matches(Regex("[0-9]+\\..*"))}
 
         Box(
             Modifier
@@ -104,7 +108,7 @@ fun TOCPopup(
                             horizontalArrangement = Arrangement.Start
                         ) {
                             Text(
-                                text = "${realIndex + 1}.  ${item._source.title}",
+                                text = if (showNumbers) "${realIndex + 1}.  ${item._source.title}" else item._source.title,
                                 overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.body1,
                                 fontWeight = if (currentIndex == index) FontWeight.ExtraBold else FontWeight.Normal,

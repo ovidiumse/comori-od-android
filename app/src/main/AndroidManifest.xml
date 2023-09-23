@@ -15,7 +15,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ComoriOD.NoActionBar">
+            android:theme="@style/Theme.ComoriOD.NoActionBar"
+            android:launchMode="singleTask"
+            >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
