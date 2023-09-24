@@ -384,8 +384,6 @@ fun BottomBarMain(
                 readArticlesModel = readArticlesModel
             )
         }
-
-
     }
 }
 

@@ -5,11 +5,12 @@ import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.ovidium.comoriod.data.article.Article
+import java.net.URLEncoder
 
 fun shareSelection(context: Context, author: String, book: String, articleId: String, selection: String, index: Int, length: Int) {
     val sharingData = """„${selection}”
 $author - $book
-https://comori-od.ro/article/${articleId}?index=${index}&length=${length}"""
+https://comori-od.ro/article/${URLEncoder.encode(articleId, "utf-8")}?index=${index}&length=${length}"""
 
     val shareIntent = Intent(Intent.ACTION_SEND)
     shareIntent.type = "text/plain"
@@ -19,7 +20,7 @@ https://comori-od.ro/article/${articleId}?index=${index}&length=${length}"""
 
 fun shareArticle(context: Context, article: Article) {
     val sharingData = """${article.title} - ${article.author}
-https://comori-od.ro/article/${article.id}"""
+https://comori-od.ro/article/${URLEncoder.encode(article.id, "utf-8")}"""
 
     val shareIntent = Intent(Intent.ACTION_SEND)
     shareIntent.type = "text/plain"
