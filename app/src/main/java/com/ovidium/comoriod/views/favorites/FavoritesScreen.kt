@@ -1,20 +1,36 @@
 package com.ovidium.comoriod.views
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -26,9 +42,14 @@ import com.ovidium.comoriod.model.FavoritesModel
 import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.favorites.SwipeableFavoriteArticleCell
+import com.ovidium.comoriod.views.search.SearchBar
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import java.net.URLEncoder
+import java.text.Normalizer
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -53,6 +74,28 @@ fun FavoritesScreen(
 
     val coroutineScope = rememberCoroutineScope()
     var selectedTag by remember { mutableStateOf("") }
+    var showSearchBar by remember { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
+    var query by remember { mutableStateOf("") }
+    var searchTextFieldValue by remember {
+        mutableStateOf(
+            TextFieldValue(
+                query,
+                TextRange(query.length)
+            )
+        )
+    }
+    val density = LocalDensity.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+
+    val REGEX_UNACCENT = "\\p{InCombiningDiacriticalMarks}+".toRegex()
+
+    fun CharSequence.unaccent(): String {
+        val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
+        return REGEX_UNACCENT.replace(temp, "")
+    }
+
 
     fun getFavoriteArticles(): List<FavoriteArticle>? {
         // selectedTag may not be in the list of tags after a deletion
@@ -60,9 +103,19 @@ fun FavoritesScreen(
             selectedTag = ""
 
         return if (selectedTag.isEmpty())
-            favoritesData.value.data?.reversed()
+            favoritesData.value.data?.reversed()?.filter { fav ->
+                fav.tags.joinToString().unaccent().contains(query.unaccent().lowercase())
+                        ||
+                        fav.title.lowercase().unaccent().contains(query.unaccent().lowercase())
+            }
         else
-            favoritesData.value.data?.reversed()?.filter { fav -> fav.tags.contains(selectedTag) }
+            favoritesData.value.data?.reversed()?.filter { fav ->
+                fav.tags.contains(selectedTag)
+                        &&
+                        (fav.tags.joinToString().unaccent().contains(query.unaccent().lowercase())
+                        ||
+                        fav.title.unaccent().lowercase().contains(query.unaccent().lowercase()))
+            }
     }
 
     Scaffold(
@@ -74,9 +127,18 @@ fun FavoritesScreen(
                         launchSingleTop = true
                     }
                 },
-                onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) }) {
+                onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) },
+                actions = @Composable {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search",
+                        modifier = Modifier.clickable(onClick = {
+                            showSearchBar = true
+                        }),
+                        tint = getNamedColor("HeaderText", isDark = isDark)
+                    )
+                })
             }
-        }
     ) {
         Column(
             modifier = Modifier
@@ -87,11 +149,44 @@ fun FavoritesScreen(
                 Status.SUCCESS -> {
                     val favorites = getFavoriteArticles()
                     if (!favorites.isNullOrEmpty()) {
+                        AnimatedVisibility(
+                            visible = showSearchBar,
+                            enter = slideInVertically {
+                                with(density) { -40.dp.roundToPx() }
+                            } + expandVertically(
+                                expandFrom = Alignment.Top
+                            ) + fadeIn(
+                                initialAlpha = 0.1f
+                            ),
+                            exit = slideOutVertically() + shrinkVertically() + fadeOut()
+                        ) {
+
+                            SearchBar(
+                                modifier = Modifier
+                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                                    .fillMaxWidth(),
+                                searchText = searchTextFieldValue,
+                                shouldFocus = false,
+                                focusRequester = focusRequester,
+                                onSearchTextChanged = { newFieldValue ->
+                                    searchTextFieldValue = newFieldValue
+                                    query = newFieldValue.text
+                                },
+                                onSearchClick = {
+                                    keyboardController?.hide()
+                                },
+                                onClearClick = {
+                                    query = ""
+                                    searchTextFieldValue = TextFieldValue(query)
+                                    keyboardController?.hide()
+                                    showSearchBar = false
+                                }
+                            )
+                        }
                         TagsRow(
                             tags,
                             selectedTag,
                             onTagsChanged = { tag -> selectedTag = tag })
-
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             favorites.forEachIndexed { index, article ->
                                 item(key = article.id) {
