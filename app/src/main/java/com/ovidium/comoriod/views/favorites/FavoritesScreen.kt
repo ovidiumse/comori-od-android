@@ -51,6 +51,15 @@ import kotlinx.coroutines.delay
 import java.net.URLEncoder
 import java.text.Normalizer
 
+
+val REGEX_UNACCENT = "\\p{InCombiningDiacriticalMarks}+".toRegex()
+
+fun CharSequence.unaccent(): String {
+    val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
+    return REGEX_UNACCENT.replace(temp, "")
+}
+
+
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun FavoritesScreen(
@@ -87,14 +96,6 @@ fun FavoritesScreen(
     }
     val density = LocalDensity.current
     val keyboardController = LocalSoftwareKeyboardController.current
-
-
-    val REGEX_UNACCENT = "\\p{InCombiningDiacriticalMarks}+".toRegex()
-
-    fun CharSequence.unaccent(): String {
-        val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
-        return REGEX_UNACCENT.replace(temp, "")
-    }
 
 
     fun getFavoriteArticles(): List<FavoriteArticle>? {
