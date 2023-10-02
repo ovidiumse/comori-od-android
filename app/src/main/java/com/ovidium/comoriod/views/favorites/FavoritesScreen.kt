@@ -23,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.NoContentPlaceholder
+import com.ovidium.comoriod.components.TagsRow
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.FavoritesModel
@@ -78,10 +80,10 @@ fun FavoritesScreen(
     val bubbleColor = getNamedColor("Bubble", isDark)
 
     val coroutineScope = rememberCoroutineScope()
-    var selectedTag by remember { mutableStateOf("") }
-    var showSearchBar by remember { mutableStateOf(false) }
+    var selectedTag by rememberSaveable { mutableStateOf("") }
+    var showSearchBar by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
-    var query by remember { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf("") }
     var searchTextFieldValue by remember {
         mutableStateOf(
             TextFieldValue(
@@ -100,9 +102,19 @@ fun FavoritesScreen(
         fav.tags.any { tag -> match(tag) } || match(fav.title)
     }
 
-    val tags = filteredFavorites?.map { article -> article.tags }?.flatten()?.distinct()
-        ?.filter { tag -> tag.isNotEmpty() }
-        ?: emptyList()
+    val tags = filteredFavorites?.reversed()?.map { article -> article.tags }?.flatten()?.distinct()
+            ?.filter { tag -> tag.isNotEmpty() }
+            ?: emptyList()
+
+    val tagCounts: MutableMap<String, Int> = mutableMapOf();
+    filteredFavorites?.forEach { fav ->
+        fav.tags.forEach { tag ->
+            if (tag.isNotEmpty()) {
+                tagCounts.putIfAbsent(tag, 0)
+                tagCounts[tag] = tagCounts[tag]!! + 1
+            }
+        }
+    }
 
     val density = LocalDensity.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -197,6 +209,8 @@ fun FavoritesScreen(
                         val favorites = getFavoriteArticles()
                         TagsRow(
                             tags,
+                            tagCounts,
+                            filteredFavorites.size,
                             selectedTag,
                             onTagsChanged = { tag -> selectedTag = tag })
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -235,66 +249,4 @@ fun FavoritesScreen(
             }
         }
     }
-}
-
-
-@Composable
-fun TagsRow(
-    tags: List<String>,
-    selectedTag: String,
-    onTagsChanged: (String) -> Unit
-) {
-    val isDark = isSystemInDarkTheme()
-
-    LazyRow(
-        modifier = Modifier
-            .padding(12.dp)
-    ) {
-        item {
-            CapsuleButton(
-                text = "Toate",
-                isDark = isDark,
-                isSelected = selectedTag.isEmpty(),
-                action = {
-                    onTagsChanged("")
-                }
-            )
-        }
-
-        tags.forEach { tag ->
-            item {
-                CapsuleButton(
-                    text = tag,
-                    isDark = isDark,
-                    isSelected = selectedTag == tag,
-                    action = { tag -> onTagsChanged(tag) }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun CapsuleButton(text: String, isDark: Boolean, isSelected: Boolean, action: (String) -> Unit) {
-
-    val bubbleColor = getNamedColor("Bubble", isDark)
-    val textColor = getNamedColor("HeaderText", isDark)
-    val unselectedText = getNamedColor("MutedText", isDark)
-
-    Text(
-        text = text,
-        textAlign = TextAlign.Center,
-        fontSize = MaterialTheme.typography.caption.fontSize,
-        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-        color = if (isSelected) textColor else unselectedText,
-        modifier = Modifier
-            .padding(end = 8.dp)
-            .background(
-                bubbleColor.copy(alpha = if (isSelected) 1.0f else 0.3f),
-                shape = MaterialTheme.shapes.medium,
-            )
-            .padding(12.dp)
-            .clickable { action(text) }
-            .defaultMinSize(minWidth = 60.dp)
-    )
 }

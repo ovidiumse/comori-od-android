@@ -18,6 +18,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -27,8 +28,11 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ovidium.comoriod.components.AppBar
 import com.ovidium.comoriod.components.NoContentPlaceholder
+import com.ovidium.comoriod.components.TagsRow
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.launchMenu
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -37,7 +41,6 @@ import com.ovidium.comoriod.model.UserState
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.Screens
-import com.ovidium.comoriod.views.TagsRow
 import com.ovidium.comoriod.views.search.SearchBar
 import com.ovidium.comoriod.views.unaccent
 import java.net.URLEncoder
@@ -60,9 +63,9 @@ fun MarkupsScreen(
     if (markupsData.value.status == Status.UNINITIALIZED && signInModel.userResource.value.state == UserState.LoggedIn)
         markupsModel.loadMarkups()
 
-    var showSearchBar by remember { mutableStateOf(false) }
+    var showSearchBar by rememberSaveable { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
-    var query by remember { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf("") }
     var searchTextFieldValue by remember {
         mutableStateOf(
             TextFieldValue(
@@ -84,13 +87,22 @@ fun MarkupsScreen(
     val density = LocalDensity.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val tags =
-        filteredMarkups?.reversed()?.map { markup -> markup.tags }?.flatten()?.distinct()
+    val tags = filteredMarkups?.reversed()?.map { article -> article.tags }?.flatten()?.distinct()
             ?.filter { tag -> tag.isNotEmpty() }
             ?: emptyList()
 
+    val tagCounts: MutableMap<String, Int> = mutableMapOf()
+    filteredMarkups?.forEach { markup ->
+        markup.tags.forEach { tag ->
+            if (tag.isNotEmpty()) {
+                tagCounts.putIfAbsent(tag, 0)
+                tagCounts[tag] = tagCounts[tag]!! + 1
+            }
+        }
+    }
+
     val coroutineScope = rememberCoroutineScope()
-    var selectedTag by remember { mutableStateOf("") }
+    var selectedTag by rememberSaveable { mutableStateOf("") }
 
     fun getMarkups(): List<Markup>? {
         if (!tags.contains(selectedTag))
@@ -182,6 +194,8 @@ fun MarkupsScreen(
 
                         TagsRow(
                             tags,
+                            tagCounts,
+                            filteredMarkups.size,
                             selectedTag,
                             onTagsChanged = { tag -> selectedTag = tag })
 
