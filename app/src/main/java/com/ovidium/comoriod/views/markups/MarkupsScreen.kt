@@ -71,11 +71,21 @@ fun MarkupsScreen(
             )
         )
     }
+
+    val filteredMarkups = markupsData.value.data?.filter { markup ->
+        val filterQuery = query.lowercase().unaccent()
+        fun match(input: String): Boolean {
+            return input.lowercase().unaccent().contains(filterQuery)
+        }
+
+        markup.tags.any { tag -> match(tag) } || match(markup.title) || match(markup.selection)
+    }
+
     val density = LocalDensity.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val tags =
-        markupsData.value.data?.reversed()?.map { markup -> markup.tags }?.flatten()?.distinct()
+        filteredMarkups?.reversed()?.map { markup -> markup.tags }?.flatten()?.distinct()
             ?.filter { tag -> tag.isNotEmpty() }
             ?: emptyList()
 
@@ -87,23 +97,9 @@ fun MarkupsScreen(
             selectedTag = ""
 
         return if (selectedTag.isEmpty())
-            markupsData.value.data?.reversed()?.filter { mark ->
-                mark.tags.joinToString().unaccent().contains(query.unaccent().lowercase())
-                        ||
-                        mark.title.lowercase().unaccent().contains(query.unaccent().lowercase())
-                        ||
-                        mark.selection.lowercase().unaccent().contains(query.unaccent().lowercase())
-            }
+            filteredMarkups?.reversed()
         else
-            markupsData.value.data?.reversed()?.filter { mark ->
-                mark.tags.contains(selectedTag)
-                        &&
-                        (mark.tags.joinToString().unaccent().contains(query.unaccent().lowercase())
-                                ||
-                                mark.title.unaccent().lowercase().contains(query.unaccent().lowercase())
-                                ||
-                                mark.selection.unaccent().lowercase().contains(query.unaccent().lowercase()))
-            }
+            filteredMarkups?.reversed()?.filter { markup -> markup.tags.contains(selectedTag) }
     }
 
     Scaffold(
@@ -117,14 +113,16 @@ fun MarkupsScreen(
                 },
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) },
                 actions = @Composable {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        modifier = Modifier.clickable(onClick = {
-                            showSearchBar = true
-                        }),
-                        tint = getNamedColor("HeaderText", isDark = isDark)
-                    )
+                    if (!markupsData.value.data.isNullOrEmpty()) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            modifier = Modifier.clickable(onClick = {
+                                showSearchBar = true
+                            }),
+                            tint = getNamedColor("HeaderText", isDark = isDark)
+                        )
+                    }
                 })
         }
     ) {
@@ -133,47 +131,55 @@ fun MarkupsScreen(
                 .fillMaxSize()
                 .background(bgColor)
         ) {
+            if (!markupsData.value.data.isNullOrEmpty()) {
+                AnimatedVisibility(
+                    visible = showSearchBar,
+                    enter = slideInVertically {
+                        with(density) { -40.dp.roundToPx() }
+                    } + expandVertically(
+                        expandFrom = Alignment.Top
+                    ) + fadeIn(
+                        initialAlpha = 0.1f
+                    ),
+                    exit = slideOutVertically() + shrinkVertically() + fadeOut()
+                ) {
+
+                    SearchBar(
+                        modifier = Modifier
+                            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                            .fillMaxWidth(),
+                        searchText = searchTextFieldValue,
+                        shouldFocus = false,
+                        placeholderText = "Caută în marcaje...",
+                        focusRequester = focusRequester,
+                        onSearchTextChanged = { newFieldValue ->
+                            searchTextFieldValue = newFieldValue
+                            query = newFieldValue.text
+                        },
+                        onSearchClick = {
+                            keyboardController?.hide()
+                        },
+                        onClearClick = {
+                            query = ""
+                            searchTextFieldValue = TextFieldValue(query)
+                            keyboardController?.hide()
+                            showSearchBar = false
+                        }
+                    )
+                }
+            }
+
             when (markupsData.value.status) {
                 Status.SUCCESS -> {
-                    val markups = getMarkups()
-
-                    if (markups.isNullOrEmpty())
+                    if (markupsData.value.data.isNullOrEmpty()) {
                         NoContentPlaceholder("Nu ai nici un pasaj favorit")
+                    }
+                    else if (filteredMarkups.isNullOrEmpty()) {
+                        NoContentPlaceholder("Nici un pasaj favorit găsit")
+                    }
                     else {
-                        AnimatedVisibility(
-                            visible = showSearchBar,
-                            enter = slideInVertically {
-                                with(density) { -40.dp.roundToPx() }
-                            } + expandVertically(
-                                expandFrom = Alignment.Top
-                            ) + fadeIn(
-                                initialAlpha = 0.1f
-                            ),
-                            exit = slideOutVertically() + shrinkVertically() + fadeOut()
-                        ) {
+                        val markups = getMarkups()
 
-                            SearchBar(
-                                modifier = Modifier
-                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-                                    .fillMaxWidth(),
-                                searchText = searchTextFieldValue,
-                                shouldFocus = false,
-                                focusRequester = focusRequester,
-                                onSearchTextChanged = { newFieldValue ->
-                                    searchTextFieldValue = newFieldValue
-                                    query = newFieldValue.text
-                                },
-                                onSearchClick = {
-                                    keyboardController?.hide()
-                                },
-                                onClearClick = {
-                                    query = ""
-                                    searchTextFieldValue = TextFieldValue(query)
-                                    keyboardController?.hide()
-                                    showSearchBar = false
-                                }
-                            )
-                        }
                         TagsRow(
                             tags,
                             selectedTag,
@@ -182,7 +188,7 @@ fun MarkupsScreen(
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            markups.forEachIndexed { index, markup ->
+                            markups?.forEachIndexed { index, markup ->
                                 item(key = markup.id) {
                                     Column(
                                         modifier = Modifier

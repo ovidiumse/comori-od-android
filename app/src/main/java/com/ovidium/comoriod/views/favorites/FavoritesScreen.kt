@@ -73,10 +73,6 @@ fun FavoritesScreen(
     if (favoritesData.value.status == Status.UNINITIALIZED && signInModel.userResource.value.state == UserState.LoggedIn)
         favoritesModel.loadFavorites()
 
-    val tags = favoritesData.value.data?.map { article -> article.tags }?.flatten()?.distinct()
-        ?.filter { tag -> tag.isNotEmpty() }
-        ?: emptyList()
-
     val isDark = isSystemInDarkTheme()
     val surfaceColor = getNamedColor("PrimarySurface", isDark)
     val bubbleColor = getNamedColor("Bubble", isDark)
@@ -94,9 +90,22 @@ fun FavoritesScreen(
             )
         )
     }
+
+    val filteredFavorites = favoritesData.value.data?.filter { fav ->
+        val filterQuery  = query.lowercase().unaccent()
+        fun match(input: String): Boolean {
+            return input.lowercase().unaccent().contains(filterQuery)
+        }
+
+        fav.tags.any { tag -> match(tag) } || match(fav.title)
+    }
+
+    val tags = filteredFavorites?.map { article -> article.tags }?.flatten()?.distinct()
+        ?.filter { tag -> tag.isNotEmpty() }
+        ?: emptyList()
+
     val density = LocalDensity.current
     val keyboardController = LocalSoftwareKeyboardController.current
-
 
     fun getFavoriteArticles(): List<FavoriteArticle>? {
         // selectedTag may not be in the list of tags after a deletion
@@ -104,19 +113,9 @@ fun FavoritesScreen(
             selectedTag = ""
 
         return if (selectedTag.isEmpty())
-            favoritesData.value.data?.reversed()?.filter { fav ->
-                fav.tags.joinToString().unaccent().contains(query.unaccent().lowercase())
-                        ||
-                        fav.title.lowercase().unaccent().contains(query.unaccent().lowercase())
-            }
+            filteredFavorites?.reversed()
         else
-            favoritesData.value.data?.reversed()?.filter { fav ->
-                fav.tags.contains(selectedTag)
-                        &&
-                        (fav.tags.joinToString().unaccent().contains(query.unaccent().lowercase())
-                        ||
-                        fav.title.unaccent().lowercase().contains(query.unaccent().lowercase()))
-            }
+            filteredFavorites?.reversed()?.filter { fav -> fav.tags.contains(selectedTag) }
     }
 
     Scaffold(
@@ -130,14 +129,16 @@ fun FavoritesScreen(
                 },
                 onMenuClicked = { launchMenu(coroutineScope, scaffoldState.drawerState) },
                 actions = @Composable {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                        modifier = Modifier.clickable(onClick = {
-                            showSearchBar = true
-                        }),
-                        tint = getNamedColor("HeaderText", isDark = isDark)
-                    )
+                    if (!favoritesData.value.data.isNullOrEmpty()) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            modifier = Modifier.clickable(onClick = {
+                                showSearchBar = true
+                            }),
+                            tint = getNamedColor("HeaderText", isDark = isDark)
+                        )
+                    }
                 })
             }
     ) {
@@ -146,50 +147,60 @@ fun FavoritesScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background) //?
         ) {
+            if (!favoritesData.value.data.isNullOrEmpty()) {
+                AnimatedVisibility(
+                    visible = showSearchBar,
+                    enter = slideInVertically {
+                        with(density) { -40.dp.roundToPx() }
+                    } + expandVertically(
+                        expandFrom = Alignment.Top
+                    ) + fadeIn(
+                        initialAlpha = 0.1f
+                    ),
+                    exit = slideOutVertically() + shrinkVertically() + fadeOut()
+                ) {
+
+                    SearchBar(
+                        modifier = Modifier
+                            .padding(top = 8.dp, start = 8.dp, end = 8.dp)
+                            .fillMaxWidth(),
+                        searchText = searchTextFieldValue,
+                        shouldFocus = false,
+                        focusRequester = focusRequester,
+                        placeholderText = "Caută în titlurile favorite...",
+                        onSearchTextChanged = { newFieldValue ->
+                            searchTextFieldValue = newFieldValue
+                            query = newFieldValue.text
+                        },
+                        onSearchClick = {
+                            keyboardController?.hide()
+                        },
+                        onClearClick = {
+                            query = ""
+                            searchTextFieldValue = TextFieldValue(query)
+                            keyboardController?.hide()
+                            showSearchBar = false
+                        }
+                    )
+                }
+            }
+
             when (favoritesData.value.status) {
                 Status.SUCCESS -> {
-                    val favorites = getFavoriteArticles()
-                    if (!favorites.isNullOrEmpty()) {
-                        AnimatedVisibility(
-                            visible = showSearchBar,
-                            enter = slideInVertically {
-                                with(density) { -40.dp.roundToPx() }
-                            } + expandVertically(
-                                expandFrom = Alignment.Top
-                            ) + fadeIn(
-                                initialAlpha = 0.1f
-                            ),
-                            exit = slideOutVertically() + shrinkVertically() + fadeOut()
-                        ) {
-
-                            SearchBar(
-                                modifier = Modifier
-                                    .padding(top = 8.dp, start = 8.dp, end = 8.dp)
-                                    .fillMaxWidth(),
-                                searchText = searchTextFieldValue,
-                                shouldFocus = false,
-                                focusRequester = focusRequester,
-                                onSearchTextChanged = { newFieldValue ->
-                                    searchTextFieldValue = newFieldValue
-                                    query = newFieldValue.text
-                                },
-                                onSearchClick = {
-                                    keyboardController?.hide()
-                                },
-                                onClearClick = {
-                                    query = ""
-                                    searchTextFieldValue = TextFieldValue(query)
-                                    keyboardController?.hide()
-                                    showSearchBar = false
-                                }
-                            )
-                        }
+                    if (favoritesData.value.data.isNullOrEmpty()) {
+                        NoContentPlaceholder("Nu ai nici un articol favorit")
+                    }
+                    else if (filteredFavorites.isNullOrEmpty()) {
+                        NoContentPlaceholder("Nici un articol favorit găsit")
+                    }
+                    else {
+                        val favorites = getFavoriteArticles()
                         TagsRow(
                             tags,
                             selectedTag,
                             onTagsChanged = { tag -> selectedTag = tag })
                         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            favorites.forEachIndexed { index, article ->
+                            favorites?.forEachIndexed { index, article ->
                                 item(key = article.id) {
                                     Column(
                                         modifier = Modifier
@@ -218,8 +229,6 @@ fun FavoritesScreen(
                                 }
                             }
                         }
-                    } else {
-                        NoContentPlaceholder("Nu ai nici un articol favorit")
                     }
                 }
                 else -> {}
