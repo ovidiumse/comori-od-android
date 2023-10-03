@@ -177,9 +177,9 @@ fun FavoritesScreen(
                             .padding(top = 8.dp, start = 8.dp, end = 8.dp)
                             .fillMaxWidth(),
                         searchText = searchTextFieldValue,
-                        shouldFocus = false,
+                        shouldFocus = true,
                         focusRequester = focusRequester,
-                        placeholderText = "Caută în titlurile favorite...",
+                        placeholderText = "Caută în favorite...",
                         onSearchTextChanged = { newFieldValue ->
                             searchTextFieldValue = newFieldValue
                             query = newFieldValue.text
@@ -225,6 +225,7 @@ fun FavoritesScreen(
                                     ) {
                                         SwipeableFavoriteArticleCell(
                                             favoriteArticle = article,
+                                            highlight = query,
                                             isDark = isDark,
                                             surfaceColor = surfaceColor,
                                             bubbleColor = bubbleColor,

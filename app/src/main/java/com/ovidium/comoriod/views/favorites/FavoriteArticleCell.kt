@@ -24,6 +24,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
@@ -35,8 +37,10 @@ import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.markups.Markup
+import com.ovidium.comoriod.data.search.Highlight
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtDuration
+import com.ovidium.comoriod.utils.highlightText
 import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.markups.MarkupCell
 import java.sql.Timestamp
@@ -50,6 +54,7 @@ import java.time.format.DateTimeFormatter
 fun FavoriteArticleCell(
     modifier: Modifier = Modifier,
     title: String,
+    highlight: String?,
     author: String,
     book: String,
     timestamp: String?,
@@ -61,6 +66,15 @@ fun FavoriteArticleCell(
     val bubbleColor = getNamedColor("Bubble", isDark)
     val textColor = getNamedColor("HeaderText", isDark)
     val mutedTextColor = getNamedColor("MutedText", isDark)
+
+    fun styleText(text: String): AnnotatedString {
+        return buildAnnotatedString {
+            if (highlight.isNullOrBlank())
+                append(text.trim())
+            else
+                append(highlightText(text.trim(), highlight, isDark))
+        }
+    }
 
     Card(
         shape = RoundedCornerShape(10.dp),
@@ -80,7 +94,7 @@ fun FavoriteArticleCell(
                     .padding(top = 12.dp)
             ) {
                 AdaptiveText(
-                    text = title,
+                    text = styleText(title),
                     minFontSize = 11.2.sp,
                     maxFontSize = 22.sp,
                     style = MaterialTheme.typography.body1,
@@ -133,7 +147,49 @@ fun FavoriteArticleCell(
                 }
             }
 
-            FavoriteCellInfo(timestamp, tags, bubbleColor, textColor)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .padding(vertical = 8.dp)
+            ) {
+                Column(horizontalAlignment = Alignment.Start) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+
+
+                        if (tags.isEmpty()) {
+                            Spacer(modifier = Modifier.weight(7f))
+                        } else {
+                            LazyRow(
+                                modifier = Modifier.weight(7f),
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                items(tags.size) { idx ->
+                                    val tag = tags[idx]
+                                    TagBubble(
+                                        tag = styleText(tag),
+                                        textColor = textColor,
+                                        bubbleColor = bubbleColor
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        if (!timestamp.isNullOrEmpty()) {
+                            val date = ZonedDateTime.parse(timestamp, DateTimeFormatter.ISO_DATE_TIME)
+                            val duration = Duration.between(date.toInstant(), Instant.now())
+
+                            Text(
+                                text = fmtDuration(duration),
+                                style = MaterialTheme.typography.caption,
+                                color = textColor
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -142,6 +198,7 @@ fun FavoriteArticleCell(
 @Composable
 fun SwipeableFavoriteArticleCell(
     favoriteArticle: FavoriteArticle,
+    highlight: String?,
     surfaceColor: Color,
     bubbleColor: Color,
     isDark: Boolean,
@@ -210,6 +267,7 @@ fun SwipeableFavoriteArticleCell(
                             boxHeight = layoutCoordinates.size.height
                         },
                     title = favoriteArticle.title,
+                    highlight = highlight,
                     author = favoriteArticle.author,
                     book = favoriteArticle.book,
                     timestamp = favoriteArticle.timestamp,
@@ -217,53 +275,6 @@ fun SwipeableFavoriteArticleCell(
                     isDark = isDark,
                     onItemClick = onItemClick
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun FavoriteCellInfo(timestamp: String?, tags: List<String>, bubbleColor: Color, textColor: Color) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-            .padding(vertical = 8.dp)
-    ) {
-        Column(horizontalAlignment = Alignment.Start) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-
-                if (tags.isEmpty()) {
-                    Spacer(modifier = Modifier.weight(7f))
-                } else {
-                    LazyRow(
-                        modifier = Modifier.weight(7f),
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        items(tags.size) { idx ->
-                            val tag = tags[idx]
-                            TagBubble(
-                                tag = tag,
-                                textColor = textColor,
-                                bubbleColor = bubbleColor
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                if (!timestamp.isNullOrEmpty()) {
-                    val date = ZonedDateTime.parse(timestamp, DateTimeFormatter.ISO_DATE_TIME)
-                    val duration = Duration.between(date.toInstant(), Instant.now())
-
-                    Text(
-                        text = fmtDuration(duration),
-                        style = MaterialTheme.typography.caption,
-                        color = textColor
-                    )
-                }
             }
         }
     }

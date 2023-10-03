@@ -31,6 +31,7 @@ import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.ui.theme.Shapes
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.highlightText
 
 @Composable
 fun SaveFavoriteDialog(
@@ -74,6 +75,7 @@ fun SaveFavoriteDialog(
 
                 FavoriteArticleCell(
                     title = articleToSave.title.text,
+                    highlight = null,
                     author = articleToSave.author,
                     book = articleToSave.book,
                     timestamp = null,

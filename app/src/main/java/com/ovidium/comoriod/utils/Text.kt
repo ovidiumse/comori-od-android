@@ -4,17 +4,16 @@ package com.ovidium.comoriod.utils
 
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
-import androidx.core.graphics.ColorUtils
 import com.ovidium.comoriod.data.article.ArticleResponseChunk
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getColorsForMarkup
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.views.unaccent
 import java.time.Duration
 
 val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
@@ -73,6 +72,7 @@ fun highlightElements(text: String, isDark: Boolean): AnnotatedString {
 }
 
 fun highlightBody(text: String, isDark: Boolean): AnnotatedString {
+    val textColor = getNamedColor("Text", isDark)
 
     return buildAnnotatedString {
         val parts = text.split("<em>", "</em>")
@@ -83,7 +83,7 @@ fun highlightBody(text: String, isDark: Boolean): AnnotatedString {
                 if (highlighted) {
                     withStyle(
                         style = SpanStyle(
-                            color = getNamedColor("Text", isDark),
+                            color = textColor,
                             background = Color.Transparent
                         ),
                     ) {
@@ -212,6 +212,27 @@ fun formatBibleRefs(item: BibleRefVerse, isDark: Boolean): AnnotatedString {
         }
         if (item.text.isNotEmpty()) {
             append(" - " + item.text)
+        }
+    }
+}
+
+fun highlightText(text: String, query: String, isDark: Boolean): AnnotatedString {
+    val highlightColor = getNamedColor("Highlight", isDark)
+    val rawText = text.unaccent().lowercase()
+
+    val ranges: MutableList<Pair<Int, Int>> = mutableListOf()
+    val parts = rawText.split(query.unaccent().lowercase())
+    var currentIndex = 0
+    for (part in parts) {
+        currentIndex += part.length
+        ranges.add(Pair(currentIndex, currentIndex + query.length))
+        currentIndex += query.length
+    }
+
+    return buildAnnotatedString {
+        append(text)
+        for (range in ranges) {
+            addStyle(SpanStyle(color = Color.Black, background = highlightColor), range.first, range.second)
         }
     }
 }

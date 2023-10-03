@@ -29,6 +29,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,6 +41,7 @@ import com.ovidium.comoriod.components.TagBubble
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.fmtDuration
+import com.ovidium.comoriod.utils.highlightText
 import com.ovidium.comoriod.utils.shareSelection
 import java.time.Duration
 import java.time.Instant
@@ -50,6 +53,7 @@ import java.time.format.DateTimeFormatter
 fun MarkupCell(
     modifier: Modifier = Modifier,
     textSelection: String,
+    highlight: String?,
     index: Int,
     length: Int,
     markupColor: String,
@@ -81,6 +85,15 @@ fun MarkupCell(
 
     val rotationDegreeState by animateFloatAsState(targetValue = if (expandedState) 180f else 0f)
     val context = LocalContext.current
+
+    fun styleText(text: String): AnnotatedString {
+        return buildAnnotatedString {
+            if (highlight.isNullOrBlank())
+                append(text.trim())
+            else
+                append(highlightText(text.trim(), highlight, isDark))
+        }
+    }
 
     fun showSharingSheet() {
         shareSelection(context = context, author = author, book = book, articleId = articleID, selection = textSelection, index = index, length = length)
@@ -117,7 +130,7 @@ fun MarkupCell(
                     )
                 }
                 Text(
-                    text = "„$textState”",
+                    text = styleText("„$textState”"),
                     color = textColor,
                     letterSpacing = 0.3.sp,
                     maxLines = maxLinesState,
@@ -169,7 +182,7 @@ fun MarkupCell(
                     items(tags.size) { idx ->
                         val tag = tags[idx]
                         TagBubble(
-                            tag = tag,
+                            tag = styleText(tag),
                             textColor = textColor,
                             bubbleColor = bubbleColor
                         )
@@ -202,7 +215,11 @@ fun MarkupCell(
                         .fillMaxWidth(0.8f)
                 ) {
                     Text(
-                        text = "$author - $title",
+                        text = buildAnnotatedString {
+                            append(author)
+                            append(" - ")
+                            append(styleText(title))
+                        },
                         color = textColor,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
@@ -237,6 +254,7 @@ fun MarkupCell(
 @Composable
 fun SwipeableMarkupCell(
     markup: Markup,
+    highlight: String?,
     surfaceColor: Color,
     bubbleColor: Color,
     isDark: Boolean,
@@ -305,6 +323,7 @@ fun SwipeableMarkupCell(
                             boxHeight = layoutCoordinates.size.height
                         },
                     textSelection = markup.selection,
+                    highlight = highlight,
                     index = markup.index,
                     length = markup.length,
                     markupColor = markup.bgColor,
@@ -344,6 +363,7 @@ fun MarkupCellPreview() {
 
     SwipeableMarkupCell(
         markup = markup,
+        highlight = null,
         isDark = isDark,
         surfaceColor = getNamedColor("PrimarySurface", isDark),
         bubbleColor = getNamedColor("Bubble", isDark),

@@ -79,6 +79,7 @@ fun SaveMarkupDialog(
                     Row() {
                         MarkupCell(
                             textSelection = selection,
+                            highlight = null,
                             index = 0,
                             length = 0,
                             markupColor = selectedColor,

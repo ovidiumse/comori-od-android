@@ -161,7 +161,7 @@ fun MarkupsScreen(
                             .padding(top = 8.dp, start = 8.dp, end = 8.dp)
                             .fillMaxWidth(),
                         searchText = searchTextFieldValue,
-                        shouldFocus = false,
+                        shouldFocus = true,
                         placeholderText = "Caută în marcaje...",
                         focusRequester = focusRequester,
                         onSearchTextChanged = { newFieldValue ->
@@ -213,6 +213,7 @@ fun MarkupsScreen(
                                     ) {
                                         SwipeableMarkupCell(
                                             markup = markup,
+                                            highlight = query,
                                             surfaceColor = surfaceColor,
                                             bubbleColor = bubbleColor,
                                             isDark = isDark,
