@@ -141,7 +141,7 @@ fun TextCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.End,
             ) {
-                TagBubble(tag = type, textColor = subtitleColor, bubbleColor = bubbleColor)
+                TagBubble(tag = buildAnnotatedString { append(type) }, textColor = subtitleColor, bubbleColor = bubbleColor)
             }
         }
 

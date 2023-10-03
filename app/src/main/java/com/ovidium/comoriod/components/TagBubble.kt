@@ -11,10 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TagBubble(tag: String, textColor: Color, bubbleColor: Color) {
+fun TagBubble(tag: AnnotatedString, textColor: Color, bubbleColor: Color) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
