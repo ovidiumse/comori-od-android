@@ -36,6 +36,7 @@ import com.ovidium.comoriod.views.Screens
 
 @Composable
 fun BibleBanner(data: AuthorsResponse?, navController: NavController) {
+    val darkBarColor = getNamedColor("DarkBar", isSystemInDarkTheme())
     Box(
         modifier = Modifier
             .padding(horizontal = 12.dp)
@@ -58,14 +59,16 @@ fun BibleBanner(data: AuthorsResponse?, navController: NavController) {
                 text = "Cercetează",
                 fontSize = 18.sp,
                 fontFamily = Montserrat,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = darkBarColor
             )
             Text(
                 text = "Biblia",
                 modifier = Modifier.offset(y = -8.dp),
                 fontSize = 36.sp,
                 fontFamily = Montserrat,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                color = darkBarColor
             )
             LazyRow(
                 modifier = Modifier
@@ -89,7 +92,8 @@ fun BibleBanner(data: AuthorsResponse?, navController: NavController) {
             Text(
                 text = "sub îndrumarea înaintașilor",
                 fontSize = 16.sp,
-                fontFamily = Montserrat
+                fontFamily = Montserrat,
+                color = darkBarColor
             )
         }
 

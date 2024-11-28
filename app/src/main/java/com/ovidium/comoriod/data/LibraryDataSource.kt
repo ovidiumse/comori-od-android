@@ -34,6 +34,7 @@ class LibraryDataSource(
     val authorsData by lazy { buildFlow(externalScope) { apiService.getAuthors() } }
     val volumesData by lazy { buildFlow(externalScope) { apiService.getVolumes() } }
     val booksData by lazy { buildFlow(externalScope) { apiService.getBooks() } }
+    val bibleBooksData by lazy { buildFlow(externalScope) { apiService.getBibleBooks() } }
 
     val recentlyAddedBooksData by lazy { buildFlow(externalScope) { apiService.getRecentlyAddedBooks() } }
 

@@ -168,7 +168,7 @@ fun BottomBarMain(
         }
 
         composable(Screens.BibleBooks.route) {
-            BibleBooksScreen()
+            BibleBooksScreen(navController, libraryModel)
         }
 
         composable(

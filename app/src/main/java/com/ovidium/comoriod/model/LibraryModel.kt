@@ -39,6 +39,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val recentlyAddedBooksData by lazy { dataSource.recentlyAddedBooksData }
     val recommendedData = mutableStateOf<Resource<SnapshotStateList<RecommendedResponseItem>>>(Resource.uninitialized())
     val trendingData by lazy { dataSource.trendingData }
+    val bibleBooksData by lazy { dataSource.bibleBooksData }
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
