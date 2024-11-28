@@ -61,6 +61,12 @@ enum class Screens(
         route = "articlesForAuthor",
         title = "Articles for author",
         icon = R.drawable.ic_book
+    ),
+
+    BibleBooks(
+        route = "bibleBooks",
+        title = "Bible books",
+        icon = R.drawable.ic_book
     );
 
     fun withArgs(vararg args: String): String {

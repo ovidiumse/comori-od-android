@@ -37,6 +37,7 @@ import com.ovidium.comoriod.views.article.ArticleView
 import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen
 import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.authors.TitlesForAuthorScreen
+import com.ovidium.comoriod.views.library.bible.BibleBooksScreen
 import com.ovidium.comoriod.views.library.books.BookScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
 import com.ovidium.comoriod.views.markups.MarkupsScreen
@@ -164,6 +165,10 @@ fun BottomBarMain(
 
         composable(Screens.Markups.route) {
             MarkupsScreen(navController, markupsModel, signInModel, scaffoldState)
+        }
+
+        composable(Screens.BibleBooks.route) {
+            BibleBooksScreen()
         }
 
         composable(
