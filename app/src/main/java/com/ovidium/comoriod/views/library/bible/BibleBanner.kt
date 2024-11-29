@@ -19,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
@@ -70,25 +71,7 @@ fun BibleBanner(data: AuthorsResponse?, navController: NavController) {
                 fontWeight = FontWeight.SemiBold,
                 color = darkBarColor
             )
-            LazyRow(
-                modifier = Modifier
-                    .offset(y = -8.dp)
-            ) {
-                val dataItems = data?.aggregations?.authors?.buckets?.map { it }
-                dataItems?.let {
-                    itemsIndexed(dataItems.subList(fromIndex = 0, toIndex = 6)) { index, item ->
-                        Image(
-                            painter = rememberAsyncImagePainter(item.photo_url_sm),
-                            contentDescription = "bible authors",
-                            contentScale = ContentScale.FillBounds,
-                            modifier = Modifier
-                                .padding(horizontal = 5.dp)
-                                .requiredSize(35.dp)
-                                .clip(RoundedCornerShape(100))
-                        )
-                    }
-                }
-            }
+            BibleBannerAuthorCarousel(data)
             Text(
                 text = "sub îndrumarea înaintașilor",
                 fontSize = 16.sp,
@@ -97,6 +80,30 @@ fun BibleBanner(data: AuthorsResponse?, navController: NavController) {
             )
         }
 
+    }
+}
+
+@Composable
+private fun BibleBannerAuthorCarousel(data: AuthorsResponse?) {
+    LazyRow(
+        modifier = Modifier
+            .offset(y = -8.dp)
+    ) {
+        val dataItems = data?.aggregations?.authors?.buckets?.map { it }
+        dataItems?.let {
+            itemsIndexed(dataItems.subList(fromIndex = 0, toIndex = 6)) { index, item ->
+                Image(
+                    painter = rememberAsyncImagePainter(item.photo_url_sm),
+                    contentDescription = "bible authors",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .padding(horizontal = 5.dp)
+                        .requiredSize(35.dp)
+                        .clip(RoundedCornerShape(100))
+                        .alpha(0.8f)
+                )
+            }
+        }
     }
 }
 
