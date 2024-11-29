@@ -58,28 +58,28 @@ fun BibleBookPager(
 
     val pagerState = rememberPagerState()
 
-        StateHandler(navController, libraryModel.bibleBooksData) { data, isLoading ->
-            data?.let {
-                val currentBibleBook = (data.newTestamentBooks + data.oldTestamentBooks).first { it.name == bibleBook }
-                HorizontalPager(
-                    pageCount = currentBibleBook.chapters,
-                    state = pagerState,
-                    contentPadding = PaddingValues(end = 16.dp),
-                    verticalAlignment = Alignment.Top,
-                ) { pageIdx ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Capitolul ${pageIdx + 1}"
-                        )
-                    }
+    StateHandler(navController, libraryModel.bibleBooksData) { data, isLoading ->
+        data?.let {
+            val currentBibleBook = (data.newTestamentBooks + data.oldTestamentBooks).first { it.name == bibleBook }
+            HorizontalPager(
+                pageCount = currentBibleBook.chapters,
+                state = pagerState,
+                contentPadding = PaddingValues(end = 16.dp),
+                verticalAlignment = Alignment.Top,
+            ) { pageIdx ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "${currentBibleBook.name} - Capitolul ${pageIdx + 1}"
+                    )
                 }
             }
         }
+    }
 
 
 }
