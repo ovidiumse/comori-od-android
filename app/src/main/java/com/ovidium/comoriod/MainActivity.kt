@@ -37,6 +37,7 @@ import com.ovidium.comoriod.views.article.ArticleView
 import com.ovidium.comoriod.views.library.books.BooksForAuthorScreen
 import com.ovidium.comoriod.views.library.books.BooksForVolumeScreen
 import com.ovidium.comoriod.views.library.authors.TitlesForAuthorScreen
+import com.ovidium.comoriod.views.library.bible.BibleBookPager
 import com.ovidium.comoriod.views.library.bible.BibleBooksScreen
 import com.ovidium.comoriod.views.library.books.BookScreen
 import com.ovidium.comoriod.views.library.volumes.VolumesForAuthorScreen
@@ -249,6 +250,24 @@ fun BottomBarMain(
                 readArticlesModel = readArticlesModel,
                 navController = navController
             )
+        }
+
+        composable(
+            route = Screens.BibleBooks.route + "/{bibleBook}",
+            arguments = listOf(navArgument("bibleBook") {
+                type = NavType.StringType
+                defaultValue = ""
+                nullable = true
+            })
+        ) { entry ->
+            fun getBibleBook(): String {
+                return if (entry.arguments == null)
+                    ""
+                else
+                    URLDecoder.decode(entry.arguments!!.getString("bibleBook", ""), "utf-8")
+            }
+            BibleBookPager(getBibleBook(), scaffoldState, libraryModel, navController)
+
         }
 
         composable(

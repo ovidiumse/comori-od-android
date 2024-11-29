@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.views.library.bible
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +27,9 @@ import com.ovidium.comoriod.data.bible.BibleBook
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.ui.theme.Montserrat
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.views.Screens
 import com.ovidium.comoriod.views.library.StateHandler
+import java.net.URLEncoder
 
 @Composable
 fun BibleBooksScreen(navController: NavHostController, libraryModel: LibraryModel) {
@@ -57,9 +60,12 @@ fun BibleBooksScreen(navController: NavHostController, libraryModel: LibraryMode
                         Column(
                             modifier = Modifier
                                 .padding(8.dp)
-                                .border(0.75.dp, if (data.newTestamentBooks.contains(item)) Color.Green else getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(12.dp)),
+                                .border(0.75.dp, if (data.newTestamentBooks.contains(item)) Color.Green else getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(12.dp))
+                                .clickable {
+                                    navController.navigate(Screens.BibleBooks.withArgs(URLEncoder.encode(item.name, "utf-8")))
+                                },
                             verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
                                 text = item.shortName,
