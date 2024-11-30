@@ -117,16 +117,16 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
 
     fun getBibleChapter(
         bibleBookTitle: String,
-        chapterNumber: Int
+        bibleChapterNumber: Int
     ) {
-        val bibleChapterData = Pair(bibleBookTitle, chapterNumber)
+        val bibleChapterData = Pair(bibleBookTitle, bibleChapterNumber)
 
         if (_bibleChapterData.value.containsKey(bibleChapterData)
             && _bibleChapterData.value[bibleChapterData]?.status == Status.SUCCESS
         ) return
 
         viewModelScope.launch {
-            dataSource.getBibleChapterData(bibleBookTitle, chapterNumber).collectLatest { response ->
+            dataSource.getBibleChapterData(bibleBookTitle, bibleChapterNumber).collectLatest { response ->
                 when (response.status) {
                     Status.SUCCESS -> {
                         _bibleChapterData.value = _bibleChapterData.value.toMutableMap().apply {

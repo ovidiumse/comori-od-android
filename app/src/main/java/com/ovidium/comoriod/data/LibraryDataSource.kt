@@ -63,8 +63,8 @@ class LibraryDataSource(
     }
 
     fun getBibleChapterData(
-        bibleBook: String,
-        chapterNumber: Int
+        bibleBookTitle: String,
+        bibleChapterNumber: Int
     ): Flow<Resource<BibleChapter>> =
-        buildFlow(externalScope) { apiService.getBibleChapter(bibleBook, chapterNumber) }
+        buildFlow(externalScope) { apiService.getBibleChapter(bibleBookTitle, bibleChapterNumber) }
 }
