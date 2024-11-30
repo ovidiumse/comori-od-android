@@ -2,8 +2,14 @@ package com.ovidium.comoriod.views.library.bible
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.ScaffoldState
@@ -17,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.ovidium.comoriod.model.LibraryModel
+import com.ovidium.comoriod.model.getFormatedText
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.library.StateHandler
 
@@ -53,18 +60,27 @@ fun BibleBookPager(
                     when (state?.status) {
                         Status.SUCCESS -> {
                             // TODO beautify this text
-                            Text(
-                                text = state.data?.hits?.hits!!.first().source.verses.first().name +
-                                        "${state.data.hits.hits.first().source.verses.first().content}"
-                            )
+                            val formatedText = state.data?.getFormatedText()
+
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth(),
+                            ) {
+                                formatedText?.let {
+                                    itemsIndexed(formatedText) { index, text ->
+                                        Text(
+                                            text = text.formatedVerse + "\n" + "\n"
+                                                    + text.formatedReference.toString()
+                                        )
+                                    }
+                                }
+                            }
                         }
 
                         // TODO add a loading spinner for LOADING state
                         Status.ERROR,
                         Status.LOADING,
                         Status.UNINITIALIZED,
-                        null -> {
-                        }
+                        null -> {}
                     }
                 }
 

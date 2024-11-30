@@ -11,6 +11,8 @@ import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
 import com.ovidium.comoriod.data.bible.BibleChapter
+import com.ovidium.comoriod.data.bible.BibleVerse
+import com.ovidium.comoriod.data.bible.Verse
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
@@ -170,3 +172,82 @@ class LibraryModelFactory(
             .newInstance(jwtUtils, signInModel) as T
     }
 }
+
+fun BibleChapter.getFormatedText(): List<BibleVerse> {
+
+    val finalBibleVerseList = mutableListOf<BibleVerse>()
+
+    val verses: List<Verse> = this.hits.hits.flatMap { it.source.verses }
+
+    verses.forEach { verse ->
+
+        val finalVerse = StringBuilder()
+        var finalReference = StringBuilder()
+        val finalReferenceList = mutableListOf<String>()
+
+        // build the verse with reference symbols
+        finalVerse.append(verse.number.toString().addSuffix(DOT_SYMBOL))
+        finalVerse.append(SPACE_SYMBOL)
+        verse.content.forEach {
+            finalVerse.append(it.text)
+        }
+
+        verse.references.oneStar?.forEach {
+            finalReference.append(ONE_STAR_SYMBOL)
+            finalReference.append(it)
+            finalReferenceList.add(finalReference.toString())
+            finalReference = StringBuilder()
+        }
+
+        verse.references.twoStars?.forEach {
+            finalReference.append(TWO_STARS_SYMBOL)
+            finalReference.append(it)
+            finalReferenceList.add(finalReference.toString())
+            finalReference = StringBuilder()
+        }
+
+        verse.references.oneCross?.forEach {
+            finalReference.append(ONE_CROSS_SYMBOL)
+            finalReference.append(it)
+            finalReferenceList.add(finalReference.toString())
+            finalReference = StringBuilder()
+        }
+
+        verse.references.twoCrosses?.forEach {
+            finalReference.append(TWO_CROSSES_SYMBOL)
+            finalReference.append(it)
+            finalReferenceList.add(finalReference.toString())
+            finalReference = StringBuilder()
+        }
+
+        verse.references.starAndCross?.forEach {
+            finalReference.append(ONE_STAR_ONE_CROSS_SYMBOL)
+            finalReference.append(it)
+            finalReferenceList.add(finalReference.toString())
+            finalReference = StringBuilder()
+        }
+
+        finalBibleVerseList.add(
+            BibleVerse(
+                finalVerse.toString(),
+                finalReferenceList.toList(),
+                emptyList()
+            )
+        )
+    }
+    return finalBibleVerseList
+}
+
+fun String.addPrefix(prefix: String) = "$prefix$this"
+fun String.addSuffix(suffix: String) = "$this$suffix"
+
+const val DOT_SYMBOL = "."
+const val SPACE_SYMBOL = " "
+const val NO_SYMBOL = ""
+const val JESUS_SYMBOL = "+"
+
+const val ONE_STAR_SYMBOL = "*"
+const val TWO_STARS_SYMBOL = "**"
+const val ONE_CROSS_SYMBOL = "†"
+const val TWO_CROSSES_SYMBOL = "††"
+const val ONE_STAR_ONE_CROSS_SYMBOL = "*†"
