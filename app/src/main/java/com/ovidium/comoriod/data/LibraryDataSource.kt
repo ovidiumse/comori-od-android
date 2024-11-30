@@ -1,6 +1,7 @@
 package com.ovidium.comoriod.data
 
 import com.ovidium.comoriod.api.ApiService
+import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.recommended.RecommendedResponse
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.model.GoogleSignInModel
@@ -27,6 +28,7 @@ class LibraryDataSource(
                     userData.user.id,
                     userData.user.issuer
                 )
+
             else -> null
         }
     }
@@ -59,4 +61,10 @@ class LibraryDataSource(
             buildToken()?.let { token -> apiService.getRecommended(token) }
         }
     }
+
+    fun getBibleChapterData(
+        bibleBook: String,
+        chapterNumber: Int
+    ): Flow<Resource<BibleChapter>> =
+        buildFlow(externalScope) { apiService.getBibleChapter(bibleBook, chapterNumber) }
 }

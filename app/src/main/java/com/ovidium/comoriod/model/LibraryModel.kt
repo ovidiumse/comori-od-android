@@ -1,26 +1,24 @@
 package com.ovidium.comoriod.model
 
-import android.content.Context
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.ovidium.comoriod.MainActivity
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
+import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -40,6 +38,9 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     val recommendedData = mutableStateOf<Resource<SnapshotStateList<RecommendedResponseItem>>>(Resource.uninitialized())
     val trendingData by lazy { dataSource.trendingData }
     val bibleBooksData by lazy { dataSource.bibleBooksData }
+
+    private var _bibleChapterData = MutableStateFlow<Map<Pair<String, Int>, Resource<BibleChapter?>>>(emptyMap())
+    val bibleChapterData = _bibleChapterData.asStateFlow()
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
@@ -62,6 +63,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
                     titlesData.value.data?.titles?.add(hit)
                 }
             }
+
             Status.LOADING -> titlesData.value = Resource.loading(null)
             Status.ERROR -> titlesData.value = Resource.error(null, response.message)
             Status.UNINITIALIZED -> titlesData.value = Resource.uninitialized()
@@ -94,16 +96,18 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
 
         viewModelScope.launch {
             dataSource.getRecommended().collectLatest { response ->
-                when(response.status){
+                when (response.status) {
                     Status.SUCCESS -> {
                         recommendedData.value = Resource.success(mutableStateListOf())
                         response.data?.forEach { item ->
                             recommendedData.value.data?.add(item)
                         }
                     }
+
                     Status.LOADING -> {
                         recommendedData.value = Resource.loading(null)
                     }
+
                     Status.ERROR -> recommendedData.value = Resource.error(null, response.message)
                     Status.UNINITIALIZED -> recommendedData.value = Resource.uninitialized()
                 }
@@ -111,6 +115,49 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
         }
     }
 
+    fun getBibleChapter(
+        bibleBookTitle: String,
+        chapterNumber: Int
+    ) {
+        val bibleChapterData = Pair(bibleBookTitle, chapterNumber)
+
+        if (_bibleChapterData.value.containsKey(bibleChapterData)
+            && _bibleChapterData.value[bibleChapterData]?.status == Status.SUCCESS
+        ) return
+
+        viewModelScope.launch {
+            dataSource.getBibleChapterData(bibleBookTitle, chapterNumber).collectLatest { response ->
+                when (response.status) {
+                    Status.SUCCESS -> {
+                        _bibleChapterData.value = _bibleChapterData.value.toMutableMap().apply {
+                            remove(bibleChapterData)
+                            put(bibleChapterData, Resource.success(response.data))
+                        }
+                    }
+
+                    Status.ERROR -> {
+                        _bibleChapterData.value = _bibleChapterData.value.toMutableMap().apply {
+                            remove(bibleChapterData)
+                            put(bibleChapterData, Resource.error(null, response.message))
+                        }
+                    }
+
+                    Status.LOADING -> {
+                        _bibleChapterData.value = _bibleChapterData.value.toMutableMap().apply {
+                            put(bibleChapterData, Resource.loading(null))
+                        }
+                    }
+
+                    Status.UNINITIALIZED -> {
+                        _bibleChapterData.value = _bibleChapterData.value.toMutableMap().apply {
+                            remove(bibleChapterData)
+                            put(bibleChapterData, Resource.uninitialized())
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 class LibraryModelFactory(

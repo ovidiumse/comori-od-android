@@ -41,14 +41,14 @@ fun BibleBooksScreen(navController: NavHostController, libraryModel: LibraryMode
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        StateHandler(navController, libraryModel.bibleBooksData) { data, isLoading ->
+        StateHandler(navController, libraryModel.bibleBooksData) { data, _ ->
             Text(
                 text = "Biblia",
                 fontSize = 36.sp,
                 fontFamily = Montserrat,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
+                    .padding(bottom = 16.dp, top = 4.dp)
             )
             LazyVerticalGrid(
                 columns = GridCells.Fixed(5),
@@ -73,7 +73,7 @@ fun BibleBooksScreen(navController: NavHostController, libraryModel: LibraryMode
                                 fontFamily = Montserrat,
                                 fontWeight = FontWeight.SemiBold,
                                 modifier = Modifier
-                                    .padding(6.dp)
+                                    .padding(horizontal = 6.dp, vertical = 8.dp)
                             )
                         }
                     }
