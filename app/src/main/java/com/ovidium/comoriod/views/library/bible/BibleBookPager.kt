@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.views.library.bible
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -20,10 +22,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.model.getFormatedText
+import com.ovidium.comoriod.utils.ParagraphStyle
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.library.StateHandler
 
@@ -59,8 +65,8 @@ fun BibleBookPager(
 
                     when (state?.status) {
                         Status.SUCCESS -> {
-                            // TODO beautify this text
-                            val formatedText = state.data?.getFormatedText()
+
+                            val formatedText = state.data?.getFormatedText(isSystemInDarkTheme())
 
                             LazyColumn(
                                 modifier = Modifier.fillMaxWidth(),
@@ -68,9 +74,25 @@ fun BibleBookPager(
                                 formatedText?.let {
                                     itemsIndexed(formatedText) { index, text ->
                                         Text(
-                                            text = text.formatedVerse + "\n" + "\n"
-                                                    + text.formatedReference.toString()
+                                            text = text.formatedVerse,
+                                            modifier = Modifier
+                                                .padding(bottom = 2.dp)
                                         )
+                                        if (text.formatedReference.text.isNotEmpty())
+                                            ClickableText(
+                                                text = text.formatedReference,
+                                                modifier = Modifier
+                                                    .padding(bottom = 5.dp),
+                                                style = TextStyle(lineHeight = 20.sp)
+                                            ) { offset ->
+                                                val annotation = text.formatedReference.getStringAnnotations(
+                                                    tag = "URL",
+                                                    start = offset,
+                                                    end = offset
+                                                ).firstOrNull()
+                                                // TODO show the Partial bottom sheet with ref verses
+                                                println("Clicked: ${annotation!!.item}")
+                                            }
                                     }
                                 }
                             }
