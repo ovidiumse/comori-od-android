@@ -24,6 +24,7 @@
 -keep class com.ovidium.comoriod.data.authors.* { *; }
 -keep class com.ovidium.comoriod.data.autocomplete.* { *; }
 -keep class com.ovidium.comoriod.data.books.* { *; }
+-keep class com.ovidium.comoriod.data.bible.* { *; }
 -keep class com.ovidium.comoriod.data.favorites.* { *; }
 -keep class com.ovidium.comoriod.data.markups.* { *; }
 -keep class com.ovidium.comoriod.data.recentlyaddedbooks.* { *; }
