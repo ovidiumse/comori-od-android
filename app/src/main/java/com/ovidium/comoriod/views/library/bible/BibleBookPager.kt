@@ -3,36 +3,37 @@ package com.ovidium.comoriod.views.library.bible
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.ovidium.comoriod.components.AdaptiveText
+import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedText
 import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.model.getFormatedText
-import com.ovidium.comoriod.utils.ParagraphStyle
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.library.StateHandler
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BibleBookPager(
     bibleBook: String,
@@ -41,8 +42,13 @@ fun BibleBookPager(
     navController: NavHostController
 ) {
 
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
+    )
+    val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
     val bibleChapterData by libraryModel.bibleChapterData.collectAsState()
+    val isDarkTheme = isSystemInDarkTheme()
 
     StateHandler(navController, libraryModel.bibleBooksData) { data, isLoading ->
         data?.let {
@@ -57,8 +63,7 @@ fun BibleBookPager(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(16.dp),
+                        .fillMaxHeight(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -66,33 +71,46 @@ fun BibleBookPager(
                     when (state?.status) {
                         Status.SUCCESS -> {
 
-                            val formatedText = state.data?.getFormatedText(isSystemInDarkTheme())
-
-                            LazyColumn(
-                                modifier = Modifier.fillMaxWidth(),
+                            BottomSheetScaffold(
+                                scaffoldState = bottomSheetScaffoldState,
+                                sheetShape = RoundedCornerShape(
+                                    topStart = 4.dp,
+                                    topEnd = 4.dp
+                                ),
+                                sheetPeekHeight = 0.dp,
+                                sheetContent = {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentSize()
+                                            .padding(16.dp)
+                                    ) {
+                                        CommonBottomSheetHeader()
+                                        //ceva dinamic
+                                    }
+                                }
                             ) {
-                                formatedText?.let {
-                                    itemsIndexed(formatedText) { index, text ->
-                                        Text(
-                                            text = text.formatedVerse,
-                                            modifier = Modifier
-                                                .padding(bottom = 2.dp)
-                                        )
-                                        if (text.formatedReference.text.isNotEmpty())
-                                            ClickableText(
-                                                text = text.formatedReference,
-                                                modifier = Modifier
-                                                    .padding(bottom = 5.dp),
-                                                style = TextStyle(lineHeight = 20.sp)
-                                            ) { offset ->
-                                                val annotation = text.formatedReference.getStringAnnotations(
-                                                    tag = "URL",
-                                                    start = offset,
-                                                    end = offset
-                                                ).firstOrNull()
-                                                // TODO show the Partial bottom sheet with ref verses
-                                                println("Clicked: ${annotation!!.item}")
-                                            }
+
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) {
+                                    state.data?.getFormatedText(isDarkTheme)?.let {
+                                        itemsIndexed(it) { _, bibleVerseContent ->
+                                            BibleVerseItem(
+                                                bibleVerseContent,
+                                                scope,
+                                                bottomSheetScaffoldState,
+                                                scaffoldState, libraryModel, navController
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                            LaunchedEffect(Unit) {
+                                scope.launch {
+                                    if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+                                        bottomSheetScaffoldState.bottomSheetState.collapse()
                                     }
                                 }
                             }
@@ -102,7 +120,8 @@ fun BibleBookPager(
                         Status.ERROR,
                         Status.LOADING,
                         Status.UNINITIALIZED,
-                        null -> {}
+                        null -> {
+                        }
                     }
                 }
 

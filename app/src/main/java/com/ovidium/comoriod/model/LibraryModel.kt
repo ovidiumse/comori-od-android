@@ -2,18 +2,12 @@ package com.ovidium.comoriod.model
 
 import android.util.Log
 import androidx.annotation.Keep
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.BaselineShift
-import androidx.compose.ui.text.withAnnotation
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -21,9 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
 import com.ovidium.comoriod.data.bible.BibleChapter
-import com.ovidium.comoriod.data.bible.BibleVerse
 import com.ovidium.comoriod.data.bible.ContentType
-import com.ovidium.comoriod.data.bible.Verse
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
@@ -184,199 +176,3 @@ class LibraryModelFactory(
             .newInstance(jwtUtils, signInModel) as T
     }
 }
-
-fun BibleChapter.getFormatedText(isDarkMode: Boolean): List<BibleVerse> {
-
-    val finalBibleVerseList = mutableListOf<BibleVerse>()
-
-    val verses: List<Verse> = this.hits.hits.flatMap { it.source.verses }
-
-    verses.forEach { verse ->
-
-        // build the verse with reference symbols
-        var annotatedString = buildAnnotatedString {
-            withStyle(
-                SpanStyle(
-                    color = Color.Gray,
-                    fontSize = 18.sp
-                )
-            ) {
-                append(verse.number.toString().addSuffix(DOT_SYMBOL))
-            }
-            append(SPACE_SYMBOL)
-            verse.content.forEach { verse ->
-                when (verse.type) {
-                    ContentType.NORMAL -> {
-                        withStyle(
-                            SpanStyle(
-                                fontSize = 18.sp
-                            )
-                        ) {
-                            append(verse.text)
-                        }
-                    }
-                    ContentType.NOTE -> {
-                        withStyle(
-                            SpanStyle(
-                                color = getNamedColor("Link", isDarkMode),
-                                fontSize = 18.sp,
-                                baselineShift = BaselineShift.Superscript
-                            )
-                        ) {
-                            append(verse.text)
-                        }
-                    }
-                    ContentType.JESUS -> {
-                        withStyle(
-                            SpanStyle(
-                                color = Color.Red,
-                                fontSize = 18.sp
-                            )
-                        ) {
-                            append(verse.text)
-                        }
-                    }
-                    ContentType.REFERENCE -> { withStyle(
-                        SpanStyle(
-                            color = getNamedColor("markupChoc", isDarkMode),
-                            fontSize = 14.sp,
-                            baselineShift = BaselineShift.Superscript
-                        )
-                    ) {
-                        append(verse.text)
-                    } }
-                }
-            }
-        }
-
-        var annotatedRef = buildAnnotatedString {
-            verse.references.oneStar?.forEach {
-                withStyle(
-                    SpanStyle(
-                        color = getNamedColor("markupChoc", isDarkMode),
-                        fontSize = 14.sp
-                    )
-                ) {
-                    append(ONE_STAR_SYMBOL)
-                }
-                withAnnotation(tag = "URL", annotation = it) {
-                    withStyle(
-                        SpanStyle(
-                            color = getNamedColor("Link", isDarkMode),
-                            fontSize = 14.sp
-                        )
-                    ) {
-                        append(it + SPACE_SYMBOL)
-                    }
-                }
-            }
-
-            verse.references.twoStars?.forEach {
-                withStyle(
-                    SpanStyle(
-                        color = getNamedColor("markupChoc", isDarkMode),
-                        fontSize = 14.sp
-                    )
-                ) {
-                    append(TWO_STARS_SYMBOL)
-                }
-                withAnnotation(tag = "URL", annotation = it) {
-                    withStyle(
-                        SpanStyle(
-                            color = getNamedColor("Link", isDarkMode),
-                            fontSize = 14.sp
-                        )
-                    ) {
-                        append(it + SPACE_SYMBOL)
-                    }
-                }
-            }
-
-            verse.references.oneCross?.forEach {
-                withStyle(
-                    SpanStyle(
-                        color = getNamedColor("markupChoc", isDarkMode),
-                        fontSize = 14.sp
-                    )
-                ) {
-                    append(ONE_CROSS_SYMBOL)
-                }
-                withAnnotation(tag = "URL", annotation = it) {
-                    withStyle(
-                        SpanStyle(
-                            color = getNamedColor("Link", isDarkMode),
-                            fontSize = 14.sp
-                        )
-                    ) {
-                        append(it + SPACE_SYMBOL)
-                    }
-                }
-            }
-
-            verse.references.twoCrosses?.forEach {
-                withStyle(
-                    SpanStyle(
-                        color = getNamedColor("markupChoc", isDarkMode),
-                        fontSize = 14.sp
-                    )
-                ) {
-                    append(TWO_CROSSES_SYMBOL)
-                }
-                withAnnotation(tag = "URL", annotation = it) {
-                    withStyle(
-                        SpanStyle(
-                            color = getNamedColor("Link", isDarkMode),
-                            fontSize = 14.sp
-                        )
-                    ) {
-                        append(it + SPACE_SYMBOL)
-                    }
-                }
-            }
-
-            verse.references.starAndCross?.forEach {
-                withStyle(
-                    SpanStyle(
-                        color = getNamedColor("markupChoc", isDarkMode),
-                        fontSize = 14.sp
-                    )
-                ) {
-                    append(ONE_STAR_ONE_CROSS_SYMBOL)
-                }
-                withAnnotation(tag = "URL", annotation = it) {
-                    withStyle(
-                        SpanStyle(
-                            color = getNamedColor("Link", isDarkMode),
-                            fontSize = 14.sp
-                        )
-                    ) {
-                        append(it + SPACE_SYMBOL)
-                    }
-                }
-            }
-        }
-
-        finalBibleVerseList.add(
-            BibleVerse(
-                annotatedString,
-                annotatedRef,
-                emptyList()
-            )
-        )
-    }
-    return finalBibleVerseList
-}
-
-fun String.addPrefix(prefix: String) = "$prefix$this"
-fun String.addSuffix(suffix: String) = "$this$suffix"
-
-const val DOT_SYMBOL = "."
-const val SPACE_SYMBOL = " "
-const val NO_SYMBOL = ""
-const val JESUS_SYMBOL = "+"
-
-const val ONE_STAR_SYMBOL = "*"
-const val TWO_STARS_SYMBOL = "**"
-const val ONE_CROSS_SYMBOL = "†"
-const val TWO_CROSSES_SYMBOL = "††"
-const val ONE_STAR_ONE_CROSS_SYMBOL = "*†"
