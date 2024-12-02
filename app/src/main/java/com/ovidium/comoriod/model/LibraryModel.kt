@@ -5,21 +5,17 @@ import androidx.annotation.Keep
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.style.BaselineShift
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
 import com.ovidium.comoriod.data.bible.BibleChapter
-import com.ovidium.comoriod.data.bible.ContentType
+import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedReferencesForVerse
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
-import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
@@ -47,6 +43,9 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
 
     private var _bibleChapterData = MutableStateFlow<Map<Pair<String, Int>, Resource<BibleChapter?>>>(emptyMap())
     val bibleChapterData = _bibleChapterData.asStateFlow()
+
+    private var _verseFullReferenceData = MutableStateFlow(AnnotatedString(""))
+    val verseFullReferenceData = _verseFullReferenceData.asStateFlow()
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
@@ -150,6 +149,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
 
                     Status.LOADING -> {
                         _bibleChapterData.value = _bibleChapterData.value.toMutableMap().apply {
+                            remove(bibleChapterData)
                             put(bibleChapterData, Resource.loading(null))
                         }
                     }
@@ -163,6 +163,10 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
                 }
             }
         }
+    }
+
+    fun getFullVerseReferenceData(bibleChapterData: BibleChapter, verse: String, isDarkTheme: Boolean) {
+        _verseFullReferenceData.value = bibleChapterData.getFormatedReferencesForVerse(verse, isDarkTheme)
     }
 }
 

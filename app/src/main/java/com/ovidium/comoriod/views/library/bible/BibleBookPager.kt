@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +14,7 @@ import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Text
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedText
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.library.StateHandler
@@ -48,9 +46,9 @@ fun BibleBookPager(
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
     val bibleChapterData by libraryModel.bibleChapterData.collectAsState()
-    val isDarkTheme = isSystemInDarkTheme()
+    val verseFullReferenceData by libraryModel.verseFullReferenceData.collectAsState()
 
-    StateHandler(navController, libraryModel.bibleBooksData) { data, isLoading ->
+    StateHandler(navController, libraryModel.bibleBooksData) { data, _ ->
         data?.let {
             val currentBibleBook = (data.newTestamentBooks + data.oldTestamentBooks).first { it.name == bibleBook }
             HorizontalPager(
@@ -86,33 +84,20 @@ fun BibleBookPager(
                                             .padding(16.dp)
                                     ) {
                                         CommonBottomSheetHeader()
-                                        //ceva dinamic
+
+                                        Text(
+                                            text = verseFullReferenceData,
+                                            modifier = Modifier.padding(bottom = 2.dp)
+                                        )
                                     }
                                 }
                             ) {
-
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                ) {
-                                    state.data?.getFormatedText(isDarkTheme)?.let {
-                                        itemsIndexed(it) { _, bibleVerseContent ->
-                                            BibleVerseItem(
-                                                bibleVerseContent,
-                                                scope,
-                                                bottomSheetScaffoldState,
-                                                scaffoldState, libraryModel, navController
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-
-                            LaunchedEffect(Unit) {
-                                scope.launch {
-                                    if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-                                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                                    }
-                                }
+                                BibleBookContainer(
+                                    state.data,
+                                    scope,
+                                    bottomSheetScaffoldState,
+                                    scaffoldState, libraryModel, navController
+                                )
                             }
                         }
 
@@ -123,10 +108,18 @@ fun BibleBookPager(
                         null -> {
                         }
                     }
+
+                    LaunchedEffect(Unit) {
+                        libraryModel.getBibleChapter(currentBibleBook.name, pageIdx + 1)
+                    }
                 }
 
                 LaunchedEffect(Unit) {
-                    libraryModel.getBibleChapter(currentBibleBook.name, pageIdx + 1)
+                    scope.launch {
+                        if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+                            bottomSheetScaffoldState.bottomSheetState.collapse()
+                        }
+                    }
                 }
             }
         }
