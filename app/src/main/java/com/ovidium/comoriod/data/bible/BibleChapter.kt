@@ -1,5 +1,14 @@
 package com.ovidium.comoriod.data.bible
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.unit.sp
 import com.google.gson.annotations.SerializedName
+import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.addSuffix
+import com.ovidium.comoriod.utils.toSpanStyle
 
 data class BibleChapter(
     val took: Int,
@@ -10,7 +19,114 @@ data class BibleChapter(
     val bibleRefs: Map<String, BibleRef>?,
     @SerializedName("od-refs")
     val odRefs: Map<String, ODRef>?
-)
+) {
+    companion object {
+
+        fun BibleChapter.getFormatedText(isDarkMode: Boolean): List<BibleVerse> {
+
+            val finalBibleVerseList = mutableListOf<BibleVerse>()
+            val verses: List<Verse> = this.hits.hits.flatMap { it.source.verses }
+
+            val verseNumberStyle = SpanStyle(color = Color.Gray, fontSize = 18.sp)
+            val starSymbolStyle = SpanStyle(color = getNamedColor("markupChoc", isDarkMode), fontSize = 14.sp)
+            val verseReferenceStyle = SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 14.sp)
+
+            verses.forEach { verse ->
+
+                // build the verse with reference symbols
+                val annotatedString = buildAnnotatedString {
+
+                    append(verse.number.toString().addSuffix(DOT_SYMBOL).toSpanStyle(verseNumberStyle))
+                    append(SPACE_SYMBOL)
+
+                    verse.content.forEach { verse ->
+                        append(verse.text.toSpanStyle(getContentStyleBy(verse.type, isDarkMode)))
+                    }
+                }
+
+                // build the verse references with reference symbols
+                val annotatedRef = buildAnnotatedString {
+                    verse.references.oneStar?.forEach {
+                        append(ONE_STAR_SYMBOL.toSpanStyle(starSymbolStyle))
+                        append(
+                            it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
+                                .toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
+                        )
+                    }
+
+                    verse.references.twoStars?.forEach {
+                        append(TWO_STARS_SYMBOL.toSpanStyle(starSymbolStyle))
+                        append(
+                            it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
+                                .toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
+                        )
+                    }
+
+                    verse.references.oneCross?.forEach {
+                        append(ONE_CROSS_SYMBOL.toSpanStyle(starSymbolStyle))
+                        append(
+                            it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
+                                .toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
+                        )
+                    }
+
+                    verse.references.twoCrosses?.forEach {
+                        append(TWO_CROSSES_SYMBOL.toSpanStyle(starSymbolStyle))
+                        append(
+                            it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
+                                .toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
+                        )
+                    }
+
+                    verse.references.starAndCross?.forEach {
+                        append(ONE_STAR_ONE_CROSS_SYMBOL.toSpanStyle(starSymbolStyle))
+                        append(
+                            it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
+                                .toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
+                        )
+                    }
+                }
+
+                finalBibleVerseList.add(
+                    BibleVerse(
+                        annotatedString,
+                        annotatedRef,
+                        emptyList()
+                    )
+                )
+            }
+            return finalBibleVerseList
+        }
+
+        private fun getContentStyleBy(
+            contentType: ContentType,
+            isDarkMode: Boolean
+        ): SpanStyle {
+
+            val normalContentStyle = SpanStyle(fontSize = 18.sp)
+            val noteContentStyle =
+                SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 18.sp, baselineShift = BaselineShift.Superscript)
+            val jesusContentStyle = SpanStyle(color = Color.Red, fontSize = 18.sp)
+            val referenceContentStyle =
+                SpanStyle(color = getNamedColor("markupChoc", isDarkMode), fontSize = 14.sp, baselineShift = BaselineShift.Superscript)
+
+            return when (contentType) {
+                ContentType.JESUS -> jesusContentStyle
+                ContentType.NORMAL -> normalContentStyle
+                ContentType.NOTE -> noteContentStyle
+                ContentType.REFERENCE -> referenceContentStyle
+            }
+        }
+
+        private const val DOT_SYMBOL = "."
+        private const val SPACE_SYMBOL = " "
+        private const val ONE_STAR_SYMBOL = "*"
+        private const val TWO_STARS_SYMBOL = "**"
+        private const val ONE_CROSS_SYMBOL = "†"
+        private const val TWO_CROSSES_SYMBOL = "††"
+        private const val ONE_STAR_ONE_CROSS_SYMBOL = "*†"
+    }
+}
 
 data class ODRef(
     @SerializedName("refId")
@@ -115,10 +231,13 @@ data class BibleVerseContent(
 enum class ContentType {
     @SerializedName("Jesus")
     JESUS,
+
     @SerializedName("normal")
     NORMAL,
+
     @SerializedName("note")
     NOTE,
+
     @SerializedName("reference")
     REFERENCE
 }
