@@ -26,7 +26,7 @@ fun RecentlyAddedBooksRow(
 
     fun getAuthorPhotoUrl(item: RecentlyAddedBooksResponseItem): String? {
         if (item.authors.size != 1)
-            return RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg"
+            return RetrofitBuilder.BASE_URL + "od/img/ic_unknown_person_sm.jpg"
 
         return item.authors[0].photo_url_sm
     }

@@ -21,7 +21,7 @@ fun TrendingRow(
             item.id,
             item.author,
             item.book,
-            item.author_photo_url_sm ?: (RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg"),
+            item.author_photo_url_sm ?: (RetrofitBuilder.BASE_URL + "od/img/ic_unknown_person_sm.jpg"),
             getVolumeCoverGradient(item.volume, isDark),
             type = ItemCategory.Article
         )

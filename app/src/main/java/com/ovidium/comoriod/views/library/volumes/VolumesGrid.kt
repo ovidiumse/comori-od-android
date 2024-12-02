@@ -29,7 +29,7 @@ fun VolumesGrid(
 
     fun getAuthorPhotoUrl(bucket: Bucket): String? {
         if (bucket.authors.buckets.size != 1)
-            return RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg"
+            return RetrofitBuilder.BASE_URL + "od/img/ic_unknown_person_sm.jpg"
 
         return bucket.authors.buckets[0].photo_url_sm
     }

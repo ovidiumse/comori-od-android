@@ -71,7 +71,7 @@ fun AuthorCard(
                     Image(
                         painter = rememberAsyncImagePainter(
                             authorInfo?.photo_url_sm
-                                ?: (RetrofitBuilder.BASE_URL + "img/ic_unknown_person_sm.jpg")
+                                ?: (RetrofitBuilder.BASE_URL + "od/img/ic_unknown_person_sm.jpg")
                         ),
                         contentDescription = "details",
                         contentScale = ContentScale.FillBounds,
