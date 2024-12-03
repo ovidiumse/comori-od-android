@@ -48,7 +48,11 @@ fun BookScreen(
     val articleModel: ArticleModel = viewModel()
     val titlesData by libraryModel.titlesData
     val titles = titlesData.data?.titles
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { titles?.count() ?: 0 }
+    )
     val coroutineScope = rememberCoroutineScope()
     var showTOCPopup by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
@@ -77,7 +81,6 @@ fun BookScreen(
             Status.SUCCESS -> {
                 if (!titles.isNullOrEmpty()) {
                     HorizontalPager(
-                        pageCount = titles.count(),
                         state = pagerState,
                         contentPadding = PaddingValues(end = 16.dp),
                         verticalAlignment = Alignment.Top,
@@ -122,7 +125,6 @@ fun BookScreen(
             Text(text = "Loading...")
         } else {
             HorizontalPager(
-                pageCount = titles.count(),
                 state = pagerState,
                 contentPadding = PaddingValues(end = 16.dp),
                 verticalAlignment = Alignment.Top,

@@ -79,7 +79,11 @@ fun LibraryScreen(
 
     val isConnected = connection === ConnectionState.Available
 
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f,
+        pageCount = { 4 }
+    )
     val coroutineScope = rememberCoroutineScope()
     val authorInfo = remember { mutableStateOf<Bucket?>(null) }
 
@@ -125,7 +129,7 @@ fun LibraryScreen(
                     })
             }
         }
-        HorizontalPager(pageCount = TabCategory.values().size, state = pagerState, beyondBoundsPageCount = 2) { tab ->
+        HorizontalPager(state = pagerState) { tab ->
             if (isConnected) {
                 Surface(modifier = Modifier
                     .background(backgroundColor)

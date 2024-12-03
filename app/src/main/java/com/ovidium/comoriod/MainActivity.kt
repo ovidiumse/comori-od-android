@@ -65,10 +65,12 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        navController?.handleDeepLink(intent)
-    }
+//     override fun onNewIntent(intent: Intent?) {
+//        if (intent != null) {
+//            super.onNewIntent(intent)
+//        }
+//        navController?.handleDeepLink(intent)
+//    }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -266,7 +268,7 @@ fun BottomBarMain(
                 else
                     URLDecoder.decode(entry.arguments!!.getString("bibleBook", ""), "utf-8")
             }
-            BibleBookPager(getBibleBook(), scaffoldState, libraryModel, navController)
+            BibleBookPager(getBibleBook(), libraryModel, navController)
 
         }
 

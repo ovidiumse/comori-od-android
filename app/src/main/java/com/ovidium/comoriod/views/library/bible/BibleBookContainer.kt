@@ -10,7 +10,10 @@ import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
@@ -22,22 +25,23 @@ import com.ovidium.comoriod.model.LibraryModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BibleBookContainer(
     bibleChapterData: BibleChapter?,
     scope: CoroutineScope,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
-    scaffoldState: ScaffoldState,
+    showBottomSheet: MutableState<Boolean>,
     libraryModel: LibraryModel,
     navController: NavHostController
 ) {
     val isDarkTheme = isSystemInDarkTheme()
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(
-            start = 16.dp, end = 16.dp, top = 16.dp
-        )
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                start = 16.dp, end = 16.dp, top = 16.dp
+            )
     ) {
 
         bibleChapterData?.getFormatedText(isDarkTheme)?.let {
@@ -58,15 +62,10 @@ fun BibleBookContainer(
                             start = offset,
                             end = offset
                         ).firstOrNull()
-
-                        // TODO show the Partial bottom sheet with ref verses
-                        println("Clicked: ${annotation!!.item}")
-
-
                         scope.launch {
-                            libraryModel.getFullVerseReferenceData(bibleChapterData, annotation.item, isDarkTheme)
-                            if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                                bottomSheetScaffoldState.bottomSheetState.expand()
+                            libraryModel.getFullVerseReferenceData(bibleChapterData, annotation!!.item, isDarkTheme)
+                            if (!showBottomSheet.value) {
+                                showBottomSheet.value = true
                             }
                         }
                     }
