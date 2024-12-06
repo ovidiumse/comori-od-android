@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.Colors
 import androidx.compose.runtime.*
@@ -21,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.components.ActionCallback
 import com.ovidium.comoriod.components.CustomTextToolbar
-import com.ovidium.comoriod.components.selection.SelectionContainer
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.BibleRefVerse
 import com.ovidium.comoriod.data.markups.Markup
@@ -116,12 +116,12 @@ fun ArticleBodyView(
         LocalTextSelectionColors provides customTextSelectionColors
     ) {
         SelectionContainer(
-            clearSelection = clearSelection,
-            onSelectionChange = { start, end ->
+            // clearSelection = clearSelection,
+            /* onSelectionChange = { start, end ->
                 selection = article.body.text.subSequence(start, end).toString()
                 startPos.value = start
                 endPos.value = end
-            },
+            },*/
             modifier = modifier
         ) {
             ClickableText(
