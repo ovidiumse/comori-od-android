@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -65,12 +66,10 @@ class MainActivity : ComponentActivity() {
 
     }
 
-//     override fun onNewIntent(intent: Intent?) {
-//        if (intent != null) {
-//            super.onNewIntent(intent)
-//        }
-//        navController?.handleDeepLink(intent)
-//    }
+     override fun onNewIntent(intent: Intent) {
+         super.onNewIntent(intent)
+         navController?.handleDeepLink(intent)
+     }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -152,7 +151,6 @@ fun BottomBarMain(
     markupsModel: MarkupsModel,
     readArticlesModel: ReadArticlesModel
 ) {
-
     NavHost(navController, startDestination = Screens.Library.route) {
         composable(Screens.Library.route) {
             LibraryScreen(navController, signInModel, libraryModel)
