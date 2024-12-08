@@ -115,7 +115,7 @@ data class BibleChapter(
             contentType: ContentType, isDarkMode: Boolean
         ): SpanStyle {
 
-            val normalContentStyle = SpanStyle(fontSize = 18.sp)
+            val normalContentStyle = SpanStyle(color = getNamedColor("Text", isDarkMode), fontSize = 18.sp)
             val noteContentStyle =
                 SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 18.sp, baselineShift = BaselineShift.Superscript)
             val jesusContentStyle = SpanStyle(color = Color.Red, fontSize = 18.sp)

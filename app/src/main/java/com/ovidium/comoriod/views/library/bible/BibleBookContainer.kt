@@ -66,7 +66,8 @@ fun BibleBookContainer(
                 if (bibleVerseContent.formatedReference.text.isNotEmpty())
                     ClickableText(
                         text = bibleVerseContent.formatedReference,
-                        modifier = Modifier.padding(bottom = 5.dp),
+                        modifier = Modifier
+                            .padding(bottom = 5.dp),
                         style = TextStyle(lineHeight = 20.sp)
                     ) { offset ->
 
@@ -118,7 +119,7 @@ fun BibleBookContainer(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.Center,
                                     modifier = Modifier
-                                        .background(Color.Gray, RoundedCornerShape(100))
+                                        .background(Color(0xffc9d1d9), RoundedCornerShape(100))
                                         .height(35.dp)
                                         .width(35.dp)
                                         .alpha(0.5f)
