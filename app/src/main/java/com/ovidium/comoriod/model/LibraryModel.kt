@@ -13,12 +13,15 @@ import com.ovidium.comoriod.api.RetrofitBuilder
 import com.ovidium.comoriod.data.LibraryDataSource
 import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedReferencesForVerse
+import com.ovidium.comoriod.data.bible.BibleVerse
+import com.ovidium.comoriod.data.bible.ODRef
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
 import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
+import com.ovidium.comoriod.views.library.bible.CountedAuthor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -46,6 +49,9 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
 
     private var _verseFullReferenceData = MutableStateFlow(AnnotatedString(""))
     val verseFullReferenceData = _verseFullReferenceData.asStateFlow()
+
+    private var _odReferenceData: MutableStateFlow<Map<String, ODRef>> = MutableStateFlow(mutableMapOf())
+    val odReferenceData = _odReferenceData.asStateFlow()
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
@@ -168,6 +174,35 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     fun getFullVerseReferenceData(bibleChapterData: BibleChapter, verse: String, isDarkTheme: Boolean) {
         _verseFullReferenceData.value = bibleChapterData.getFormatedReferencesForVerse(verse, isDarkTheme)
     }
+
+    fun getOdRefData(bibleVerseContent: BibleVerse, bibleChapterData: BibleChapter) {
+        _odReferenceData.value = getOdRefsForVerse(bibleVerseContent, bibleChapterData)
+    }
+
+
+    fun getSortedAuthors(bibleVerseContent: BibleVerse, bibleChapterData: BibleChapter): List<CountedAuthor> {
+        val tempArray = getNumberOfEachAuthorOdRefForVerse(bibleVerseContent, bibleChapterData)
+            .map { (name, count) ->
+                CountedAuthor(name = name, count = count)
+            }
+        return tempArray.sortedWith(compareByDescending<CountedAuthor> { it.count }
+            .thenBy { it.name })
+    }
+
+    fun getAuthorImageUrl(bibleVerseContent: BibleVerse, bibleChapterData: BibleChapter, author: String): String? =
+        getOdRefsForVerse(
+            bibleVerseContent,
+            bibleChapterData
+        ).values.first { it.author == author }.authorPhotoURLSm
+
+    private fun getNumberOfEachAuthorOdRefForVerse(bibleVerseContent: BibleVerse, bibleChapterData: BibleChapter): Map<String, Int> =
+        getOdRefsForVerse(bibleVerseContent, bibleChapterData).map { it.value.author }
+            .groupingBy { it }
+            .eachCount()
+
+    private fun getOdRefsForVerse(bibleVerseContent: BibleVerse, bibleChapterData: BibleChapter): Map<String, ODRef> =
+        bibleChapterData.odRefs?.filter { bibleVerseContent.odReferences.contains(it.key) } ?: emptyMap()
+
 }
 
 class LibraryModelFactory(

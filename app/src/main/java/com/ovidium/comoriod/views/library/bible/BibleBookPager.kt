@@ -1,6 +1,5 @@
 package com.ovidium.comoriod.views.library.bible
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,13 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
-import androidx.compose.material.rememberBottomSheetScaffoldState
-import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -46,10 +39,15 @@ fun BibleBookPager(
 
     val bibleChapterData by libraryModel.bibleChapterData.collectAsState()
     val verseFullReferenceData by libraryModel.verseFullReferenceData.collectAsState()
+    val odReferenceData by libraryModel.odReferenceData.collectAsState()
 
-    val sheetState = rememberModalBottomSheetState()
+    val verseRefSheetState = rememberModalBottomSheetState()
+    val showVerseRefBottomSheet = remember { mutableStateOf(false) }
+
+    val odRefSheetState = rememberModalBottomSheetState()
+    val showOdRefBottomSheet = remember { mutableStateOf(false) }
+
     val scope = rememberCoroutineScope()
-    var showBottomSheet = remember { mutableStateOf(false) }
 
     StateHandler(navController, libraryModel.bibleBooksData) { data, _ ->
         data?.let {
@@ -78,18 +76,18 @@ fun BibleBookPager(
                             BibleBookContainer(
                                 state.data,
                                 scope,
-                                showBottomSheet,
-                                libraryModel,
-                                navController
+                                showVerseRefBottomSheet,
+                                showOdRefBottomSheet,
+                                libraryModel
                             )
-                            if (showBottomSheet.value) {
+                            if (showVerseRefBottomSheet.value) {
                                 ModalBottomSheet(
                                     onDismissRequest = {
                                         scope.launch {
-                                            showBottomSheet.value = false
+                                            showVerseRefBottomSheet.value = false
                                         }
                                     },
-                                    sheetState = sheetState
+                                    sheetState = verseRefSheetState
                                 ) {
                                     Column(
                                         modifier = Modifier
@@ -106,6 +104,33 @@ fun BibleBookPager(
                                     }
                                 }
                             }
+
+                            if (showOdRefBottomSheet.value) {
+                                ModalBottomSheet(
+                                    onDismissRequest = {
+                                        scope.launch {
+                                            showOdRefBottomSheet.value = false
+                                        }
+                                    },
+                                    sheetState = odRefSheetState
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentSize()
+                                            .padding(16.dp)
+                                    ) {
+
+                                        Text(
+                                            text = "Test numar referinte: " + odReferenceData.size,
+                                            color = Color.Gray,
+                                            modifier = Modifier
+                                                .padding(bottom = 2.dp)
+                                        )
+                                    }
+                                }
+                            }
+
                         }
 
                         // TODO add a loading spinner for LOADING state
@@ -123,8 +148,8 @@ fun BibleBookPager(
 
                 LaunchedEffect(Unit) {
                     scope.launch {
-                        sheetState.hide()
-                    }.invokeOnCompletion { showBottomSheet.value = false }
+                        verseRefSheetState.hide()
+                    }.invokeOnCompletion { showVerseRefBottomSheet.value = false }
                 }
             }
         }

@@ -3,11 +3,14 @@ package com.ovidium.comoriod.views.library.bible
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
@@ -31,7 +34,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedText
@@ -44,9 +46,9 @@ import kotlinx.coroutines.launch
 fun BibleBookContainer(
     bibleChapterData: BibleChapter?,
     scope: CoroutineScope,
-    showBottomSheet: MutableState<Boolean>,
-    libraryModel: LibraryModel,
-    navController: NavHostController
+    showVerseRefBottomSheet: MutableState<Boolean>,
+    showOdRefBottomSheet: MutableState<Boolean>,
+    libraryModel: LibraryModel
 ) {
     val isDarkTheme = isSystemInDarkTheme()
 
@@ -78,23 +80,15 @@ fun BibleBookContainer(
                         ).firstOrNull()
                         scope.launch {
                             libraryModel.getFullVerseReferenceData(bibleChapterData, annotation!!.item, isDarkTheme)
-                            if (!showBottomSheet.value) {
-                                showBottomSheet.value = true
+                            if (!showVerseRefBottomSheet.value) {
+                                showVerseRefBottomSheet.value = true
                             }
                         }
                     }
-                val odRefsForVerse = bibleChapterData.odRefs?.filter { bibleVerseContent.odReferences.contains(it.key) }
-                val dict = odRefsForVerse!!.map { it.value.author }
-                    .groupingBy { it }
-                    .eachCount()
-                val tempArray = dict.map { (name, count) ->
-                    CountedAuthor(name = name, count = count)
-                }
-                val sortedAuthors = tempArray.sortedWith(compareByDescending<CountedAuthor> { it.count }
-                    .thenBy { it.name })
+
                 Row {
-                    sortedAuthors.forEach() { author ->
-                        val photoURL = odRefsForVerse.values.first { it.author == author.name }.authorPhotoURLSm
+                    libraryModel.getSortedAuthors(bibleVerseContent, bibleChapterData).forEach { author ->
+                        val photoURL = libraryModel.getAuthorImageUrl(bibleVerseContent, bibleChapterData, author.name)
                         Box(
                             contentAlignment = Alignment.BottomEnd,
                             modifier = Modifier
@@ -102,14 +96,22 @@ fun BibleBookContainer(
                         ) {
                             if (!photoURL.isNullOrEmpty()) {
                                 Image(
-                                    painter = rememberAsyncImagePainter(photoURL),
-                                    contentDescription = "bible authors",
-                                    contentScale = ContentScale.FillBounds,
                                     modifier = Modifier
                                         .padding(horizontal = 5.dp)
                                         .requiredSize(35.dp)
                                         .border(1.dp, getNamedColor("Link", isDarkTheme), RoundedCornerShape(100))
-                                        .clip(RoundedCornerShape(100)),
+                                        .clip(RoundedCornerShape(100))
+                                        .clickable {
+                                            scope.launch {
+                                                libraryModel.getOdRefData(bibleVerseContent, bibleChapterData)
+                                                if (!showOdRefBottomSheet.value) {
+                                                    showOdRefBottomSheet.value = true
+                                                }
+                                            }
+                                        },
+                                    painter = rememberAsyncImagePainter(photoURL),
+                                    contentDescription = "bible authors",
+                                    contentScale = ContentScale.FillBounds,
                                     colorFilter = ColorFilter.colorMatrix(
                                         ColorMatrix().apply { setToSaturation(0f) }
                                     )
@@ -150,6 +152,11 @@ fun BibleBookContainer(
                         }
                     }
                 }
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(15.dp)
+                )
             }
         }
     }

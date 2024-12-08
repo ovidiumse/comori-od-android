@@ -26,10 +26,10 @@ data class BibleChapter(
             val finalBibleVerseList = mutableListOf<BibleVerse>()
             val verses: List<Verse> = this.hits.hits.flatMap { it.source.verses }
 
-            val verseNumberStyle = SpanStyle(color = Color.Gray, fontSize = 18.sp)
+            val verseNumberStyle = SpanStyle(color = Color.Gray, fontSize = 20.sp)
             val starSymbolStyle = SpanStyle(color = getNamedColor("markupChoc", isDarkMode), fontSize = 14.sp)
             val reverseRefStyle = SpanStyle(color = getNamedColor("markupChoc", isDarkMode), fontSize = 18.sp, baselineShift = BaselineShift(0.25f))
-            val verseReferenceStyle = SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 14.sp)
+            val verseReferenceStyle = SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 16.sp)
 
             verses.forEach { verse ->
 
@@ -94,7 +94,7 @@ data class BibleChapter(
                         append(REV_REF_SYMBOL.toSpanStyle(reverseRefStyle))
                         verse.reverseReferences.forEach {
                             append(
-                                it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
+                                it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
                                     .toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
                             )
                         }
@@ -113,7 +113,7 @@ data class BibleChapter(
 
         fun BibleChapter.getFormatedReferencesForVerse(verse: String, isDarkMode: Boolean): AnnotatedString {
 
-            val verseTitleStyle = SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            val verseTitleStyle = SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 18.sp, fontWeight = FontWeight.Bold)
             val normalContentStyle = SpanStyle(fontSize = 18.sp)
 
             val refVerses = this.bibleRefs?.mapValues { it.value.verses }
@@ -136,7 +136,7 @@ data class BibleChapter(
             contentType: ContentType, isDarkMode: Boolean
         ): SpanStyle {
 
-            val normalContentStyle = SpanStyle(color = getNamedColor("Text", isDarkMode), fontSize = 18.sp)
+            val normalContentStyle = SpanStyle(color = getNamedColor("Text", isDarkMode), fontSize = 22.sp)
             val noteContentStyle =
                 SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 18.sp, baselineShift = BaselineShift.Superscript)
             val jesusContentStyle = SpanStyle(color = Color.Red, fontSize = 18.sp)
