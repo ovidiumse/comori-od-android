@@ -98,7 +98,7 @@ fun BibleBookContainer(
                         Box(
                             contentAlignment = Alignment.BottomEnd,
                             modifier = Modifier
-                                .padding(bottom = 5.dp)
+                                .padding(bottom = 12.dp)
                         ) {
                             if (!photoURL.isNullOrEmpty()) {
                                 Image(
