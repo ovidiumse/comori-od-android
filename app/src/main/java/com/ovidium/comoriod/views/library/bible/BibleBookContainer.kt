@@ -137,14 +137,14 @@ fun BibleBookContainer(
                                 horizontalArrangement = Arrangement.Center,
                                 modifier = Modifier
                                     .background(getNamedColor("Link", isDarkTheme), RoundedCornerShape(100))
-                                    .height(20.dp)
-                                    .width(20.dp)
+                                    .height(13.dp)
+                                    .width(13.dp)
                             ) {
                                 Text(
                                     text = "${author.count}",
-                                    fontSize = 10.sp,
+                                    fontSize = 9.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.White
+                                    color = getNamedColor("InvertedText", isDarkTheme)
                                 )
                             }
                         }
