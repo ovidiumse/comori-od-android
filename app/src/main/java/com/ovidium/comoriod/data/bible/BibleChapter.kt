@@ -28,6 +28,7 @@ data class BibleChapter(
 
             val verseNumberStyle = SpanStyle(color = Color.Gray, fontSize = 18.sp)
             val starSymbolStyle = SpanStyle(color = getNamedColor("markupChoc", isDarkMode), fontSize = 14.sp)
+            val reverseRefStyle = SpanStyle(color = getNamedColor("markupChoc", isDarkMode), fontSize = 18.sp, baselineShift = BaselineShift(0.25f))
             val verseReferenceStyle = SpanStyle(color = getNamedColor("Link", isDarkMode), fontSize = 14.sp)
 
             verses.forEach { verse ->
@@ -79,6 +80,26 @@ data class BibleChapter(
                             it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL).toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
                         )
                     }
+
+                    if (!verse.reverseReferences.isNullOrEmpty()) {
+                        if (
+                            !verse.references.oneStar.isNullOrEmpty() ||
+                            !verse.references.twoStars.isNullOrEmpty() ||
+                            !verse.references.oneCross.isNullOrEmpty() ||
+                            !verse.references.twoCrosses.isNullOrEmpty() ||
+                            !verse.references.starAndCross.isNullOrEmpty()
+                            ) {
+                            append(NEW_LINE_SYMBOL.toSpanStyle(verseReferenceStyle))
+                        }
+                        append(REV_REF_SYMBOL.toSpanStyle(reverseRefStyle))
+                        verse.reverseReferences.forEach {
+                            append(
+                                it.addSuffix(SPACE_SYMBOL).addSuffix(SPACE_SYMBOL)
+                                    .toSpanStyle(verseReferenceStyle, AnnotationString(it, "URL"))
+                            )
+                        }
+                    }
+
                 }
 
                 finalBibleVerseList.add(
@@ -138,6 +159,8 @@ data class BibleChapter(
         private const val ONE_CROSS_SYMBOL = "†"
         private const val TWO_CROSSES_SYMBOL = "††"
         private const val ONE_STAR_ONE_CROSS_SYMBOL = "*†"
+        private const val REV_REF_SYMBOL = "\u2192"
+        private const val NEW_LINE_SYMBOL = "\n"
     }
 }
 
