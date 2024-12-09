@@ -149,11 +149,6 @@ fun SearchScreen(
                                         searchModel.getBooks(query, params)
                                     }
                                 }) {
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_filter),
-                                    tint = textColor,
-                                    contentDescription = "Filtrează",
-                                )
                             }
                         }
                     }
