@@ -153,15 +153,27 @@ fun BibleBookPager(
 
                         }
 
-                        Status.ERROR,
+                        Status.ERROR -> {
+                            Text(
+                                text = "A apărut o eroare, te rugăm să revii mai târziu.",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Gray
+                            )
+                        }
                         Status.LOADING -> {
                             CircularProgressIndicator(
-                                modifier = Modifier.width(64.dp),
+                                modifier = Modifier.width(48.dp),
                                 color = MaterialTheme.colorScheme.secondary,
                                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
                             )
                         }
-                        Status.UNINITIALIZED,
+                        Status.UNINITIALIZED -> {
+                            Text(
+                                text = "A apărut o eroare, te rugăm să revii mai târziu.",
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Gray
+                            )
+                        }
                         null -> {
                         }
                     }
