@@ -15,6 +15,7 @@ import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedReferencesForVerse
 import com.ovidium.comoriod.data.bible.BibleVerse
 import com.ovidium.comoriod.data.bible.ODRef
+import com.ovidium.comoriod.data.bible.Verse
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
@@ -52,6 +53,9 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
 
     private var _odReferenceData: MutableStateFlow<Map<String, ODRef>> = MutableStateFlow(mutableMapOf())
     val odReferenceData = _odReferenceData.asStateFlow()
+
+    private var _currentVerseData: MutableStateFlow<BibleVerse?> = MutableStateFlow(null)
+    val currentVerseData = _currentVerseData.asStateFlow()
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
@@ -176,6 +180,7 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
     }
 
     fun getOdRefData(bibleVerseContent: BibleVerse, bibleChapterData: BibleChapter) {
+        _currentVerseData.value = bibleVerseContent
         _odReferenceData.value = getOdRefsForVerse(bibleVerseContent, bibleChapterData)
     }
 

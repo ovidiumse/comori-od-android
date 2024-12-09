@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedText
+import com.ovidium.comoriod.data.bible.BibleVerse
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import kotlinx.coroutines.CoroutineScope
@@ -48,6 +49,7 @@ fun BibleBookContainer(
     scope: CoroutineScope,
     showVerseRefBottomSheet: MutableState<Boolean>,
     showOdRefBottomSheet: MutableState<Boolean>,
+    currentAuthor: MutableState<CountedAuthor?>,
     libraryModel: LibraryModel
 ) {
     val isDarkTheme = isSystemInDarkTheme()
@@ -86,72 +88,23 @@ fun BibleBookContainer(
                         }
                     }
 
-                Row {
-                    libraryModel.getSortedAuthors(bibleVerseContent, bibleChapterData).forEach { author ->
-                        val photoURL = libraryModel.getAuthorImageUrl(bibleVerseContent, bibleChapterData, author.name)
-                        Box(
-                            contentAlignment = Alignment.BottomEnd,
-                            modifier = Modifier
-                                .padding(bottom = 12.dp)
-                        ) {
-                            if (!photoURL.isNullOrEmpty()) {
-                                Image(
-                                    modifier = Modifier
-                                        .padding(horizontal = 5.dp)
-                                        .requiredSize(35.dp)
-                                        .border(1.dp, getNamedColor("Link", isDarkTheme), RoundedCornerShape(100))
-                                        .clip(RoundedCornerShape(100))
-                                        .clickable {
-                                            scope.launch {
-                                                libraryModel.getOdRefData(bibleVerseContent, bibleChapterData)
-                                                if (!showOdRefBottomSheet.value) {
-                                                    showOdRefBottomSheet.value = true
-                                                }
-                                            }
-                                        },
-                                    painter = rememberAsyncImagePainter(photoURL),
-                                    contentDescription = "bible authors",
-                                    contentScale = ContentScale.FillBounds,
-                                    colorFilter = ColorFilter.colorMatrix(
-                                        ColorMatrix().apply { setToSaturation(0f) }
-                                    )
-                                )
-                            } else {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                    modifier = Modifier
-                                        .background(Color(0xffc9d1d9), RoundedCornerShape(100))
-                                        .height(35.dp)
-                                        .width(35.dp)
-                                        .alpha(0.5f)
-                                        .border(1.dp, getNamedColor("Link", isDarkTheme), RoundedCornerShape(100))
-                                ) {
-                                    val authorInitials = Regex("\\b(\\w)\\w*")
-                                        .findAll(author.name)
-                                        .map { it.groupValues[1].uppercase() }
-                                        .joinToString("")
-                                    Text(authorInitials)
-                                }
-                            }
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.Center,
-                                modifier = Modifier
-                                    .background(getNamedColor("Link", isDarkTheme), RoundedCornerShape(100))
-                                    .height(13.dp)
-                                    .width(13.dp)
-                            ) {
-                                Text(
-                                    text = "${author.count}",
-                                    fontSize = 9.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = getNamedColor("InvertedText", isDarkTheme)
-                                )
+                VersesAuthorCarousel(
+                    libraryModel,
+                    bibleVerseContent,
+                    bibleChapterData,
+                    isDarkTheme,
+                    scope,
+                    showOdRefBottomSheet,
+                    { author ->
+                        scope.launch {
+                        libraryModel.getOdRefData(bibleVerseContent, bibleChapterData)
+                            currentAuthor.value = author
+                            if (!showOdRefBottomSheet.value) {
+                                showOdRefBottomSheet.value = true
                             }
                         }
                     }
-                }
+                )
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
