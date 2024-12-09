@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.Text
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.android.material.bottomsheet.BottomSheetDragHandleView
@@ -87,7 +89,13 @@ fun BibleBookPager(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("${currentBibleBook.name} ${pageIdx + 1}")
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 8.dp),
+                        text = "${currentBibleBook.name} ${pageIdx + 1}",
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Gray
+                    )
                     when (state?.status) {
                         Status.SUCCESS -> {
                             BibleBookContainer(

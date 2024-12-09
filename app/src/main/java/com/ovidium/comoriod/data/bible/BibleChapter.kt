@@ -1,5 +1,6 @@
 package com.ovidium.comoriod.data.bible
 
+import android.graphics.fonts.FontStyle
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -8,6 +9,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.unit.sp
 import com.google.gson.annotations.SerializedName
+import com.ovidium.comoriod.ui.theme.Montserrat
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.addSuffix
 import com.ovidium.comoriod.utils.toSpanStyle
