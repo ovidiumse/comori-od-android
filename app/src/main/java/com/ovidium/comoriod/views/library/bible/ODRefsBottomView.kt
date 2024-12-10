@@ -1,5 +1,8 @@
 package com.ovidium.comoriod.views.library.bible
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,22 +12,30 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +44,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -73,6 +86,7 @@ fun ODRefsBottomView(
 
     val receivedMarkupIndex = remember { mutableStateOf(0) }
     val receivedMarkupLength = remember { mutableStateOf(0) }
+    val currentRelatedODRef = remember { mutableStateOf("") }
 
     val filteredODRefs = odReferenceData.values.filter { it.author == currentAuthor.value?.name }
     val scrollState = rememberScrollState()
@@ -82,6 +96,7 @@ fun ODRefsBottomView(
         pageCount = { filteredODRefs.size }
     )
     val showFullArticle = remember { mutableStateOf(false) }
+    val expandRelatedODRefs = remember { mutableStateOf(false) }
 
     Box(
         contentAlignment = Alignment.CenterEnd
@@ -91,7 +106,7 @@ fun ODRefsBottomView(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentSize()
-                .padding(16.dp)
+                .padding(start = 8.dp, end = 8.dp)
                 .fillMaxSize()
         ) {
 
@@ -113,6 +128,79 @@ fun ODRefsBottomView(
             } else {
                 state.data?.let { bibleChapter ->
                     libraryModel.currentVerseData.value?.let { currentVerse ->
+                        val annotations =
+                            currentVerse.formatedReference.getStringAnnotations(start = 0, end = currentVerse.formatedReference.text.length)
+                        LazyHorizontalGrid(
+                            rows = GridCells.Fixed(1),
+                            modifier = Modifier
+                                .height(45.dp)
+                                .padding(bottom = 16.dp)
+                        ) {
+                            item {
+                                Column(
+                                    modifier = Modifier
+                                        .padding(3.dp)
+                                        .border(
+                                            if (currentRelatedODRef.value == currentVerse.verseTitle) 1.dp else 0.dp,
+                                            if (currentRelatedODRef.value == currentVerse.verseTitle) Color.White else Color.Transparent,
+                                            RoundedCornerShape(25.dp)
+                                        )
+                                        .background(getNamedColor("SecondaryBackground", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
+                                        .fillMaxHeight()
+                                        .padding(start = 8.dp, end = 8.dp)
+                                        .padding(top = 4.dp)
+                                        .clickable {
+                                            currentRelatedODRef.value = currentVerse.verseTitle
+                                            // TODO: Get back to initial data
+                                        }
+                                ) {
+                                    Text(
+                                        text = currentVerse.verseTitle,
+                                        fontSize = 10.sp,
+                                        color = getNamedColor("Text", isSystemInDarkTheme())
+                                    )
+                                }
+                            }
+                            if (expandRelatedODRefs.value) {
+                                items(annotations.size) { index ->
+                                    Column(
+                                        modifier = Modifier
+                                            .padding(3.dp)
+                                            .border(
+                                                if (currentRelatedODRef.value == annotations[index].item) 1.dp else 0.dp,
+                                                if (currentRelatedODRef.value == annotations[index].item) Color.White else Color.Transparent,
+                                                RoundedCornerShape(25.dp)
+                                            )
+                                            .background(getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
+                                            .fillMaxHeight()
+                                            .padding(start = 8.dp, end = 8.dp)
+                                            .padding(top = 4.dp)
+                                            .clickable {
+                                                currentRelatedODRef.value = annotations[index].item
+                                                // TODO: Get odRefs for this verse and replace the data
+                                            }
+                                    ) {
+                                        Text(
+                                            text = annotations[index].item,
+                                            fontSize = 10.sp,
+                                            color = getNamedColor("InvertedText", isSystemInDarkTheme())
+                                        )
+                                    }
+                                }
+                            }
+                            item {
+                                Icon(
+                                    imageVector = if (expandRelatedODRefs.value) Icons.AutoMirrored.Filled.KeyboardArrowLeft else Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                    contentDescription = "Show full article floating action button",
+                                    modifier = Modifier
+                                        .clickable {
+                                            expandRelatedODRefs.value = !expandRelatedODRefs.value
+                                            currentRelatedODRef.value = currentVerse.verseTitle
+                                        },
+                                    tint = getNamedColor("Link", isSystemInDarkTheme())
+                                )
+                            }
+                        }
                         ODRefsBottomSheetAuthorCarousel(
                             libraryModel,
                             currentVerse,
@@ -143,6 +231,9 @@ fun ODRefsBottomView(
                             ) {
                                 ODRefBasicTextView(filteredODRefs, pageIDX)
                             }
+                        }
+                        LaunchedEffect(Unit) {
+                            currentRelatedODRef.value = currentVerse.verseTitle
                         }
                     }
                 }
@@ -179,6 +270,7 @@ private fun ODRefBasicTextView(filteredODRefs: List<ODRef>, pageIDX: Int) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(start = 8.dp, end = 8.dp)
     ) {
         Text(
             modifier = Modifier

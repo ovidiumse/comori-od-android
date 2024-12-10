@@ -106,7 +106,7 @@ data class BibleChapter(
 
                 finalBibleVerseList.add(
                     BibleVerse(
-                        annotatedString, annotatedRef, verse.odRefs
+                        verse.name, annotatedString, annotatedRef, verse.odRefs
                     )
                 )
             }
