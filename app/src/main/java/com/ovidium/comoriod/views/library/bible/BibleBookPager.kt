@@ -56,7 +56,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.ovidium.comoriod.R
+import com.ovidium.comoriod.model.FavoritesModel
+import com.ovidium.comoriod.model.GoogleSignInModel
 import com.ovidium.comoriod.model.LibraryModel
+import com.ovidium.comoriod.model.MarkupsModel
+import com.ovidium.comoriod.model.ReadArticlesModel
+import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.library.StateHandler
@@ -67,6 +72,11 @@ import kotlinx.coroutines.launch
 fun BibleBookPager(
     bibleBook: String,
     libraryModel: LibraryModel,
+    signInModel: GoogleSignInModel,
+    favoritesModel: FavoritesModel,
+    searchModel: SearchModel,
+    markupsModel: MarkupsModel,
+    readArticlesModel: ReadArticlesModel,
     navController: NavHostController
 ) {
 
@@ -178,7 +188,7 @@ fun BibleBookPager(
                             }
                             if (showOdRefBottomSheet.value) {
                                 ModalBottomSheet(
-                                    containerColor = Color.DarkGray,
+                                    containerColor = getNamedColor("HeaderBar", isSystemInDarkTheme()),
                                     dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) },
                                     onDismissRequest = {
                                         scope.launch {
@@ -190,6 +200,11 @@ fun BibleBookPager(
                                     ODRefsBottomView(
                                         state,
                                         libraryModel,
+                                        signInModel,
+                                        favoritesModel,
+                                        searchModel,
+                                        markupsModel,
+                                        readArticlesModel,
                                         currentAuthor,
                                         odReferenceData
                                     )

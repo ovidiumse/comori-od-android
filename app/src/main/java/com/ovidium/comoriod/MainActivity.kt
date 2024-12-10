@@ -266,7 +266,16 @@ fun BottomBarMain(
                 else
                     URLDecoder.decode(entry.arguments!!.getString("bibleBook", ""), "utf-8")
             }
-            BibleBookPager(getBibleBook(), libraryModel, navController)
+            BibleBookPager(
+                getBibleBook(),
+                libraryModel,
+                signInModel,
+                favoritesModel,
+                searchModel,
+                markupsModel,
+                readArticlesModel,
+                navController
+            )
 
         }
 

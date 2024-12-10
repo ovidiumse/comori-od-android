@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.core.content.ContextCompat.startActivity
@@ -19,6 +20,7 @@ import com.ovidium.comoriod.data.article.ArticleResponse
 import com.ovidium.comoriod.data.article.SearchArticleResponse
 import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.*
+import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.highlightBody
@@ -37,7 +39,8 @@ fun ArticleView(
     favoritesModel: FavoritesModel,
     searchModel: SearchModel,
     markupsModel: MarkupsModel,
-    readArticlesModel: ReadArticlesModel
+    readArticlesModel: ReadArticlesModel,
+    bgColor: Color = getNamedColor("Background", isSystemInDarkTheme())
 ) {
     val bookModel: BookModel = viewModel()
     val bookData = remember { bookModel.bookData }
@@ -125,7 +128,8 @@ fun ArticleView(
                             signInModel,
                             favoritesModel,
                             markupsModel,
-                            readArticlesModel
+                            readArticlesModel,
+                            bgColor
                         )
                     }
                 }

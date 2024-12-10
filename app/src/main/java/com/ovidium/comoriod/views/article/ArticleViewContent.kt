@@ -93,7 +93,8 @@ fun ArticleViewContent(
     signInModel: GoogleSignInModel,
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel,
-    readArticlesModel: ReadArticlesModel
+    readArticlesModel: ReadArticlesModel,
+    bgColor: Color
 ) {
     val isDark = isSystemInDarkTheme()
 
@@ -115,7 +116,6 @@ fun ArticleViewContent(
     val mutedTextColor = getNamedColor("MutedText", isDark)
     val doneColor = getNamedColor("doneColor", isDark)
     val textColor = getNamedColor("Text", isDark)
-    val bgColor = getNamedColor("Background", isDark)
     val primarySurfaceColor = getNamedColor("PrimarySurface", isDark)
     val buttonColor = getNamedColor("PrimarySurface", isDark)
     val handleColor = getNamedColor("HandleColor", isDark)
