@@ -133,7 +133,7 @@ fun ODRefsBottomView(
                         LazyHorizontalGrid(
                             rows = GridCells.Fixed(1),
                             modifier = Modifier
-                                .height(45.dp)
+                                .height(50.dp)
                                 .padding(bottom = 16.dp)
                         ) {
                             item {
@@ -142,13 +142,13 @@ fun ODRefsBottomView(
                                         .padding(3.dp)
                                         .border(
                                             if (currentRelatedODRef.value == currentVerse.verseTitle) 1.dp else 0.dp,
-                                            if (currentRelatedODRef.value == currentVerse.verseTitle) Color.White else Color.Transparent,
+                                            if (currentRelatedODRef.value == currentVerse.verseTitle) getNamedColor("Text", isSystemInDarkTheme()) else Color.Transparent,
                                             RoundedCornerShape(25.dp)
                                         )
-                                        .background(getNamedColor("SecondaryBackground", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
+                                        .background(getNamedColor("grayBubble", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
                                         .fillMaxHeight()
                                         .padding(start = 8.dp, end = 8.dp)
-                                        .padding(top = 4.dp)
+                                        .padding(top = 6.5.dp)
                                         .clickable {
                                             currentRelatedODRef.value = currentVerse.verseTitle
                                             // TODO: Get back to initial data
@@ -168,13 +168,13 @@ fun ODRefsBottomView(
                                             .padding(3.dp)
                                             .border(
                                                 if (currentRelatedODRef.value == annotations[index].item) 1.dp else 0.dp,
-                                                if (currentRelatedODRef.value == annotations[index].item) Color.White else Color.Transparent,
+                                                if (currentRelatedODRef.value == annotations[index].item) getNamedColor("Text", isSystemInDarkTheme()) else Color.Transparent,
                                                 RoundedCornerShape(25.dp)
                                             )
                                             .background(getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
                                             .fillMaxHeight()
                                             .padding(start = 8.dp, end = 8.dp)
-                                            .padding(top = 4.dp)
+                                            .padding(top = 6.5.dp)
                                             .clickable {
                                                 currentRelatedODRef.value = annotations[index].item
                                                 // TODO: Get odRefs for this verse and replace the data

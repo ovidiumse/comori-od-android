@@ -53,6 +53,7 @@ private val LightNamedColors = mapOf(
     "PrimarySurface" to Color(0xFFE7E9F1),
     "SecondarySurface" to Color(0xFF7F8796),
     "Bubble" to Color(0xFFD6DAE4),
+    "grayBubble" to Color(0xffc9d1d9),
     //Markup colors
     "markupChoc" to Color(0xFFFCA49E),
     "markupCrayola" to Color(0xFFFDD291),
@@ -103,6 +104,7 @@ private val DarkNamedColors = mapOf(
     "PrimarySurface" to Color(0xFF2E3641),
     "SecondarySurface" to Color(0xFF707D99),
     "Bubble" to Color(0xff383F4D),
+    "grayBubble" to Color(0xFF2C2F2C),
     //Markup colors
     "markupChoc" to Color(0xFFFF8282),
     "markupCrayola" to Color(0xFFFFCA7D),
