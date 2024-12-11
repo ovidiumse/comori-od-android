@@ -212,7 +212,8 @@ fun ODRefsBottomView(
                         Text(
                             modifier = Modifier
                                 .padding(bottom = 12.dp),
-                            text = "${currentAuthor.value?.name} - ${pagerState.currentPage + 1}/${filteredODRefs.size}"
+                            text = "${currentAuthor.value?.name} - ${pagerState.currentPage + 1}/${filteredODRefs.size}",
+                            fontSize = 12.sp
                         )
                         HorizontalDivider(
                             modifier = Modifier

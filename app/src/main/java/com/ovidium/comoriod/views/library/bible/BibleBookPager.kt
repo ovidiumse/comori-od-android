@@ -117,29 +117,29 @@ fun BibleBookPager(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AssistChip(
-                        onClick = {
-                            scope.launch {
-                                showChapterListBottomSheet.value = true
-                            }
-                        },
-                        label = {
-                            Text(
-                                text = "${currentBibleBook.name} ${pageIdx + 1}",
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.Gray
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down),
-                                tint = getNamedColor("Link", isSystemInDarkTheme()),
-                                contentDescription = "Chapter List",
-                            )
-                        },
-                    )
                     when (state?.status) {
                         Status.SUCCESS -> {
+                            AssistChip(
+                                onClick = {
+                                    scope.launch {
+                                        showChapterListBottomSheet.value = true
+                                    }
+                                },
+                                label = {
+                                    Text(
+                                        text = "${currentBibleBook.name} ${pageIdx + 1}",
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = Color.Gray
+                                    )
+                                },
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_down),
+                                        tint = getNamedColor("Link", isSystemInDarkTheme()),
+                                        contentDescription = "Chapter List",
+                                    )
+                                },
+                            )
                             BibleBookContainer(
                                 state.data,
                                 scope,
