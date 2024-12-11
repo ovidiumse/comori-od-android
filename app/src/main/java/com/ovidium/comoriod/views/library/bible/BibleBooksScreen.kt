@@ -60,7 +60,7 @@ fun BibleBooksScreen(navController: NavHostController, libraryModel: LibraryMode
                         Column(
                             modifier = Modifier
                                 .padding(8.dp)
-                                .border(0.75.dp, if (data.newTestamentBooks.contains(item)) Color.Green else getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(12.dp))
+                                .border(1.dp, if (data.newTestamentBooks.contains(item)) Color.Green else getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(12.dp))
                                 .clickable {
                                     navController.navigate(Screens.BibleBooks.withArgs(URLEncoder.encode(item.name, "utf-8")))
                                 },
