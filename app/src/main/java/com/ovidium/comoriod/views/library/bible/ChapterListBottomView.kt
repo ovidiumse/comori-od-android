@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.PagerState
@@ -54,7 +55,7 @@ fun ChapterListBottomView(
             fontSize = 18.sp,
             fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center,
-            color = getNamedColor("Text", isSystemInDarkTheme())
+            color = Color.White
         )
         LazyVerticalGrid(
             columns = GridCells.Fixed(5),
@@ -68,7 +69,7 @@ fun ChapterListBottomView(
                     modifier = Modifier
                         .padding(5.dp)
                         .border(1.dp, getNamedColor("Link", isSystemInDarkTheme()), CircleShape)
-                        .height(40.dp)
+                        .requiredSize(50.dp)
                         .clickable {
                             scope.launch {
                                 libraryModel.getBibleChapter(currentBibleBook.name, chapter)
@@ -80,7 +81,7 @@ fun ChapterListBottomView(
                 ) {
                     Text(
                         text = (chapter + 1).toString(),
-                        color = getNamedColor("Text", isSystemInDarkTheme())
+                        color = Color.White
                     )
                 }
             }
