@@ -57,10 +57,10 @@ fun ODRefsBottomSheetAuthorCarousel(
                     Image(
                         modifier = Modifier
                             .padding(horizontal = 5.dp)
-                            .requiredSize(35.dp)
+                            .requiredSize(40.dp)
                             .border(
                                 if (currentAuthor.value?.name == author.name) 1.5.dp else 0.dp,
-                                getNamedColor("Link", isDarkTheme),
+                                if (currentAuthor.value?.name == author.name) getNamedColor("Link", isDarkTheme) else Color.Transparent,
                                 RoundedCornerShape(100)
                             )
                             .clip(RoundedCornerShape(100))
@@ -70,10 +70,7 @@ fun ODRefsBottomSheetAuthorCarousel(
                             },
                         painter = rememberAsyncImagePainter(photoURL),
                         contentDescription = "bible authors",
-                        contentScale = ContentScale.FillBounds,
-                        colorFilter = ColorFilter.colorMatrix(
-                            ColorMatrix().apply { setToSaturation(0f) }
-                        )
+                        contentScale = ContentScale.FillBounds
                     )
                 } else {
                     Row(
@@ -81,12 +78,12 @@ fun ODRefsBottomSheetAuthorCarousel(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .background(Color(0xffc9d1d9), RoundedCornerShape(100))
-                            .height(35.dp)
-                            .width(35.dp)
+                            .height(40.dp)
+                            .width(40.dp)
                             .alpha(0.5f)
                             .border(
                                 if (currentAuthor.value?.name == author.name) 1.5.dp else 0.dp,
-                                    getNamedColor("Link", isDarkTheme),
+                                if (currentAuthor.value?.name == author.name) getNamedColor("Link", isDarkTheme) else Color.Transparent,
                                     RoundedCornerShape(100)
                             )
                             .clickable {
