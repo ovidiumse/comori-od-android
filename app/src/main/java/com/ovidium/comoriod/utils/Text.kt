@@ -2,7 +2,7 @@
 
 package com.ovidium.comoriod.utils
 
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
@@ -15,8 +15,6 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getColorsForMarkup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.unaccent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.time.Duration
 
 val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
@@ -110,7 +108,7 @@ fun parseVerses(
     highlights: SnapshotStateList<TextRange>,
     currentHighlightIndex: Int?,
     isDark: Boolean,
-    coroutineScope: CoroutineScope
+    clickedRef: MutableState<String>
 ): AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)
 
@@ -138,13 +136,10 @@ fun parseVerses(
                 "bible-ref" -> {
                     val link = LinkAnnotation.Url(
                         chunk.ref!!,
-                        TextLinkStyles(SpanStyle(Color.Red))
+                        TextLinkStyles(SpanStyle(getNamedColor("Link", isDark)))
                     ) {
                         val url = (it as LinkAnnotation.Url).url
-                        val event = RefClickedEvent(url)
-                        coroutineScope.launch {
-                            EventBus.publish(event)
-                        }
+                        clickedRef.value = url
                     }
                     withLink(link) {
                         bibleRefsRanges.add(Pair(index + this.length, index + chunk.text.length))

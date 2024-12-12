@@ -42,8 +42,6 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.NotoSans
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.EventBus
-import com.ovidium.comoriod.utils.RefClickedEvent
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.fmtDuration
 import com.ovidium.comoriod.utils.formatBibleRefs
@@ -96,7 +94,8 @@ fun ArticleViewContent(
     favoritesModel: FavoritesModel,
     markupsModel: MarkupsModel,
     readArticlesModel: ReadArticlesModel,
-    bgColor: Color
+    bgColor: Color,
+    clickedRef: MutableState<String>
 ) {
     val isDark = isSystemInDarkTheme()
 
@@ -256,9 +255,6 @@ fun ArticleViewContent(
                 }
             }
         }
-//        if (bibleRefs.isNotEmpty()) {
-//            BibleRefsPopup(bibleRefs)
-//        }
         Column(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.End,
@@ -564,11 +560,20 @@ fun ArticleViewContent(
             )
         )
     }
+    if (clickedRef.value.isNotEmpty()) {
+        bibleRefs.clear()
+        article.bibleRefs[clickedRef.value]?.let { refs ->
+            bibleRefs.addAll(refs.verses)
+        }
+        showVerseRefBottomSheet = true
+    } else {
+        showVerseRefBottomSheet = false
+    }
     if (showVerseRefBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = {
                 coroutineScope.launch {
-                    showVerseRefBottomSheet = false
+                    clickedRef.value = ""
                 }
             },
             sheetState = verseRefSheetState
@@ -616,19 +621,13 @@ fun ArticleViewContent(
             showSavingSharedMarkupPopup = true
         }
     }
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            if (articleModel.isRegisteredForClickedRefs.value == false) {
-                articleModel.isRegisteredForClickedRefs.value = true
-                EventBus.subscribe<RefClickedEvent> { refClickedEvent ->
-                    bibleRefs.clear()
-                    article.bibleRefs[refClickedEvent.ref]?.let { refs ->
-                        bibleRefs.addAll(refs.verses)
-                        showVerseRefBottomSheet = true
-                    }
-                }
-            }
-        }
-    }
+//    LaunchedEffect(clickedRef) {
+//        println("BEWARE: ${clickedRef.value}")
+//        bibleRefs.clear()
+//        article.bibleRefs[clickedRef.value]?.let { refs ->
+//            bibleRefs.addAll(refs.verses)
+//            showVerseRefBottomSheet = clickedRef.value.isNotEmpty()
+//        }
+//    }
 }
 

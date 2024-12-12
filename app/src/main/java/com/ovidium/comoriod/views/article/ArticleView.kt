@@ -2,7 +2,6 @@
 
 package com.ovidium.comoriod.views.article
 
-import android.content.Intent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,9 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.article.Article
 import com.ovidium.comoriod.data.article.ArticleResponse
@@ -49,7 +46,8 @@ fun ArticleView(
     val highlights = remember { mutableStateListOf<TextRange>() }
     val offsetList = remember { mutableStateListOf<Int>() }
     val currentHighlightIndex = remember { mutableStateOf<Int?>(null) }
-    val coroutineScope = rememberCoroutineScope()
+    val clickedRef = remember { mutableStateOf("") }
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,7 +73,7 @@ fun ArticleView(
                     highlights,
                     currentHighlightIndex.value,
                     isDark = isSystemInDarkTheme(),
-                    coroutineScope
+                    clickedRef
                 ),
                 currentArticle.bibleRefs,
                 currentArticle.read_time
@@ -97,7 +95,7 @@ fun ArticleView(
                     highlights,
                     currentHighlightIndex.value,
                     isDark = isSystemInDarkTheme(),
-                    coroutineScope
+                    clickedRef
                 ),
                 currentArticle._source.bibleRefs,
                 currentArticle._source.read_time
@@ -132,7 +130,8 @@ fun ArticleView(
                             favoritesModel,
                             markupsModel,
                             readArticlesModel,
-                            bgColor
+                            bgColor,
+                            clickedRef
                         )
                     }
                 }
