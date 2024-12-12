@@ -49,6 +49,7 @@ fun ArticleView(
     val highlights = remember { mutableStateListOf<TextRange>() }
     val offsetList = remember { mutableStateListOf<Int>() }
     val currentHighlightIndex = remember { mutableStateOf<Int?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,7 +74,8 @@ fun ArticleView(
                     markups,
                     highlights,
                     currentHighlightIndex.value,
-                    isDark = isSystemInDarkTheme()
+                    isDark = isSystemInDarkTheme(),
+                    coroutineScope
                 ),
                 currentArticle.bibleRefs,
                 currentArticle.read_time
@@ -94,7 +96,8 @@ fun ArticleView(
                     markups,
                     highlights,
                     currentHighlightIndex.value,
-                    isDark = isSystemInDarkTheme()
+                    isDark = isSystemInDarkTheme(),
+                    coroutineScope
                 ),
                 currentArticle._source.bibleRefs,
                 currentArticle._source.read_time

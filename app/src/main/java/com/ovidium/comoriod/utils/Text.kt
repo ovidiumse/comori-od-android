@@ -2,6 +2,7 @@
 
 package com.ovidium.comoriod.utils
 
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
@@ -14,6 +15,8 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.ui.theme.getColorsForMarkup
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.views.unaccent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.time.Duration
 
 val ParagraphStyle = SpanStyle(letterSpacing = 0.3.sp)
@@ -106,7 +109,8 @@ fun parseVerses(
     markups: List<Markup>,
     highlights: SnapshotStateList<TextRange>,
     currentHighlightIndex: Int?,
-    isDark: Boolean
+    isDark: Boolean,
+    coroutineScope: CoroutineScope
 ): AnnotatedString {
     val linkColor = getNamedColor("Link", isDark)
 
@@ -130,12 +134,21 @@ fun parseVerses(
                         append(highlightBody(chunk.text, isDark))
                     }
                 }
+
                 "bible-ref" -> {
-                    withAnnotation(tag = "URL", annotation = chunk.ref!!) {
-                        withStyle(buildStyle(chunk.style)) {
-                            bibleRefsRanges.add(Pair(index + this.length, index + chunk.text.length))
-                            append(highlightBody(chunk.text, isDark))
+                    val link = LinkAnnotation.Url(
+                        chunk.ref!!,
+                        TextLinkStyles(SpanStyle(Color.Red))
+                    ) {
+                        val url = (it as LinkAnnotation.Url).url
+                        val event = RefClickedEvent(url)
+                        coroutineScope.launch {
+                            EventBus.publish(event)
                         }
+                    }
+                    withLink(link) {
+                        bibleRefsRanges.add(Pair(index + this.length, index + chunk.text.length))
+                        append(highlightBody(chunk.text, isDark))
                     }
                 }
             }

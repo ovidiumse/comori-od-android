@@ -2,7 +2,6 @@
 
 package com.ovidium.comoriod.views.article
 
-import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
@@ -12,9 +11,11 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -27,14 +28,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.gms.common.GooglePlayServicesUtil
 import com.ovidium.comoriod.R
 import com.ovidium.comoriod.components.AdaptiveText
 import com.ovidium.comoriod.data.article.Article
@@ -44,8 +42,11 @@ import com.ovidium.comoriod.data.markups.Markup
 import com.ovidium.comoriod.model.*
 import com.ovidium.comoriod.ui.theme.NotoSans
 import com.ovidium.comoriod.ui.theme.getNamedColor
+import com.ovidium.comoriod.utils.EventBus
+import com.ovidium.comoriod.utils.RefClickedEvent
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.utils.fmtDuration
+import com.ovidium.comoriod.utils.formatBibleRefs
 import com.ovidium.comoriod.utils.nowUtc
 import com.ovidium.comoriod.utils.shareArticle
 import com.ovidium.comoriod.utils.toIsoString
@@ -79,6 +80,7 @@ private fun LazyListState.isAtBottom(): Boolean {
     }.value
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArticleViewContent(
     article: Article,
@@ -141,6 +143,8 @@ fun ArticleViewContent(
     var showSavingSharedMarkupPopup by remember { mutableStateOf(false) }
     val userResourceState = signInModel.userResource
     val userResource = userResourceState.value
+    var showVerseRefBottomSheet by remember { mutableStateOf(false) }
+    val verseRefSheetState = rememberModalBottomSheetState()
 
     Box(
         modifier = Modifier
@@ -241,6 +245,7 @@ fun ArticleViewContent(
                         bibleRefs,
                         showHighlightControls,
                         signInModel,
+                        coroutineScope,
                         onTextClick = {
                             expandFloatingMenu = false
                             showSavingSharedMarkupPopup = false
@@ -251,10 +256,9 @@ fun ArticleViewContent(
                 }
             }
         }
-
-        if (bibleRefs.isNotEmpty()) {
-            BibleRefsPopup(bibleRefs)
-        }
+//        if (bibleRefs.isNotEmpty()) {
+//            BibleRefsPopup(bibleRefs)
+//        }
         Column(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.End,
@@ -266,16 +270,15 @@ fun ArticleViewContent(
                     onClick = { showSharingSheet() },
                     modifier = Modifier
                         .padding(bottom = 16.dp, end = 16.dp),
-                    backgroundColor = buttonColor,
+                    backgroundColor = buttonColor
                 ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.baseline_share_24),
-                        contentDescription = "Share article",
-                        modifier = Modifier.size(35.dp),
-                        tint = textColor.copy(alpha = 0.7f),
-                    )
+                                        Icon(
+                                            imageVector = ImageVector.vectorResource(id = R.drawable.baseline_share_24),
+                                            contentDescription = "Share article",
+                                            modifier = Modifier.size(35.dp),
+                                            tint = textColor.copy(alpha = 0.7f),
+                                        )
                 }
-
             if (expandFloatingMenu && userResource.state == UserState.LoggedIn)
                 FloatingActionButton(
                     onClick = {
@@ -463,8 +466,8 @@ fun ArticleViewContent(
                                     receivedMarkupLength.value = 0
                                 },
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = getNamedColor("Link", isDark),
-                                    disabledBackgroundColor = primarySurfaceColor,
+                                    containerColor = getNamedColor("Link", isDark),
+                                    disabledContentColor = primarySurfaceColor,
                                     contentColor = Color.White
                                 ),
                                 modifier = Modifier
@@ -483,8 +486,8 @@ fun ArticleViewContent(
                                     receivedMarkupLength.value = 0
                                 },
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = getNamedColor("Link", isDark),
-                                    disabledBackgroundColor = primarySurfaceColor,
+                                    containerColor = getNamedColor("Link", isDark),
+                                    disabledContentColor = primarySurfaceColor,
                                     contentColor = Color.White
                                 ),
                                 modifier = Modifier
@@ -561,7 +564,39 @@ fun ArticleViewContent(
             )
         )
     }
+    if (showVerseRefBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                coroutineScope.launch {
+                    showVerseRefBottomSheet = false
+                }
+            },
+            sheetState = verseRefSheetState
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentSize()
+                    .padding(16.dp)
+            ) {
+                itemsIndexed(bibleRefs) { idx, item ->
+                    if (idx > 0)
+                        Spacer(modifier = Modifier.height(8.dp))
 
+                    Text(
+                        text = formatBibleRefs(item, isDark = isDark),
+                        style = TextStyle(
+                            color = if (isDark) Color.Black else Color.White,
+                            fontFamily = NotoSans,
+                            fontSize = 18.sp,
+                            lineHeight = 22.sp,
+                            fontWeight = FontWeight.Light
+                        )
+                    )
+                }
+            }
+        }
+    }
     LaunchedEffect(article.id) {
         Log.d("ArticleViewContent", "Reading time: ${article.read_time}")
         Timer().schedule(timerTask {
@@ -579,6 +614,20 @@ fun ArticleViewContent(
         delay(2500L)
         if (receivedMarkupLength.value > 0) {
             showSavingSharedMarkupPopup = true
+        }
+    }
+    LaunchedEffect(Unit) {
+        coroutineScope.launch {
+            if (articleModel.isRegisteredForClickedRefs.value == false) {
+                articleModel.isRegisteredForClickedRefs.value = true
+                EventBus.subscribe<RefClickedEvent> { refClickedEvent ->
+                    bibleRefs.clear()
+                    article.bibleRefs[refClickedEvent.ref]?.let { refs ->
+                        bibleRefs.addAll(refs.verses)
+                        showVerseRefBottomSheet = true
+                    }
+                }
+            }
         }
     }
 }
