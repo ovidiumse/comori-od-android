@@ -15,25 +15,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.bible.BibleVerse
 import com.ovidium.comoriod.model.LibraryModel
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun ODRefsBottomSheetAuthorCarousel(
@@ -41,6 +34,7 @@ fun ODRefsBottomSheetAuthorCarousel(
     bibleVerseContent: BibleVerse,
     bibleChapterData: BibleChapter,
     currentAuthor: MutableState<CountedAuthor?>,
+    currentOdRef: String,
     isDarkTheme: Boolean,
     onClick: (CountedAuthor) -> Unit
 ) {
@@ -66,6 +60,7 @@ fun ODRefsBottomSheetAuthorCarousel(
                             .clip(RoundedCornerShape(100))
                             .clickable {
                                 currentAuthor.value = author
+                                libraryModel.getOfRefFor(currentOdRef, author.name)
                                 onClick(author)
                             },
                         painter = rememberAsyncImagePainter(photoURL),
@@ -84,10 +79,11 @@ fun ODRefsBottomSheetAuthorCarousel(
                             .border(
                                 if (currentAuthor.value?.name == author.name) 1.5.dp else 0.dp,
                                 if (currentAuthor.value?.name == author.name) getNamedColor("Link", isDarkTheme) else Color.Transparent,
-                                    RoundedCornerShape(100)
+                                RoundedCornerShape(100)
                             )
                             .clickable {
                                 currentAuthor.value = author
+                                libraryModel.getOfRefFor(currentOdRef, author.name)
                                 onClick(author)
                             },
                     ) {

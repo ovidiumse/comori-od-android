@@ -15,7 +15,6 @@ import com.ovidium.comoriod.data.bible.BibleChapter
 import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedReferencesForVerse
 import com.ovidium.comoriod.data.bible.BibleVerse
 import com.ovidium.comoriod.data.bible.ODRef
-import com.ovidium.comoriod.data.bible.Verse
 import com.ovidium.comoriod.data.recommended.RecommendedResponseItem
 import com.ovidium.comoriod.data.titles.TitleHit
 import com.ovidium.comoriod.data.titles.TitlesResponse
@@ -23,7 +22,9 @@ import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.library.bible.CountedAuthor
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -56,6 +57,9 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
 
     private var _currentVerseData: MutableStateFlow<BibleVerse?> = MutableStateFlow(null)
     val currentVerseData = _currentVerseData.asStateFlow()
+
+    private var _odRef: MutableSharedFlow<Resource<List<ODRef>>> = MutableSharedFlow()
+    val odRef = _odRef.asSharedFlow()
 
     class TitlesData {
         var totalHitsCnt = mutableStateOf(0)
@@ -170,6 +174,28 @@ class LibraryModel(jwtUtils: JWTUtils, signInModel: GoogleSignInModel) :
                             put(bibleChapterData, Resource.uninitialized())
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun getOfRefFor(bibleRef: String, author: String? = null) {
+        viewModelScope.launch {
+            dataSource.getOdRef(bibleRef).collectLatest { response ->
+                when (response.status) {
+                    Status.SUCCESS -> {
+                        val filteredOdRefs = author?.let { author ->
+                            response.data?.filter { it.author == author }
+                        } ?: response.data
+
+                        Resource.success(filteredOdRefs ?: emptyList())
+                    }
+
+                    Status.ERROR -> Resource.error(response.data, response.message)
+                    Status.LOADING -> Resource.loading(null)
+                    Status.UNINITIALIZED -> Resource.uninitialized()
+                }.let {
+                    _odRef.emit(it)
                 }
             }
         }

@@ -7,6 +7,7 @@ import com.ovidium.comoriod.data.authors.AuthorsResponse
 import com.ovidium.comoriod.data.autocomplete.AutocompleteResponse
 import com.ovidium.comoriod.data.bible.BibleBooks
 import com.ovidium.comoriod.data.bible.BibleChapter
+import com.ovidium.comoriod.data.bible.ODRef
 import com.ovidium.comoriod.data.books.BooksResponse
 import com.ovidium.comoriod.data.favorites.FavoriteArticle
 import com.ovidium.comoriod.data.markups.Markup
@@ -155,4 +156,9 @@ interface ApiService {
         @Query("include-od-refs") includeOdRefs: Boolean = true,
         @Query("include-reverse-bible-refs") includeReverseBibleRefs: Boolean = true,
     ): BibleChapter
+
+    @GET("od/od-refs")
+    suspend fun getOdRef(
+        @Query("q") q: String,
+    ): List<ODRef>
 }

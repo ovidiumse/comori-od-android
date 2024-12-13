@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,47 +26,36 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.currentRecomposeScope
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ovidium.comoriod.data.bible.BibleChapter
-import com.ovidium.comoriod.data.bible.BibleChapter.Companion.getFormatedText
 import com.ovidium.comoriod.data.bible.ODRef
 import com.ovidium.comoriod.model.FavoritesModel
 import com.ovidium.comoriod.model.GoogleSignInModel
-import com.ovidium.comoriod.model.GoogleSignInModelFactory
 import com.ovidium.comoriod.model.LibraryModel
-import com.ovidium.comoriod.model.LibraryModelFactory
 import com.ovidium.comoriod.model.MarkupsModel
 import com.ovidium.comoriod.model.ReadArticlesModel
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.Montserrat
 import com.ovidium.comoriod.ui.theme.getNamedColor
-import com.ovidium.comoriod.utils.JWTUtils
 import com.ovidium.comoriod.utils.Resource
+import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.article.ArticleView
-import com.ovidium.comoriod.views.article.ArticleViewContent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun ODRefsBottomView(
@@ -84,16 +70,19 @@ fun ODRefsBottomView(
     odReferenceData: Map<String, ODRef>,
 ) {
 
+    val currentRelatedODRef = remember { mutableStateOf("") }
+
     val receivedMarkupIndex = remember { mutableStateOf(0) }
     val receivedMarkupLength = remember { mutableStateOf(0) }
-    val currentRelatedODRef = remember { mutableStateOf("") }
+    val odRefForBibleRef by libraryModel.odRef.collectAsState(Resource.loading(emptyList()))
 
     val filteredODRefs = odReferenceData.values.filter { it.author == currentAuthor.value?.name }
     val scrollState = rememberScrollState()
+
     val pagerState = rememberPagerState(
         initialPage = 0,
         initialPageOffsetFraction = 0f,
-        pageCount = { filteredODRefs.size }
+        pageCount = { odRefForBibleRef.data?.size ?: 0 }
     )
     val showFullArticle = remember { mutableStateOf(false) }
     val expandRelatedODRefs = remember { mutableStateOf(false) }
@@ -142,7 +131,10 @@ fun ODRefsBottomView(
                                         .padding(3.dp)
                                         .border(
                                             if (currentRelatedODRef.value == currentVerse.verseTitle) 1.dp else 0.dp,
-                                            if (currentRelatedODRef.value == currentVerse.verseTitle) getNamedColor("Text", isSystemInDarkTheme()) else Color.Transparent,
+                                            if (currentRelatedODRef.value == currentVerse.verseTitle) getNamedColor(
+                                                "Text",
+                                                isSystemInDarkTheme()
+                                            ) else Color.Transparent,
                                             RoundedCornerShape(25.dp)
                                         )
                                         .background(getNamedColor("grayBubble", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
@@ -150,8 +142,10 @@ fun ODRefsBottomView(
                                         .padding(start = 8.dp, end = 8.dp)
                                         .padding(top = 6.5.dp)
                                         .clickable {
-                                            currentRelatedODRef.value = currentVerse.verseTitle
-                                            // TODO: Get back to initial data
+                                            if (currentRelatedODRef.value != currentVerse.verseTitle) {
+                                                currentRelatedODRef.value = currentVerse.verseTitle
+                                                libraryModel.getOfRefFor(currentVerse.verseTitle)
+                                            }
                                         }
                                 ) {
                                     Text(
@@ -168,7 +162,10 @@ fun ODRefsBottomView(
                                             .padding(3.dp)
                                             .border(
                                                 if (currentRelatedODRef.value == annotations[index].item) 1.dp else 0.dp,
-                                                if (currentRelatedODRef.value == annotations[index].item) getNamedColor("Text", isSystemInDarkTheme()) else Color.Transparent,
+                                                if (currentRelatedODRef.value == annotations[index].item) getNamedColor(
+                                                    "Text",
+                                                    isSystemInDarkTheme()
+                                                ) else Color.Transparent,
                                                 RoundedCornerShape(25.dp)
                                             )
                                             .background(getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
@@ -176,8 +173,10 @@ fun ODRefsBottomView(
                                             .padding(start = 8.dp, end = 8.dp)
                                             .padding(top = 6.5.dp)
                                             .clickable {
-                                                currentRelatedODRef.value = annotations[index].item
-                                                // TODO: Get odRefs for this verse and replace the data
+                                                if (currentRelatedODRef.value != annotations[index].item) {
+                                                    currentRelatedODRef.value = annotations[index].item
+                                                    libraryModel.getOfRefFor(annotations[index].item)
+                                                }
                                             }
                                     ) {
                                         Text(
@@ -195,46 +194,74 @@ fun ODRefsBottomView(
                                     modifier = Modifier
                                         .clickable {
                                             expandRelatedODRefs.value = !expandRelatedODRefs.value
-                                            currentRelatedODRef.value = currentVerse.verseTitle
+                                            if (currentRelatedODRef.value != currentVerse.verseTitle) {
+                                                currentRelatedODRef.value = currentVerse.verseTitle
+                                            }
                                         },
                                     tint = getNamedColor("Link", isSystemInDarkTheme())
                                 )
                             }
                         }
-                        ODRefsBottomSheetAuthorCarousel(
-                            libraryModel,
-                            currentVerse,
-                            bibleChapter,
-                            currentAuthor,
-                            isSystemInDarkTheme(),
-                            { }
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(bottom = 12.dp),
-                            text = "${currentAuthor.value?.name} - ${pagerState.currentPage + 1}/${filteredODRefs.size}",
-                            fontSize = 12.sp
-                        )
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .alpha(0.5f)
-                                .padding(bottom = 12.dp)
-                                .fillMaxWidth(1f),
-                            thickness = 0.5.dp
-                        )
-                        HorizontalPager(
-                            pagerState
-                        ) { pageIDX ->
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(scrollState)
-                            ) {
-                                ODRefBasicTextView(filteredODRefs, pageIDX)
+
+                        when (odRefForBibleRef.status) {
+
+                            Status.SUCCESS -> {
+                                if (!odRefForBibleRef.data.isNullOrEmpty()) {
+                                    ODRefsBottomSheetAuthorCarousel(
+                                        libraryModel,
+                                        currentVerse,
+                                        bibleChapter,
+                                        currentAuthor,
+                                        currentRelatedODRef.value,
+                                        isSystemInDarkTheme()
+                                    ) {
+                                    }
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(bottom = 12.dp),
+                                        text = "${currentAuthor.value?.name} - ${pagerState.currentPage + 1}/${odRefForBibleRef.data?.size ?: 0}",
+                                        fontSize = 12.sp
+                                    )
+
+                                    HorizontalDivider(
+                                        modifier = Modifier
+                                            .alpha(0.5f)
+                                            .padding(bottom = 12.dp)
+                                            .fillMaxWidth(1f),
+                                        thickness = 0.5.dp
+                                    )
+
+                                    HorizontalPager(
+                                        pagerState
+                                    ) { pageIDX ->
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .verticalScroll(scrollState)
+                                        ) {
+
+                                            ODRefBasicTextView(odRefForBibleRef.data as List<ODRef>, pageIDX)
+                                        }
+                                    }
+
+
+                                } else {
+                                    Text(text = "Nu exista referinte!")
+                                }
+                            }
+
+                            Status.ERROR,
+                            Status.LOADING,
+                            Status.UNINITIALIZED -> {
+
                             }
                         }
+
                         LaunchedEffect(Unit) {
-                            currentRelatedODRef.value = currentVerse.verseTitle
+                            if (currentRelatedODRef.value != currentVerse.verseTitle) {
+                                currentRelatedODRef.value = currentVerse.verseTitle
+                                libraryModel.getOfRefFor(currentVerse.verseTitle, currentAuthor.value?.name)
+                            }
                         }
                     }
                 }
@@ -266,7 +293,10 @@ fun ODRefsBottomView(
 }
 
 @Composable
-private fun ODRefBasicTextView(filteredODRefs: List<ODRef>, pageIDX: Int) {
+private fun ODRefBasicTextView(
+    filteredODRefs: List<ODRef>,
+    pageIDX: Int
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
