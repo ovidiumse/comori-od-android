@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,11 +37,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ovidium.comoriod.data.bible.BibleChapter
@@ -52,10 +55,12 @@ import com.ovidium.comoriod.model.MarkupsModel
 import com.ovidium.comoriod.model.ReadArticlesModel
 import com.ovidium.comoriod.model.SearchModel
 import com.ovidium.comoriod.ui.theme.Montserrat
+import com.ovidium.comoriod.ui.theme.NotoSans
 import com.ovidium.comoriod.ui.theme.getNamedColor
 import com.ovidium.comoriod.utils.Resource
 import com.ovidium.comoriod.utils.Status
 import com.ovidium.comoriod.views.article.ArticleView
+import kotlinx.coroutines.launch
 
 @Composable
 fun ODRefsBottomView(
@@ -78,6 +83,7 @@ fun ODRefsBottomView(
 
     val filteredODRefs = odReferenceData.values.filter { it.author == currentAuthor.value?.name }
     val scrollState = rememberScrollState()
+    val emptyODRefs by remember { mutableStateOf(mutableListOf<String>()) }
 
     val pagerState = rememberPagerState(
         initialPage = 0,
@@ -86,6 +92,7 @@ fun ODRefsBottomView(
     )
     val showFullArticle = remember { mutableStateOf(false) }
     val expandRelatedODRefs = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     Box(
         contentAlignment = Alignment.CenterEnd
@@ -168,7 +175,14 @@ fun ODRefsBottomView(
                                                 ) else Color.Transparent,
                                                 RoundedCornerShape(25.dp)
                                             )
-                                            .background(getNamedColor("Link", isSystemInDarkTheme()), RoundedCornerShape(25.dp))
+                                            .background(
+                                                if (emptyODRefs.contains(annotations[index].item)) {
+                                                    Color.Gray
+                                                } else {
+                                                    getNamedColor("Link", isSystemInDarkTheme())
+                                                },
+                                                RoundedCornerShape(25.dp)
+                                            )
                                             .fillMaxHeight()
                                             .padding(start = 8.dp, end = 8.dp)
                                             .padding(top = 6.5.dp)
@@ -204,7 +218,6 @@ fun ODRefsBottomView(
                         }
 
                         when (odRefForBibleRef.status) {
-
                             Status.SUCCESS -> {
                                 if (!odRefForBibleRef.data.isNullOrEmpty()) {
                                     ODRefsBottomSheetAuthorCarousel(
@@ -239,25 +252,51 @@ fun ODRefsBottomView(
                                                 .fillMaxSize()
                                                 .verticalScroll(scrollState)
                                         ) {
-
                                             ODRefBasicTextView(odRefForBibleRef.data as List<ODRef>, pageIDX)
                                         }
                                     }
-
-
                                 } else {
-                                    Text(text = "Nu exista referinte!")
+                                    coroutineScope.run {
+                                        launch {
+                                            when (odRefForBibleRef.status) {
+                                                Status.SUCCESS -> {
+                                                    if (!emptyODRefs.contains(currentRelatedODRef.value)) {
+                                                        emptyODRefs.add(currentRelatedODRef.value)
+                                                    }
+                                                }
+                                                else -> {}
+                                            }
+                                        }
+                                    }
+
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Top,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(top = 64.dp)
+                                    ) {
+                                        Text(
+                                            text = "Nu există referințe în scrierile \nînaintașilor pentru acest verset.",
+                                            fontSize = 16.sp,
+                                            fontFamily = NotoSans,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.Gray,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier
+                                                .padding(horizontal = 16.dp)
+                                        )
+                                    }
                                 }
                             }
 
                             Status.ERROR,
                             Status.LOADING,
-                            Status.UNINITIALIZED -> {
-
-                            }
+                            Status.UNINITIALIZED -> {}
                         }
 
                         LaunchedEffect(Unit) {
+                            emptyODRefs.clear()
                             if (currentRelatedODRef.value != currentVerse.verseTitle) {
                                 currentRelatedODRef.value = currentVerse.verseTitle
                                 libraryModel.getOfRefFor(currentVerse.verseTitle, currentAuthor.value?.name)
