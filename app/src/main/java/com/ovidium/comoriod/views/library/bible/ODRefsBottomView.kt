@@ -210,6 +210,7 @@ fun ODRefsBottomView(
                                             expandRelatedODRefs.value = !expandRelatedODRefs.value
                                             if (currentRelatedODRef.value != currentVerse.verseTitle) {
                                                 currentRelatedODRef.value = currentVerse.verseTitle
+                                                libraryModel.getOfRefFor(currentVerse.verseTitle)
                                             }
                                         },
                                     tint = getNamedColor("Link", isSystemInDarkTheme())
